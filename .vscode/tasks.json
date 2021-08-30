@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "tscheck",
+      "group": "build",
+      "label": "npm: tscheck",
+      "detail": "vue-ts-checker"
+    }
+  ]
+}
