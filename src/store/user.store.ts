@@ -15,7 +15,7 @@ const state: UserState = {
 };
 const mutations = {
   SET_USER(state: UserState, payload: UserState): void {
-    if (typeof !payload !== "object")
+    if (typeof payload !== "object")
       return console.error("payload was was not an object!");
     state = {
       ...state,
