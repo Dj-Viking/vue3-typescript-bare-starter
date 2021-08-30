@@ -4,7 +4,7 @@
     v-for="(todo, i) in todos"
     :key="i"
   >
-    <p>
+    <p :style="`color: ${todo.color}`">
       {{ todo.text }}
     </p>
     <button @click.prevent="deleteTodo($event, i)">delete todo</button>
@@ -38,6 +38,7 @@ export default defineComponent({
     return {
       todos: [] as Array<Todo>,
       inputText: "",
+      todoStyleClass: "",
     };
   },
   methods: {
@@ -46,7 +47,7 @@ export default defineComponent({
         this.todos.push({
           id: i + 1,
           text: `something at ${i}`,
-          color: "green",
+          color: "red",
         });
       }
     },
