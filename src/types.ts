@@ -40,9 +40,9 @@ export type RootDispatchType =
   | "todos/addTodo";
 
 export type RootCommitType =
-  | "todos/ADD_TODO"
   | "user/SET_USER"
   | "user/CLEAR_USER_TOKEN"
+  | "todos/ADD_TODO"
   | "todos/SET_TODOS"
   | "todos/DELETE_TODO"
   | "todos/EDIT_TODO";
