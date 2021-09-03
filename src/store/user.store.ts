@@ -3,15 +3,17 @@ import {
   TodosState,
   UserState,
   Todo,
-  RootDispatchTypes,
+  RootDispatchType,
 } from "@/types";
 import { ActionContext } from "vuex";
 
 const state: UserState = {
-  username: "",
-  email: "",
-  token: "",
-  todos: [] as Todo[],
+  user: {
+    username: "",
+    email: "",
+    token: "",
+    todos: [] as Todo[],
+  },
 };
 const mutations = {
   SET_USER(state: UserState, payload: UserState): void {
@@ -23,7 +25,7 @@ const mutations = {
     };
   },
   CLEAR_USER_TOKEN(state: UserState, payload: null): void {
-    state.token = payload;
+    state.user.token = payload;
   },
 };
 const actions = {
@@ -37,12 +39,12 @@ const actions = {
 
     //type casting here provides the autocomplete for string union type of
     // all possible rootstate actions accessed with the root: true option as 3rd argument
-    await dispatch("user/setUserTodos" as RootDispatchTypes, payload, {
+    await dispatch("user/setUserTodos" as RootDispatchType, payload, {
       root: true,
     });
 
     //set the todos on the page
-    await dispatch("todos/setTodos" as RootDispatchTypes, payload, {
+    await dispatch("todos/setTodos" as RootDispatchType, payload, {
       root: true,
     });
   },

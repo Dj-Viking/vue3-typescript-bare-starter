@@ -19,17 +19,38 @@ export interface MyRootState {
   todos: TodosState;
 }
 export interface UserState {
-  username: string | null;
-  email: string | null;
-  token: string | null;
-  todos: Todo[];
+  user: {
+    username: string | null;
+    email: string | null;
+    token: string | null;
+    todos: Todo[];
+  };
 }
 export interface TodosState {
   todos: Array<Todo>;
 }
 
-export type RootDispatchTypes =
+export type RootDispatchType =
   | "user/setUserToken"
   | "user/setUserTodos"
   | "user/setUser"
-  | "todos/setTodos";
+  | "todos/setTodos"
+  | "todos/deleteTodo"
+  | "todos/editTodo"
+  | "todos/addTodo";
+
+export type LocalCommitType =
+  | "ADD_TODO"
+  | "SET_USER"
+  | "CLEAR_USER_TOKEN"
+  | "SET_TODOS"
+  | "DELETE_TODO"
+  | "EDIT_TODO";
+
+export type RootCommitType =
+  | "todos/ADD_TODO"
+  | "user/SET_USER"
+  | "user/CLEAR_USER_TOKEN"
+  | "todos/SET_TODOS"
+  | "todos/DELETE_TODO"
+  | "todos/EDIT_TODO";

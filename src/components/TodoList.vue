@@ -21,8 +21,9 @@
 </template>
 
 <script lang="ts">
+import { RootDispatchType } from "@/types";
 import { defineComponent } from "vue";
-import { Todo } from "../types";
+import store from "../store";
 
 interface MyDOMInputEvent extends Event {
   target: EventTarget & {
@@ -36,46 +37,53 @@ export default defineComponent({
   name: "TodoList",
   data() {
     return {
-      todos: [] as Array<Todo>,
       inputText: "",
-      todoStyleClass: "",
     };
   },
+  computed: {
+    todos: () => store.state.todos.todos,
+  },
   methods: {
-    initList() {
-      for (let i = 0; i < 2; i++) {
-        this.todos.push({
-          id: i + 1,
-          text: `something at ${i}`,
-          color: "red",
-        });
-      }
-    },
-    deleteTodo(_event: Event, index: number) {
-      this.todos.splice(index, 1);
+    async deleteTodo(_event: Event, index: number) {
+      await store.dispatch("todos/deleteTodo" as RootDispatchType, index, {
+        root: true,
+      });
     },
     // eslint-disable-next-line
-    addTodo(_event: Event) {
+    async addTodo(_event: Event) {
       if (!this.inputText) return;
-      this.todos.push({
+      const payload = {
         id: Date.now(),
         text: this.inputText,
         color: "blue",
-      });
+      };
+      const addResponse: boolean = await store.dispatch(
+        "todos/addTodo" as RootDispatchType,
+        payload,
+        {
+          root: true,
+        }
+      );
       this.inputText = "";
+      return addResponse;
     },
     // eslint-disable-next-line
-    editTodo(_event: any, index: number) {
-      const text = prompt("enter some text to edit this todo");
+    async editTodo(_event: any, index: number) {
+      const text: string | null = prompt("enter some text to edit this todo");
       if (!text) return;
-      this.todos[index].text = text as string;
+      const payload = {
+        text,
+        index,
+      };
+      await store.dispatch("todos/editTodo" as RootDispatchType, payload, {
+        root: true,
+      });
     },
     textInput(event: MyDOMInputEvent) {
       this.inputText = event.target.value as string;
     },
   },
   mounted() {
-    this.initList();
     console.log("todos", this.todos);
   },
 });
