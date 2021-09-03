@@ -39,14 +39,6 @@ export type RootDispatchType =
   | "todos/editTodo"
   | "todos/addTodo";
 
-export type LocalCommitType =
-  | "ADD_TODO"
-  | "SET_USER"
-  | "CLEAR_USER_TOKEN"
-  | "SET_TODOS"
-  | "DELETE_TODO"
-  | "EDIT_TODO";
-
 export type RootCommitType =
   | "todos/ADD_TODO"
   | "user/SET_USER"
