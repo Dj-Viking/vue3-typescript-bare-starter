@@ -29,7 +29,7 @@ export class Todo extends BaseEntity {
   text?: string;
 
   //not exposing the creator here
-  @ManyToOne(() => User, user => user.todos)
+  @ManyToOne(() => User, user => user.todos, { onDelete: "CASCADE" })
   creator: User;
 
   @Field(() => String)

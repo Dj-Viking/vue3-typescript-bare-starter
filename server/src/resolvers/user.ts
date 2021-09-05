@@ -149,4 +149,37 @@ export class UserResolver {
       user
     };
   }
+  @Mutation(() => UserResponse)
+  async logout(
+    @Arg("email", () => String) email: string,
+    @Ctx() context: MyContext
+  ): Promise<UserResponse | ErrorResponse> {
+    console.log('context user', context.req.user);
+    try {
+      //remove token from user table?
+      const changedUser = await getConnection()
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .update<User>(User, 
+                    { token: "" })
+                                  .where("email = :email", { email: email })
+                                  .returning(['username', 'token', 'email'])
+                                  .updateEntity(true)
+                                  .execute();
+      if (!changedUser) return new ErrorResponse("user", "user not found");
+
+      console.log('changed user', changedUser.raw[0]);
+      
+      return {
+        user: changedUser.raw[0]
+      }
+
+    } catch (error) {
+      console.log(error);
+      const field = "error";
+      const msg = `error in the logout mutation ${error}`
+      return new ErrorResponse(field, msg);
+      
+    }
+  }
 }

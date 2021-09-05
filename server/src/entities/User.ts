@@ -32,7 +32,7 @@ export class User extends BaseEntity {
   @Column()
   token?: string;
 
-  @OneToMany(() => Todo, (todo: Todo) => todo.creator)
+  @OneToMany(() => Todo, (todo: Todo) => todo.creator, { onDelete: "CASCADE" })
   todos?: Todo[];
 
   //not a field so can't select it

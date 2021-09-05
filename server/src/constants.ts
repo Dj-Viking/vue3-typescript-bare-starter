@@ -45,6 +45,8 @@ mutation register {
     }
     user{
       email
+      username
+      id
     }
   }
 }
@@ -81,6 +83,7 @@ mutation login {
     }
     user {
       token
+      id
       username
       email
     }
