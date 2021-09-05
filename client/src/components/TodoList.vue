@@ -1,27 +1,32 @@
 <template>
-  <div
-    style="border: black 2px solid; margin: 10px"
-    v-for="(todo, i) in todos"
-    :key="i"
-  >
-    <p :style="`color: ${todo.color}`">
-      {{ todo.text }}
-    </p>
-    <button @click.prevent="deleteTodo($event, i)">delete todo</button>
-    <button @click.prevent="editTodo($event, i)">edit todo</button>
-  </div>
+  <div>
+    <button @click.prevent="clearTodos($event)">clear todos</button>
+    <div
+      style="border: black 2px solid; margin: 10px"
+      v-for="(todo, i) in todos"
+      :key="i"
+    >
+      <p :style="`color: ${todo.color}`">
+        {{ todo.text }}
+      </p>
+      <button @click.prevent="deleteTodo($event, i)">delete todo</button>
+      <button @click.prevent="editTodo($event, i)">edit todo</button>
+    </div>
 
-  <div style="margin-top: 100px">
-    <input type="text" @input="textInput($event)" :value="inputText" />
-    <pre style="color: black">
-      {{ inputText }}
-    </pre>
-    <button @click.prevent="addTodo($event)">Add todo</button>
+    <div style="margin-top: 100px">
+      <form @submit.prevent="addTodo($event)">
+        <input type="text" @input="textInput($event)" :value="inputText" />
+        <pre style="color: black">
+          {{ inputText }}
+        </pre>
+        <button type="submit">Add todo</button>
+      </form>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { RootDispatchType } from "@/types";
+import { RootCommitType, RootDispatchType } from "../types";
 import { defineComponent } from "vue";
 import store from "../store";
 
@@ -44,13 +49,17 @@ export default defineComponent({
     todos: () => store.state.todos.todos,
   },
   methods: {
-    async deleteTodo(_event: Event, index: number) {
+    async deleteTodo(_event: Event, index: number): Promise<void> {
       await store.dispatch("todos/deleteTodo" as RootDispatchType, index, {
         root: true,
       });
     },
     // eslint-disable-next-line
-    async addTodo(_event: Event) {
+    clearTodos(_event: Event): void {
+      store.commit("todos/SET_TODOS" as RootCommitType, [], { root: true });
+    },
+    // eslint-disable-next-line
+    async addTodo(_event: Event): Promise<void | boolean> {
       if (!this.inputText) return;
       const payload = {
         id: Date.now(),
@@ -68,7 +77,7 @@ export default defineComponent({
       return addResponse;
     },
     // eslint-disable-next-line
-    async editTodo(_event: any, index: number) {
+    async editTodo(_event: any, index: number): Promise<void> {
       const text: string | null = prompt("enter some text to edit this todo");
       if (!text) return;
       const payload = {
@@ -79,11 +88,11 @@ export default defineComponent({
         root: true,
       });
     },
-    textInput(event: MyDOMInputEvent) {
+    textInput(event: MyDOMInputEvent): void {
       this.inputText = event.target.value as string;
     },
   },
-  mounted() {
+  mounted(): void {
     console.log("todos", this.todos);
   },
 });
