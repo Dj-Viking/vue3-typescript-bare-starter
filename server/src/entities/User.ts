@@ -33,7 +33,7 @@ export class User extends BaseEntity {
   token?: string;
 
   @OneToMany(() => Todo, (todo: Todo) => todo.creator)
-  todos: Todo[];
+  todos?: Todo[];
 
   //not a field so can't select it
   @Column()

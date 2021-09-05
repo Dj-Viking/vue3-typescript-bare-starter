@@ -6,14 +6,16 @@ import {
   Resolver, 
   Arg, 
   Mutation, 
-  // Ctx, 
+  Ctx, 
   ObjectType,
   Query 
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import argon2 from 'argon2';
+import { MyContext } from '../types';
 
 import { User } from '../entities/User';
+import { Todo } from '../entities/Todo';
 import { verifyRegisterArgs } from '../utils/verifyRegisterArgs';
 
 @InputType()
@@ -46,14 +48,24 @@ class UserResponse {
   
   @Field(() => String, { nullable: true })
   token?: string | null
+
+  @Field(() => Todo, { nullable: true })
+  todos?: Todo[] | null
+}
+@InputType()
+class LoginInput {
+  @Field()
+  email: string;
+  @Field()
+  password: string;
 }
 
 @Resolver()
 export class UserResolver {
 
   @Query(() => String)
-  async hello(): Promise<string>{
-    return "hello there"
+  async helloUser(): Promise<string>{
+    return "hello user"
   }
 
   @Mutation(() => UserResponse)
@@ -107,5 +119,34 @@ export class UserResolver {
         return new ErrorResponse(field, message);
       }
     }
+  }
+
+  @Mutation(() => UserResponse)
+  async login(
+    @Arg('options', () => LoginInput) options: LoginInput,
+    @Ctx() { req }: MyContext
+  ): Promise<UserResponse>{
+    const user = await User.findOne({ where: { email: options.email } });
+    console.log("user", user);
+    
+    if (!user) 
+    {
+      return new ErrorResponse(
+        'Credentials',
+        'Incorrect Credentials'
+      );
+    }
+    const valid = await argon2.verify(user.password, options.password);
+    if (!valid)
+    {
+      return new ErrorResponse(
+        "Credentials",
+        "Incorrect Credentials"
+      );
+    }
+    req.user = user
+    return {
+      user
+    };
   }
 }

@@ -21,20 +21,12 @@ export class Todo extends BaseEntity {
   id!: number;
   
   @Field()
-  @Column()
-  creatorId: number;
+  @Column({nullable: true})
+  creatorId?: number;
 
   @Field()
   @Column()
-  title!: string;
-
-  @Field()
-  @Column()
-  text!: string;
-
-  @Field()
-  @Column({ type: "int", default: 0 })
-  points!: number;
+  text?: string;
 
   //not exposing the creator here
   @ManyToOne(() => User, user => user.todos)
