@@ -117,15 +117,11 @@ export class TodoResolver {
     .createQueryBuilder()
     .insert()
     .into(Todo)
-    .values(
-      {
-        text: options.text,
-        //a creator with this id MUST exist for this query to work!!
-        creatorId: options.creatorId,
-      }
-    )
-    .returning('*')
-    .execute();
+    .values({ text: options.text,
+              //a creator with this id MUST exist for this query to work!!
+              creatorId: options.creatorId })
+                                            .returning('*')
+                                            .execute();
     const todos = await Todo.find();
     console.log(`${ANSI_ESCAPES.green}`, `Someone added a todo!`, `${ANSI_ESCAPES.reset}`)
     return todos;
