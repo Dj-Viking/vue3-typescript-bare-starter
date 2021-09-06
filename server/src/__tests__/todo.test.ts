@@ -1,13 +1,11 @@
 import { request } from "graphql-request";
 import { User } from "../entities/User";
-import { 
-  HOST, 
-} from "../constants";
 import { connectDb } from "./utils/connectDb";
 import {
-  REGISTER_MUTATION, 
+  REGISTER_MUTATION,
   REGISTER_EMAIL,
-  UPDATED_TODO_TEXT
+  UPDATED_TODO_TEXT,
+  HOST
 } from "../constants";
 import { ANSI_ESCAPES, RegisterResponse, AddTodoResponse, GetUserTodosResponse, ClearUserTodosResponse, EditTodoByIdResponse } from "../types";
 import { createAddTodoMutation, createClearUserTodosMutation, createEditTodoMutation, createGetUserTodosQuery, logJson } from "./utils/helpers";
@@ -25,16 +23,16 @@ describe("Tests the user register", () => {
 
     //assign the creatorId for later when we add a todo
     creatorId = res.register.user.id;
-    
+
     expect(res.register.token).toBeTruthy();
     expect(res.register.errors).toBeNull();
     expect(res.register.user.email).toEqual(REGISTER_EMAIL);
   });
-  
+
   it("and check that the user got added to the db", async () => {
     console.log(`${ANSI_ESCAPES.blue}`, `checking that the user got added to the DB`, `${ANSI_ESCAPES.reset}`);
     const connection = await connectDb();
-    const users = await User.find({ where: { email: REGISTER_EMAIL }});
+    const users = await User.find({ where: { email: REGISTER_EMAIL } });
     logJson(users);
     expect(users).toHaveLength(1);
     connection.close();
@@ -54,7 +52,7 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     const res: AddTodoResponse = await request(HOST + "/graphql", `${createAddTodoMutation(creatorId)}`);
     logJson(res.addTodo);
 
-    
+
     //find the todos that have the creator's id
     const foundTodo = res.addTodo.filter(todo => todo.creatorId === creatorId)[0];
 
@@ -66,7 +64,7 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     //make query for get todo by id
     console.log(`${ANSI_ESCAPES.blue}`, `getting the todo we just made from the id generated from the add todo response`, `${ANSI_ESCAPES.reset}`);
     const res: GetUserTodosResponse = await request(HOST + "/graphql", `${createGetUserTodosQuery(creatorId)}`);
-    
+
     expect(res.getUserTodos).toHaveLength(1);
   });
 
