@@ -14,6 +14,7 @@ import { buildSchema } from "type-graphql";
 import { User } from "./entities/User";
 import { Todo } from "./entities/Todo";
 import { UserResolver } from './resolvers/user';
+import { TodoResolver } from "./resolvers/todo"
 // import { ANSI_ESCAPES } from "./types";
 import { GraphQLSchema } from "graphql";
 import { ANSI_ESCAPES } from "./types";
@@ -56,8 +57,10 @@ const {
 
   //BUILD THE SCHEMA
 
+  console.log("resolvers", UserResolver, TodoResolver);
+  
   MyGraphQLSchema = await buildSchema({
-    resolvers: [UserResolver],
+    resolvers: [UserResolver, TodoResolver],
     validate: false
   });
   console.log(`${ANSI_ESCAPES.yellow}`, `graphql schema build success`, `${ANSI_ESCAPES.reset}`);

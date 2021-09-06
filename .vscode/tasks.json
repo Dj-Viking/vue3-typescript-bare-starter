@@ -3,6 +3,15 @@
   "tasks": [
     {
       "type": "npm",
+      "script": "build",
+      "path": "client/",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build - client",
+      "detail": "vue-cli-service build"
+    },
+    {
+      "type": "npm",
       "script": "tscheck",
       "group": "build",
       "label": "npm: tscheck",

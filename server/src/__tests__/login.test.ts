@@ -21,11 +21,14 @@ describe("log a cookie", () => {
   });
 });
 
-describe("register first and then use the same credentials to test login mutation", () => {
+describe("Tests the user register", () => {
   it("get expected response from the register mutation", async () => {
+
     console.log(`${ANSI_ESCAPES.blue}`, `Registering a new user`, `${ANSI_ESCAPES.reset}`);
     const res: RegisterResponse = await request(HOST + "/graphql", REGISTER_MUTATION);
     logJson(res);
+    console.log('user', res);
+    
     expect(res.register.token).toBeTruthy();
     expect(res.register.errors).toBeNull();
     expect(res.register.user.email).toEqual(REGISTER_EMAIL);
@@ -40,7 +43,14 @@ describe("register first and then use the same credentials to test login mutatio
     connection.close();
   });
 
+  it("checks if we try to register with the same credentials it returns an error", async () => {
+    console.log(`${ANSI_ESCAPES.blue}`, `trying to register the same user`, `${ANSI_ESCAPES.reset}`);
+    const res: RegisterResponse = await request(HOST + "/graphql", REGISTER_MUTATION);
+    logJson(res);
+    expect(res.register.errors).toHaveLength(1);
+  });
 });
+
 // launch login mutation
 describe("do the login mutation", () => {
   it("login mutation", async () => {

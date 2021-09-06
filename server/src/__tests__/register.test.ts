@@ -11,6 +11,8 @@ import {
 import { ANSI_ESCAPES, RegisterResponse } from "../types";
 import { logJson } from "../__tests__/utils/helpers";
 
+let connection;
+
 describe("Tests the user register", () => {
   it("get expected response from the register mutation", async () => {
 
@@ -26,7 +28,7 @@ describe("Tests the user register", () => {
   
   it("and check that the user got added to the db", async () => {
     console.log(`${ANSI_ESCAPES.blue}`, `checking that the user got added to the DB`, `${ANSI_ESCAPES.reset}`);
-    const connection = await connectDb();
+    connection = await connectDb();
     const users = await User.find({ where: { email: REGISTER_EMAIL }});
     logJson(users);
     expect(users).toHaveLength(1);
@@ -41,7 +43,7 @@ describe("Tests the user register", () => {
   });
 
   it("checks if we delete the user we just made", async () => {
-    const connection = await connectDb();
+    connection = await connectDb();
     await User.delete({ email: REGISTER_EMAIL });
     const users = await User.find({ where: { email: REGISTER_EMAIL } });
     console.log(`${ANSI_ESCAPES.blue}`, `deleting a user ${users}`, `${ANSI_ESCAPES.reset}`);

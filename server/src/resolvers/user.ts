@@ -6,14 +6,16 @@ import {
   Resolver, 
   Arg, 
   Mutation, 
-  // Ctx, 
+  Ctx, 
   ObjectType,
   Query 
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import argon2 from 'argon2';
+import { MyContext } from '../types';
 
 import { User } from '../entities/User';
+import { Todo } from '../entities/Todo';
 import { verifyRegisterArgs } from '../utils/verifyRegisterArgs';
 
 @InputType()
@@ -46,14 +48,24 @@ class UserResponse {
   
   @Field(() => String, { nullable: true })
   token?: string | null
+
+  @Field(() => Todo, { nullable: true })
+  todos?: Todo[] | null
+}
+@InputType()
+class LoginInput {
+  @Field()
+  email: string;
+  @Field()
+  password: string;
 }
 
 @Resolver()
 export class UserResolver {
 
   @Query(() => String)
-  async hello(): Promise<string>{
-    return "hello there"
+  async helloUser(): Promise<string>{
+    return "hello user"
   }
 
   @Mutation(() => UserResponse)
@@ -106,6 +118,70 @@ export class UserResolver {
         const message = error;
         return new ErrorResponse(field, message);
       }
+    }
+  }
+
+  @Mutation(() => UserResponse)
+  async login(
+    @Arg('options', () => LoginInput) options: LoginInput,
+    @Ctx() { req }: MyContext
+  ): Promise<UserResponse>{
+    const user = await User.findOne({ where: { email: options.email } });
+    console.log("user", user);
+    
+    if (!user) 
+    {
+      return new ErrorResponse(
+        'Credentials',
+        'Incorrect Credentials'
+      );
+    }
+    const valid = await argon2.verify(user.password, options.password);
+    if (!valid)
+    {
+      return new ErrorResponse(
+        "Credentials",
+        "Incorrect Credentials"
+      );
+    }
+    req.user = user
+    return {
+      user
+    };
+  }
+  @Mutation(() => UserResponse)
+  async logout(
+    @Arg("email", () => String) email: string,
+    @Ctx() context: MyContext
+  ): Promise<UserResponse | ErrorResponse> {
+    console.log('context user', context.req.user);
+    try {
+      //remove token from user table?
+      const changedUser = await getConnection()
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .update<User>(User, 
+                    { token: "" })
+                                  .where("email = :email", { email: email })
+                                  .returning(['username', 'token', 'email'])
+                                  .updateEntity(true)
+                                  .execute();
+      if (!changedUser) return new ErrorResponse("user", "user not found");
+
+      console.log('changed user', changedUser.raw[0]);
+
+      context.req.user = null;
+      
+      return {
+        user: changedUser.raw[0]
+      }
+
+    } catch (error) {
+      console.log(error);
+      const field = "error";
+      const msg = `error in the logout mutation ${error}`
+      return new ErrorResponse(field, msg);
+      
     }
   }
 }
