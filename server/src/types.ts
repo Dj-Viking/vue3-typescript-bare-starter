@@ -46,6 +46,7 @@ export interface RegisterResponse {
         token: string
         user: {
             email: string
+            id: number
         }
     }
 }
@@ -102,4 +103,44 @@ export interface IJwtData {
     email: string;
     iat?: number;
     exp?: number;
+}
+
+export interface AddTodoResponse {
+    addTodo: Todo[]
+}
+
+export interface GetUserTodosResponse {
+    getUserTodos: Todo[]
+}
+
+export interface Todo {
+    text: string;
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    creatorId: number;
+
+}
+
+export interface ClearUserTodosResponse {
+    clearUserTodos: boolean;
+}
+
+export interface EditTodoByIdResponse {
+    editTodoById: {
+        errors?: null | [{
+            field: string;
+            message: string;
+        }];
+        todo?: null | {
+            text: string;
+            creatorId: number;
+            id: number;
+        }
+    }
+}
+
+export interface EditTodoPayload {
+    text: string;
+    id: number;
 }

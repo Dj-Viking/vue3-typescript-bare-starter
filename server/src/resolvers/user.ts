@@ -169,6 +169,8 @@ export class UserResolver {
       if (!changedUser) return new ErrorResponse("user", "user not found");
 
       console.log('changed user', changedUser.raw[0]);
+
+      context.req.user = null;
       
       return {
         user: changedUser.raw[0]
