@@ -9,13 +9,15 @@ import {
   REGISTER_USERNAME
 } from "../constants";
 import { connectDb } from "./utils/connectDb";
-import { ANSI_ESCAPES, LoginResponse, RegisterResponse } from "../types";
-import { logJson } from "./utils/helpers";
+import { LoginResponse, RegisterResponse } from "../types";
+import { logJson, ColorLog } from "./utils/helpers";
 // import { connectDb } from "./utils/connectDb";
+
+const logger = ColorLog;
 
 describe("log a cookie", () => {
   it("logs", () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `logging a cookie`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "logging a cookie").genLog();
     let cookie = Buffer.from(JSON.stringify({"count": 2})).toString('base64');
     logJson(cookie);
   });
@@ -23,11 +25,9 @@ describe("log a cookie", () => {
 
 describe("Tests the user register", () => {
   it("get expected response from the register mutation", async () => {
-
-    console.log(`${ANSI_ESCAPES.blue}`, `Registering a new user`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "registering a new user").genLog();
     const res: RegisterResponse = await request(HOST + "/graphql", REGISTER_MUTATION);
     logJson(res);
-    console.log('user', res);
     
     expect(res.register.token).toBeTruthy();
     expect(res.register.errors).toBeNull();
@@ -35,7 +35,8 @@ describe("Tests the user register", () => {
   });
   
   it("and check that the user got added to the db", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `checking that the user got added to the DB`, `${ANSI_ESCAPES.reset}`);
+    // console.log(`${ANSI_ESCAPES.blue}`, `checking that the user got added to the DB`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "checking that the user got added to the DB").genLog();
     const connection = await connectDb();
     const users = await User.find({ where: { email: REGISTER_EMAIL }});
     logJson(users);
@@ -44,7 +45,7 @@ describe("Tests the user register", () => {
   });
 
   it("checks if we try to register with the same credentials it returns an error", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `trying to register the same user`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "trying to register the same user credentials should fail").genLog();
     const res: RegisterResponse = await request(HOST + "/graphql", REGISTER_MUTATION);
     logJson(res);
     expect(res.register.errors).toHaveLength(1);
@@ -54,7 +55,7 @@ describe("Tests the user register", () => {
 // launch login mutation
 describe("do the login mutation", () => {
   it("login mutation", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `check the login mutation`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "check the login mutation").genLog();
     const res: LoginResponse = await request(HOST + "/graphql", LOGIN_MUTATION);
     // check the response
     logJson(res);
@@ -78,7 +79,7 @@ describe("do the login mutation", () => {
 describe("delete the user we just made", () => {
   //delete the user
   it("checks if we delete the user we just made", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `checks the delete action`, `${ANSI_ESCAPES.reset}`);
+    new logger("green", "checks the delete action").genLog();
     const connection = await connectDb();
     await User.delete({ email: REGISTER_EMAIL });
     const users = await User.find({ where: { email: REGISTER_EMAIL } });

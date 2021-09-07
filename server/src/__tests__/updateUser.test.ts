@@ -7,12 +7,14 @@ import {
   HOST
 } from "../constants";
 import { connectDb } from "./utils/connectDb";
-import { ANSI_ESCAPES, RegisterResponse } from "../types";
-import { logJson } from "../__tests__/utils/helpers";
+import { RegisterResponse } from "../types";
+import { logJson, ColorLog } from "../__tests__/utils/helpers";
+
+const logger = ColorLog;
 
 describe("Tests the user register", () => {
   it("get expected response from the register mutation", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `Registering a new user`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "registering a new user").genLog();
     const res: RegisterResponse = await request(HOST + "/graphql", REGISTER_MUTATION);
     console.log('user', logJson(res));
     expect(res.register.token).toBeTruthy();
@@ -21,7 +23,7 @@ describe("Tests the user register", () => {
   });
 
   it("checks if we try to register with the same credentials it returns an error", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `trying to register the same user`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "trying to register the same user").genLog();
     const res: RegisterResponse = await request(HOST + "/graphql", REGISTER_MUTATION);
     logJson(res);
     expect(res.register.errors).toHaveLength(1);
@@ -30,10 +32,10 @@ describe("Tests the user register", () => {
 
 describe("check user was added", () => {
   it("and check that the user got added to the db", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `checking that the user got added to the DB`, `${ANSI_ESCAPES.reset}`);
+    new logger ("blue", "checking that the user got added to the DB").genLog();
     const connection = await connectDb();
     const users = await User.find({ where: { email: REGISTER_EMAIL }});
-    console.log('users set', logJson(users));
+    logJson(users);
     expect(users).toHaveLength(1);
     await connection.close();
   });
@@ -41,7 +43,7 @@ describe("check user was added", () => {
 
 describe("do the update action", () => {
   it("execute a query builder of updating a user's username", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `updating a user's username`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "updating a user's username").genLog();
     const connection = await connectDb();
     const changedUser = await connection.getRepository(User).createQueryBuilder("user").update<User>(User, { 
       username: UPDATED_USERNAME 
@@ -64,7 +66,7 @@ describe("checks the delete action", () => {
     const connection = await connectDb();
     await User.delete({ email: REGISTER_EMAIL });
     const users = await User.find({ where: { email: REGISTER_EMAIL } });
-    console.log(`${ANSI_ESCAPES.blue}`, `deleting a user ${users}`, `${ANSI_ESCAPES.reset}`);
+    new logger("green", `deleting a user ${users}`).genLog();
     logJson(users);
     expect(users).toHaveLength(0);
     await connection.close();

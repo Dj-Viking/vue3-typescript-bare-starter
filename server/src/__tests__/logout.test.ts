@@ -1,13 +1,15 @@
 import { request } from "graphql-request";
 import { User } from "../entities/User";
 import { HOST, LOGOUT_MUTATION, REGISTER_EMAIL, REGISTER_MUTATION, REGISTER_USERNAME } from "../constants";
-import { ANSI_ESCAPES, LogoutResponse, RegisterResponse } from "../types";
+import { LogoutResponse, RegisterResponse } from "../types";
 import { connectDb } from "./utils/connectDb";
-import { logJson } from "./utils/helpers";
+import { logJson, ColorLog } from "./utils/helpers";
+
+const logger = ColorLog;
 
 describe("Tests the user register", () => {
   it("get expected response from the register mutation", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `Registering a new user`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "registering a new user").genLog();
     const res: RegisterResponse = await request(HOST + "/graphql", REGISTER_MUTATION);
     console.log('user', logJson(res));
     expect(res.register.token).toBeTruthy();
@@ -16,7 +18,7 @@ describe("Tests the user register", () => {
   });
 
   it("checks if we try to register with the same credentials it returns an error", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `trying to register the same user`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "trying to register the same user credentials").genLog();
     const res: RegisterResponse = await request(HOST + "/graphql", REGISTER_MUTATION);
     logJson(res);
     expect(res.register.errors).toHaveLength(1);
@@ -25,7 +27,7 @@ describe("Tests the user register", () => {
 
 describe("check user was added", () => {
   it("and check that the user got added to the db", async () => {
-    console.log(`${ANSI_ESCAPES.blue}`, `checking that the user got added to the DB`, `${ANSI_ESCAPES.reset}`);
+    new logger("blue", "checking that the user got added to the DB").genLog();
     const connection = await connectDb();
     const users = await User.find({ where: { email: REGISTER_EMAIL }});
     console.log('users set', logJson(users));
@@ -37,7 +39,9 @@ describe("check user was added", () => {
 describe("do the logout mutation", () => {
   it("logs out", async () => {
     const res: LogoutResponse = await request(HOST + "/graphql", LOGOUT_MUTATION);
-    console.log('logout response', res);
+    logJson(res);
+
+    new logger("purple", "logging out the user").genLog();
 
     expect(res.logout.user?.email).toEqual(REGISTER_EMAIL);
     expect(res.logout.user?.username).toEqual(REGISTER_USERNAME);
@@ -50,7 +54,7 @@ describe("checks the delete action", () => {
     const connection = await connectDb();
     await User.delete({ email: REGISTER_EMAIL });
     const users = await User.find({ where: { email: REGISTER_EMAIL } });
-    console.log(`${ANSI_ESCAPES.blue}`, `deleting a user ${users}`, `${ANSI_ESCAPES.reset}`);
+    new logger("green", `deleting a user ${users}`).genLog();
     logJson(users);
     expect(users).toHaveLength(0);
     await connection.close();
