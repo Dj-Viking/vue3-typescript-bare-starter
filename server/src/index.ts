@@ -1,24 +1,20 @@
-// require('dotenv').config();
-// import path from "path";
+require('dotenv').config();
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import express from "express";
 import { IS_PROD } from "./constants";
-// // import session from "express-session";
-// // import connectRedis from "connect-redis";
-// // import Redis from "ioredis";
 import cors from "cors";
-// import { IS_PROD } from "./constants";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { User } from "./entities/User";
 import { Todo } from "./entities/Todo";
 import { UserResolver } from './resolvers/user';
 import { TodoResolver } from "./resolvers/todo"
-// import { ANSI_ESCAPES } from "./types";
 import { GraphQLSchema } from "graphql";
-import { ANSI_ESCAPES } from "./types";
 import { authMiddleware } from "./utils/authMiddleWare";
+import { ColorLog } from "./__tests__/utils/helpers";
+
+const logger = ColorLog;
 
 const {
   DB_NAME,
@@ -47,7 +43,7 @@ const {
     entities: [User, Todo]
   });
 
-  console.log(`${ANSI_ESCAPES.yellow}`, `postgres connection success`, `${ANSI_ESCAPES.reset}`);
+  new logger("green", "postgres connection success").genLog();
 
   //create express app
   const app = express();
@@ -57,13 +53,16 @@ const {
 
   //BUILD THE SCHEMA
 
-  console.log("resolvers", UserResolver, TodoResolver);
+  console.log("resolvers");
+  console.log(UserResolver);
+  console.log(TodoResolver);
+  
   
   MyGraphQLSchema = await buildSchema({
     resolvers: [UserResolver, TodoResolver],
     validate: false
   });
-  console.log(`${ANSI_ESCAPES.yellow}`, `graphql schema build success`, `${ANSI_ESCAPES.reset}`);
+  new logger("purple", "graphql schema build success").genLog();
 
   // express cors
   app.use(cors({
@@ -94,7 +93,7 @@ const {
 
   //other post deployment configs
 
-  // //IF-ENV IN DEPLOYMENT
+  // //IF-ENV IN PRODUCTION
   // if (process.env.NODE_ENV === 'production') {
   //   //STATIC ASSETS FROM VUE BUILD FOLDER
   //   app.use(express.static(
@@ -122,16 +121,8 @@ const {
   const PORT = process.env.PORT || 4000;
   //SERVER LISTEN
   app.listen(PORT, () => {
-    console.log(
-      ANSI_ESCAPES.yellow,
-      `server started on ${PORT}`,
-      ANSI_ESCAPES.reset
-    );
-    console.log(
-      ANSI_ESCAPES.purple,
-      `graphql started? ${apolloServer.graphqlPath}`,
-      ANSI_ESCAPES.reset
-    );
+    new logger("green", `server started on ${PORT}`).genLog();
+    new logger("purple", `graphql server started? ${apolloServer.graphqlPath}`);
   });
 
 
