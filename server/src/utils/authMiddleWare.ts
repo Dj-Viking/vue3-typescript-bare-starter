@@ -38,8 +38,6 @@ export function authMiddleware(
     }
 
     verifyAsync(token).then((decoded) => {
-      console.log("decoded", decoded);
-      
       context.req.user = <JwtData>decoded;
     }).catch(err => console.error(err))
     
