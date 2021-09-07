@@ -71,6 +71,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg('options', () => RegisterInput) options: RegisterInput,
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     try 
     {
@@ -100,6 +101,8 @@ export class UserResolver {
       // i guess I could insert as many objects into the table and will
       // return more created objects into the raw array
       user = result.raw[0];
+
+      req.user = user;
       console.log('what is the result', result.raw[0]);
       
       
@@ -127,7 +130,7 @@ export class UserResolver {
     @Ctx() { req }: MyContext
   ): Promise<UserResponse>{
     const user = await User.findOne({ where: { email: options.email } });
-    console.log("user", user);
+    // console.log("user", user);
     
     if (!user) 
     {
@@ -144,7 +147,17 @@ export class UserResolver {
         "Incorrect Credentials"
       );
     }
-    req.user = user
+    req.user = user;
+
+    //sign a new token for the user who just logged in
+    user.token = signToken({
+      username: user.username,
+      email: user.email,
+      password: user.password
+    });
+    console.log("new token for the user???", user.token);
+    
+    
     return {
       user
     };

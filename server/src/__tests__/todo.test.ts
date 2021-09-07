@@ -10,8 +10,9 @@ import {
 import { ANSI_ESCAPES, RegisterResponse, AddTodoResponse, GetUserTodosResponse, ClearUserTodosResponse, EditTodoByIdResponse } from "../types";
 import { createAddTodoMutation, createClearUserTodosMutation, createEditTodoMutation, createGetUserTodosQuery, logJson } from "./utils/helpers";
 
+let token: string = "";
 let creatorId: number = 0;
-let newTodoId: number = 0;
+let newTodoId: number | undefined = 0;
 
 describe("Tests the user register", () => {
   it("get expected response from the register mutation", async () => {
@@ -23,6 +24,8 @@ describe("Tests the user register", () => {
 
     //assign the creatorId for later when we add a todo
     creatorId = res.register.user.id;
+
+    token = res.register.token;
 
     expect(res.register.token).toBeTruthy();
     expect(res.register.errors).toBeNull();
@@ -49,15 +52,19 @@ describe("Tests the user register", () => {
 describe("Tests the todo resolvers adding, reading, editing, and deleting", () => {
   it("adds a todo from the user's stored ID from when we created them earlier", async () => {
     console.log(`${ANSI_ESCAPES.blue}`, `starting process of adding a todo with the creatorId`, `${ANSI_ESCAPES.reset}`);
-    const res: AddTodoResponse = await request(HOST + "/graphql", `${createAddTodoMutation(creatorId)}`);
+    const res: AddTodoResponse = await request(HOST + "/graphql", `${createAddTodoMutation(creatorId)}`, {},  
+      {
+        "authorization":  `Bearer ${token}`
+      }
+    );
     logJson(res.addTodo);
 
 
     //find the todos that have the creator's id
-    const foundTodo = res.addTodo.filter(todo => todo.creatorId === creatorId)[0];
+    const foundTodo = res.addTodo.todos?.filter(todo => todo.creatorId === creatorId)[0];
 
-    newTodoId = foundTodo.id;
-    expect(foundTodo.creatorId).toEqual(creatorId);
+    newTodoId = foundTodo?.id;
+    expect(foundTodo?.creatorId).toEqual(creatorId);
   });
 
   it("checks that the todo is added to the DB by the creatorId that made the todo", async () => {
@@ -65,7 +72,7 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     console.log(`${ANSI_ESCAPES.blue}`, `getting the todo we just made from the id generated from the add todo response`, `${ANSI_ESCAPES.reset}`);
     const res: GetUserTodosResponse = await request(HOST + "/graphql", `${createGetUserTodosQuery(creatorId)}`);
 
-    expect(res.getUserTodos).toHaveLength(1);
+    expect(res.getUserTodos.todos).toHaveLength(1);
   });
 
   it("edits the todo that was just added", async () => {
@@ -83,13 +90,13 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     console.log(`${ANSI_ESCAPES.blue}`, `deleting the user's todos that we made`, `${ANSI_ESCAPES.reset}`);
     const res: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorId)}`);
 
-    expect(res.clearUserTodos).toBe(true);
+    expect(res.clearUserTodos.done).toBe(true);
   });
 
   it("checks the user's todos to see if the deleted todo is now missing", async () => {
     console.log(`${ANSI_ESCAPES.blue}`, `checking if the user's todos are gone`, `${ANSI_ESCAPES.reset}`);
     const res: GetUserTodosResponse = await request(HOST + "/graphql", `${createGetUserTodosQuery(creatorId)}`);
-    expect(res.getUserTodos.length).toEqual(0);
+    expect(res.getUserTodos.todos?.length).toEqual(0);
   });
 
   it("deletes the user", async () => {
