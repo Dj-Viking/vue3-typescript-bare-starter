@@ -122,7 +122,7 @@ const {
   //SERVER LISTEN
   app.listen(PORT, () => {
     new logger("green", `server started on ${PORT}`).genLog();
-    new logger("purple", `graphql server started? ${apolloServer.graphqlPath}`);
+    new logger("purple", `graphql server started? ${apolloServer.graphqlPath}`).genLog();
   });
 
 
