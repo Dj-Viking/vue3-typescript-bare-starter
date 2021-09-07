@@ -1,4 +1,5 @@
 import { Todo } from '../entities/Todo';
+// import { User } from '../entities/User';
 import { 
   Resolver, 
   Query, 
@@ -8,10 +9,11 @@ import {
   InputType,
   Arg,
   Int,
-  ObjectType
+  ObjectType,
+  Ctx
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
-import { ANSI_ESCAPES } from '../types';
+import { ANSI_ESCAPES, MyContext } from '../types';
 import { ErrorResponse } from '../utils/ErrorResponse';
 
 @ObjectType()
@@ -38,12 +40,36 @@ class EditTodoInput {
 }
 
 @ObjectType()
-class TodoResponse {
+class ClearTodoResponse {
+  @Field(() => [TodoError], { nullable: true })
+  errors?: TodoError[] | null
+
+  @Field(() => Boolean, { nullable: true })
+  done: boolean;
+}
+@ObjectType()
+class AddTodoResponse {
+  @Field(() => [TodoError], { nullable: true })
+  errors?: TodoError[] | null
+
+  @Field(() => [Todo], { nullable: true })
+  todos?: Todo[] | null
+}
+@ObjectType()
+class EditTodoResponse {
   @Field(() => [TodoError], { nullable: true })
   errors?: TodoError[] | null
 
   @Field(() => Todo, { nullable: true })
   todo?: Todo | null
+}
+@ObjectType()
+class GetUserTodosResponse {
+  @Field(() => [TodoError], { nullable: true })
+  errors?: TodoError[] | null
+
+  @Field(() => [Todo], { nullable: true })
+  todos?: Todo[] | null
 }
 
 // @ObjectType()
@@ -59,19 +85,25 @@ export class TodoResolver {
     return "hello TODO"
   }
 
-  @Query(() => [Todo])
+  @Query(() => GetUserTodosResponse)
   async getUserTodos(
     @Arg("creatorId", () => Int) creatorId: number
-  ): Promise<Todo[]> {
-    const todos = await Todo.find({ where: { creatorId }});
-    console.log("checking todos given the creatorId", todos);
-    return todos;
+  ): Promise<GetUserTodosResponse> {
+    try {
+      const todos = await Todo.find({ where: { creatorId }});
+      console.log("checking todos given the creatorId", todos);
+      return {
+        todos: todos
+      };
+    } catch (error) {
+      return new ErrorResponse("error", error.message)
+    }
   }
 
-  @Mutation(() => TodoResponse)
+  @Mutation(() => EditTodoResponse)
   async editTodoById(
     @Arg("options", () => EditTodoInput) options: EditTodoInput
-  ): Promise<TodoResponse | ErrorResponse> {
+  ): Promise<EditTodoResponse> {
     try {
       const changedTodo = await getConnection()
         .getRepository(Todo)
@@ -95,36 +127,53 @@ export class TodoResolver {
     }
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ClearTodoResponse)
   async clearUserTodos(
     @Arg("creatorId", () => Int) creatorId: number
-  ): Promise<boolean> {
-    //get all todos by the user's creatorId
-    const todosToDelete = await Todo.find({ where: { creatorId }});
-    const deletePromises = todosToDelete.map(async (todo: Todo) => {
-      return Todo.delete(todo.id);
-    });
-    await Promise.all(deletePromises);
-    
-    return true;
+  ): Promise<ClearTodoResponse | ErrorResponse> {
+    try {
+      //get all todos by the user's creatorId
+      const todosToDelete = await Todo.find({ where: { creatorId }});
+      const deletePromises = todosToDelete.map(async (todo: Todo) => {
+        return Todo.delete(todo.id);
+      });
+      await Promise.all(deletePromises);
+      return {
+        done: true
+      }
+    } catch (error) {
+      return new ErrorResponse("error", error.message);
+    }
   }
 
-  @Mutation(() => [Todo])
+  @Mutation(() => AddTodoResponse)
   async addTodo(
-    @Arg("options", () => AddTodoInput) options: AddTodoInput
-  ): Promise<Todo[]> {
-    await getConnection()
-    .createQueryBuilder()
-    .insert()
-    .into(Todo)
-    .values({ text: options.text,
-              //a creator with this id MUST exist for this query to work!!
-              creatorId: options.creatorId })
-                                            .returning('*')
-                                            .execute();
-    const todos = await Todo.find();
-    console.log(`${ANSI_ESCAPES.green}`, `Someone added a todo!`, `${ANSI_ESCAPES.reset}`)
-    return todos;
+    @Arg("options", () => AddTodoInput) options: AddTodoInput,
+    @Ctx() { req }: MyContext
+  ): Promise<AddTodoResponse> {
+    try {
+      console.log("checking context user", req.user);
+      if (!req.user) {
+        throw new Error("user not authenticated");
+      }
+      await getConnection()
+      .createQueryBuilder()
+      .insert()
+      .into(Todo)
+      .values({ text: options.text,
+                //a creator with this id MUST exist for this query to work!!
+                creatorId: options.creatorId })
+                                              .returning('*')
+                                              .execute();
+      const todos = await Todo.find();
+      console.log(`${ANSI_ESCAPES.green}`, `Someone added a todo!`, `${ANSI_ESCAPES.reset}`)
+      return {
+        todos: todos
+      };
+    } catch (error) {
+      return new ErrorResponse("error", error.message)
+    }
+    
   }
   
 }

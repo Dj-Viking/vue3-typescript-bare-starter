@@ -12,11 +12,17 @@ export function createAddTodoMutation(creatorId: number): string {
 				text: "some text",
 				creatorId: ${creatorId as number}
 			}){
-				text
-				id
-				createdAt
-				updatedAt
-				creatorId
+				todos {
+					text
+					id
+					createdAt
+					updatedAt
+					creatorId
+				}
+				errors {
+					field
+					message
+				}
 			}
 		}
 	`
@@ -26,11 +32,17 @@ export function createGetUserTodosQuery(creatorId: number): string {
   return `
 		{
 			getUserTodos(creatorId: ${creatorId}){
-				id
-				creatorId
-				text
-				createdAt
-				updatedAt
+				todos {
+					id
+					creatorId
+					text
+					createdAt
+					updatedAt
+				}
+				errors {
+					field
+					message
+				}
 			}
 		}
 	`
@@ -39,7 +51,9 @@ export function createGetUserTodosQuery(creatorId: number): string {
 export function createClearUserTodosMutation(creatorId: number): string {
   return `
 		mutation clearUserTodos {
-			clearUserTodos(creatorId: ${creatorId})
+			clearUserTodos(creatorId: ${creatorId}){
+				done
+			}
 		}
 	`
 }

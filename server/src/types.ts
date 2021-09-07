@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Session, SessionData } from 'express-session';
 import { Redis } from 'ioredis';
 // & sign in typescript joins types together (intersection)
@@ -9,6 +9,7 @@ import { Redis } from 'ioredis';
 // new values on the req.session object
 export type MyContext = {
     req: Request & {
+        user: JwtData | null
         session: Session & Partial<SessionData> & {
             userId?: number
         } & {
@@ -16,11 +17,10 @@ export type MyContext = {
         } & {
             username?: String
         }
-    } & {
-        user: JwtData | null
     }
     res: Response
     RedisClient?: Redis
+    next: NextFunction
 }
 
 /**
@@ -106,11 +106,19 @@ export interface IJwtData {
 }
 
 export interface AddTodoResponse {
-    addTodo: Todo[]
+    addTodo: {
+        todos: null | Todo[]
+        errors: null | [{
+            field: string;
+            message: string;
+        }]
+    }
 }
 
 export interface GetUserTodosResponse {
-    getUserTodos: Todo[]
+    getUserTodos: {
+        todos?: Todo[];
+    }
 }
 
 export interface Todo {
@@ -123,7 +131,9 @@ export interface Todo {
 }
 
 export interface ClearUserTodosResponse {
-    clearUserTodos: boolean;
+    clearUserTodos: {
+        done: boolean;
+    }
 }
 
 export interface EditTodoByIdResponse {
@@ -132,15 +142,11 @@ export interface EditTodoByIdResponse {
             field: string;
             message: string;
         }];
-        todo?: null | {
-            text: string;
-            creatorId: number;
-            id: number;
-        }
+        todo?: null | Todo
     }
 }
 
 export interface EditTodoPayload {
     text: string;
-    id: number;
+    id: number | undefined;
 }
