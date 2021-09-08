@@ -87,10 +87,17 @@ export function createGetUserTodosQuery(creatorId: number): string {
 	`
 }
 
-export function createClearUserTodosMutation(creatorId: number): string {
+export function createClearUserTodosMutation(email: string, creatorId: number): string {
   return `
 		mutation clearUserTodos {
-			clearUserTodos(creatorId: ${creatorId}){
+			clearUserTodos(options: {
+				email: "${email}",
+				creatorId: ${creatorId}
+			}){
+				errors {
+					field
+					message
+				}
 				done
 			}
 		}
@@ -117,4 +124,26 @@ export function createEditTodoMutation(payload: EditTodoPayload): string {
 			}
 		}
 	`;
+}
+
+export function createMeQuery(id: number): string {
+	return `
+		{
+			me(id: ${id}){
+				user {
+					token
+					id
+					username
+					email
+					createdAt
+					updatedAt
+				}
+				token
+				errors {
+					field
+					message
+				}
+			}
+		}
+	`
 }

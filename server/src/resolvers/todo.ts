@@ -1,5 +1,5 @@
 import { Todo } from '../entities/Todo';
-// import { User } from '../entities/User';
+import { User } from '../entities/User';
 import { 
   Resolver, 
   Query, 
@@ -46,6 +46,15 @@ class ClearTodoResponse {
 
   @Field(() => Boolean, { nullable: true })
   done: boolean;
+}
+
+@ObjectType()
+@InputType()
+class ClearTodoInput {
+  @Field(() => String, { nullable: true })
+  email: string;
+  @Field(() => Int, { nullable: true })
+  creatorId: number;
 }
 @ObjectType()
 class AddTodoResponse {
@@ -129,11 +138,21 @@ export class TodoResolver {
 
   @Mutation(() => ClearTodoResponse)
   async clearUserTodos(
-    @Arg("creatorId", () => Int) creatorId: number
+    @Arg("options", () => ClearTodoInput) options: ClearTodoInput,
+    @Ctx() { req }: MyContext
   ): Promise<ClearTodoResponse | ErrorResponse> {
     try {
+      //cant delete if not authorized or even the user who is logged in trying to complete this operation
+      if (!req.user) throw new Error("unauthorized");
+      console.log("req.user", req.user);
+      //the requestor is not the owner of the todos using email since emails are unique per user
+      // and the requestor is embedded into the jwt information
+      if (req.user.email !== options.email) throw new Error("unauthorized");
+      const user = await User.findOne({ where: { id: options.creatorId }});
+      //if no user return error
+      if (!user) throw new Error("cant complete the request at this time");
       //get all todos by the user's creatorId
-      const todosToDelete = await Todo.find({ where: { creatorId }});
+      const todosToDelete = await Todo.find({ where: { creatorId: options.creatorId }});
       const deletePromises = todosToDelete.map(async (todo: Todo) => {
         return Todo.delete(todo.id);
       });

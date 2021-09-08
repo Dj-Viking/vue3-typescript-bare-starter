@@ -14,6 +14,7 @@ import { createAddTodoMutation, createClearUserTodosMutation, createEditTodoMuta
 const logger = ColorLog;
 let token: string = "";
 let creatorId: number = 0;
+let creatorEmail: string = "";
 let newTodoId: number | undefined = 0;
 
 describe("Tests the user register", () => {
@@ -27,6 +28,7 @@ describe("Tests the user register", () => {
     creatorId = res.register.user.id;
 
     token = res.register.token;
+    creatorEmail = res.register.user.email;
 
     expect(res.register.token).toBeTruthy();
     expect(res.register.errors).toBeNull();
@@ -92,7 +94,9 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
 
   it("deletes the todos that the user just made", async () => {
     new logger("purple", "deleting the user's todos that we made").genLog();
-    const res: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorId)}`);
+    const res: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail, creatorId)}`, {}, {
+      "authorization": `Bearer ${token}`
+    });
     expect(res.clearUserTodos.done).toBe(true);
   });
 
