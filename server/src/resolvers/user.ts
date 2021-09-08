@@ -127,11 +127,9 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg('options', () => LoginInput) options: LoginInput,
-    @Ctx() { req }: MyContext
+    @Ctx() _context: MyContext
   ): Promise<UserResponse>{
     const user = await User.findOne({ where: { email: options.email } });
-    // console.log("user", user);
-    
     if (!user) 
     {
       return new ErrorResponse(
@@ -147,7 +145,6 @@ export class UserResolver {
         "Incorrect Credentials"
       );
     }
-    req.user = user;
 
     //sign a new token for the user who just logged in
     user.token = signToken({
@@ -155,9 +152,6 @@ export class UserResolver {
       email: user.email,
       password: user.password
     });
-    console.log("new token for the user???", user.token);
-    
-    
     return {
       user
     };
@@ -176,7 +170,7 @@ export class UserResolver {
       .update<User>(User, 
                     { token: "" })
                                   .where("email = :email", { email: email })
-                                  .returning(['username', 'token', 'email'])
+                                  .returning(["id", "username", "createdAt", "updatedAt", "token", "email"])
                                   .updateEntity(true)
                                   .execute();
       if (!changedUser) return new ErrorResponse("user", "user not found");
