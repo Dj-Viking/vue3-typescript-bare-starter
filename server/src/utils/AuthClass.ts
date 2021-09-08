@@ -12,8 +12,8 @@ class AuthService {
       else 
         return false;
     } catch (err) {
-      console.error("error when verifying expiration", err);
-      return "invalid token"
+      console.error("error when verifying expiration", err.message as Error["message"]);
+      return err.message
     }
   }
 

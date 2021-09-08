@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { Session, SessionData } from 'express-session';
-import { Redis } from 'ioredis';
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
 
@@ -9,18 +8,17 @@ import { Redis } from 'ioredis';
 // new values on the req.session object
 export type MyContext = {
     req: Request & {
-        user: JwtData | null
+        user: JwtData | null;
         session: Session & Partial<SessionData> & {
-            userId?: number
+            userId?: number;
         } & {
-            welcomeBackMsg?: String
+            welcomeBackMsg?: String;
         } & {
-            username?: String
+            username?: String;
         }
-    }
-    res: Response
-    RedisClient?: Redis
-    next: NextFunction
+    };
+    res: Response;
+    next: NextFunction;
 }
 
 /**
@@ -39,59 +37,27 @@ export enum ANSI_ESCAPES {
 
 export interface RegisterResponse {
     register: {
-        errors: null | {
-            field: string,
-            message: string
-        },
+        errors: MyErrorResponse
         token: string
-        user: {
-            email: string
-            id: number
-        }
+        user: UserEntityBase
     }
 }
 export interface RegisterErrorResponse {
     register: {
-        errors: [
-            {
-                field: string;
-                message: string;
-            }
-        ];
+        errors: MyErrorResponse
         user: null;
     }
 }
 export interface LoginResponse {
     login: {
-        errors: null | [{
-            field: string;
-            message: string;
-        }];
-        user: null | {
-            token: string;
-            email: string;
-            username: string;
-        };
+        errors: MyErrorResponse
+        user: UserEntityBase
     }
-}
-export interface MeResponse {
-    me: {
-        email: string;
-        username: string;
-        token?: string;
-    };
 }
 export interface LogoutResponse {
     logout: {
-        errors: [{
-            field: string;
-            message: string;
-        }] | null;
-        user: {
-            username: string;
-            email: string;
-            token: string;
-        } | null;
+        errors: MyErrorResponse
+        user: UserEntityBase
     };
 }
 
@@ -105,13 +71,16 @@ export interface IJwtData {
     exp?: number;
 }
 
+export interface CustomError {
+    field: string;
+    message: string;
+}
+export type MyErrorResponse = CustomError[] | null
+
 export interface AddTodoResponse {
     addTodo: {
         todos: null | Todo[]
-        errors: null | [{
-            field: string;
-            message: string;
-        }]
+        errors: MyErrorResponse
     }
 }
 
@@ -138,10 +107,7 @@ export interface ClearUserTodosResponse {
 
 export interface EditTodoByIdResponse {
     editTodoById: {
-        errors?: null | [{
-            field: string;
-            message: string;
-        }];
+        errors?: MyErrorResponse
         todo?: null | Todo
     }
 }
@@ -149,4 +115,21 @@ export interface EditTodoByIdResponse {
 export interface EditTodoPayload {
     text: string;
     id: number | undefined;
+}
+
+export interface UserEntityBase {
+    id: number;
+    username: string;
+    email: string;
+    token: string | null;
+    createdAt: number;
+    updatedAt: number;
+}
+
+export interface MeQueryResponse {
+    me: {
+        token: string | null;
+        user: null | UserEntityBase;
+        errors: MyErrorResponse
+    }
 }

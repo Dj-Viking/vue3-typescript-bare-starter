@@ -8,6 +8,7 @@ import {
   Mutation, 
   Ctx, 
   ObjectType,
+  Int,
   Query 
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
@@ -52,6 +53,19 @@ class UserResponse {
   @Field(() => Todo, { nullable: true })
   todos?: Todo[] | null
 }
+
+@ObjectType()
+class MeQueryResponse {
+  @Field(() => [UserFieldError], { nullable: true })
+  errors?: UserFieldError[] | null;
+
+  @Field(() => User, { nullable: true })
+  user?: User | null;
+
+  @Field(() => String, { nullable: true })
+  token?: string | null;
+}
+
 @InputType()
 class LoginInput {
   @Field()
@@ -66,6 +80,38 @@ export class UserResolver {
   @Query(() => String)
   async helloUser(): Promise<string>{
     return "hello user"
+  }
+
+  //whenever a user navigates somewhere on the applicaton they are still active
+  // so we are signing a new token with a new expiration
+  // so the token doesn't expire when the user is still active
+  // this also lets the UI stay in a "logged in state" if the token isn't expired
+  @Query(() => MeQueryResponse)
+  async me(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { req }: MyContext
+  ): Promise<MeQueryResponse | ErrorResponse> {
+    try {
+      //cant query themselves if they are not logged in with a fresh token to make a me query
+      if (!req.user) throw new Error("user not authenticated");
+      const user = await User.findOne({ where: { id }});
+      // user not found
+      if (!user) throw new Error("user not found");
+
+      user.token = signToken({
+        username: user.username,
+        email: user.email,
+        password: user.password
+      });
+
+      return {
+        token: user.token,
+        user: user
+      }
+      //if user is found sign a new token for them with a new expiration
+    } catch (error) {
+      return new ErrorResponse("error during me query", error.message);
+    }
   }
 
   @Mutation(() => UserResponse)
