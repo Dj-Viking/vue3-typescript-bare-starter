@@ -162,7 +162,7 @@ export class TodoResolver {
     //if no user RETURN error not throw, this is for testing the correct responses
     // because graphql will only return 200's for most everything even if the request is formatted correctly
     // we are checking for data integrity and user honesty
-    if (!foundUserByEmail) return new ErrorResponse("not found", "404 not found");
+    if (!foundUserByEmail) return new ErrorResponse("not found", "404 Not Found");
 
     //if user was found with email in request but does not match the requestor's email
     if (req.user?.email !== foundUserByEmail.email) return new ErrorResponse("forbidden", "403 Forbidden");

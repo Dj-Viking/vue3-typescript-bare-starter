@@ -61,7 +61,7 @@ describe("Tests the user register", () => {
 });
 
 describe("Tests the todo resolvers adding, reading, editing, and deleting", () => {
-  it("adds a todo from the user's stored ID from when we created them earlier and checks if the user is authenticated to do so and has a fresh token to do so", async () => {
+  it("tries to add a todo with an email that isn't found", async () => {
     new logger("purple", "starting the process of adding a todo with the creatorId").genLog();
 
     //user with that email not found
@@ -73,17 +73,21 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     );
     expect(notFound.addTodo.errors).toHaveLength(1);
     expect(notFound.addTodo.errors[0].message).toBe("404 Not Found");
-    
+    });
+
+  it("tries to add a todo with a invalid token", async () => {
     //user not authenticated (bad token or no token)
-    const unauthed: AddTodoResponse = await request(
+    const invalidToken: AddTodoResponse = await request(
       HOST + "/graphql",
       `${createAddTodoMutation(creatorEmail)}`,
       {},
       { "authorization": `Bearer adsfadfs` }
     );
-    expect(unauthed.addTodo.errors).toHaveLength(1);
-    expect(unauthed.addTodo.errors[0].message).toBe("401 user not authenticated");
-    
+    expect(invalidToken.addTodo.errors).toHaveLength(1);
+    expect(invalidToken.addTodo.errors[0].message).toBe("401 user not authenticated");
+  });
+
+  it("tries to add a todo as a forbidden action, the email is the the requestor's email", async () => {
     //user cant add todos to someone elses todo list (forbidden)
     const forbidden: AddTodoResponse = await request(
       HOST + "/graphql",
@@ -93,7 +97,9 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     );
     expect(forbidden.addTodo.errors).toHaveLength(1);
     expect(forbidden.addTodo.errors[0].message).toBe("403 Forbidden");
-    
+  });
+
+  it("should successfully add a todo with the proper credentials", async () => {
     //this should all be good, user is authenticated and 
     // the requestor's id is the id of the original todoList creator
     const res: AddTodoResponse = await request(
@@ -102,17 +108,22 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
       {},
       { "authorization":  `Bearer ${newToken}`}
     );
-
+  
     expect(res.addTodo.errors).toBeNull();
     logJson(res.addTodo);
     //find the todos that have the creator's id
     const foundTodo = res.addTodo.todos?.filter(todo => todo.creatorId === creatorId)[0];
-
+  
     expect(typeof foundTodo?.id).toBe("number");
     expect(typeof foundTodo?.creatorId).toBe("number");
     newTodoId = foundTodo?.id;
     expect(foundTodo?.creatorId).toEqual(creatorId);
   });
+    
+    
+});
+
+describe("checks the getting todos mutation responses", () => {
 
   it("checks that the todo is added to the DB by the creatorId that made the todo", async () => {
     //make query for get todo by id
@@ -125,7 +136,7 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     expect(res.getUserTodos.todos?.length).toBeTruthy();
     expect(res.getUserTodos.todos).toHaveLength(1);
   });
-
+  
   it("checks the error messages are correct when not authenticated (no token), email input is not a user that is found, requestor's email is not the same as the email input", async () => {
     new logger("purple", "checking the error messages that throw on the request are for the proper situation");
     //check that the response
@@ -155,10 +166,11 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     // expect(forbidden.getUserTodos.errors).toBeNull();
     expect(forbidden.getUserTodos.errors).toHaveLength(1);
     expect(forbidden.getUserTodos.errors[0].message).toBe("403 Forbidden");
-
   });
+});
 
 
+describe("checks editing a todo", () => {
   it("edits the todo that was just added", async () => {
     new logger("blue", "editing the todo we just added").genLog();
     const editTodoPayload = {
@@ -169,64 +181,79 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     logJson(res.editTodoById.todo);
     expect(res.editTodoById.todo?.text).toEqual(UPDATED_TODO_TEXT);
   });
+});
 
-  it("deletes the todos that the user just made checking if we are authenticated to do so and that the requestor token is not expired", async () => {
+describe("deletes the todos", () => {
+
+  it("tries to delete todos with an invalid token", async () => {
     new logger("purple", "deleting the user's todos that we made").genLog();
     // TODO write tests to verify the access control in the resolver is working for this mutation
-
+  
     //malformed token test error
-    const res1: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail)}`, {}, {
+    const invalidToken: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail)}`, {}, {
       "authorization": `Bearer al;kdjf;asfj`
     });
+    new logger("red", "should get expired error or unauthed because of a mangled, missing, or invalid token").genLog();
+    expect(invalidToken.clearUserTodos.errors).toHaveLength(1);
+    expect(invalidToken.clearUserTodos.errors[0].message).toBe("401 unauthorized or expired token");
 
-    if (res1.clearUserTodos.errors !== null) {
-      new logger("red", `should get unauthorized error or expired error:  ${res1.clearUserTodos.errors[0].message}`).genLog();
-      expect(res1.clearUserTodos.errors[0].message).toBe("401 unauthorized or expired token");
-      //ERRORS not null there is an error message
-      new logger("red", `${res1.clearUserTodos.errors[0].message }`);
-    } else if (res1.clearUserTodos.errors === null){
-      //errors was null no error message
-      new logger("green", `clear todos action was done should be true: ${res1.clearUserTodos.done}`);
-    }
-    
-    new logger("green", `clear todos action was done should be true: ${res1.clearUserTodos.done}`);
-    //expired token test error
-    const res3: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail)}`, {}, {
-      "authorization": `Bearer ${EXPIRED_TOKEN}`
-    });
-
-    new logger("red", "should get expired error").genLog();
-    if (res3.clearUserTodos.errors !== null) {
-      expect(res3.clearUserTodos.errors[0].message).toBeTruthy();
-      // expect(res3.clearUserTodos.errors[0].message).toBe("unauthorized");
-      //ERRORS not null there is an error message
-      new logger("red", `${res3.clearUserTodos.errors[0].message }`);
-    } else if (res3.clearUserTodos.errors === null) {
-      //errors was null no error message
-      new logger("green", `clear todos action was done should be true: ${res3.clearUserTodos.done}`);
-    }
-    expect(res3.clearUserTodos.errors).toHaveLength(1);
-    expect(res3.clearUserTodos.errors[0].message).toBe("401 unauthorized or expired token");
-
-    //delete the currently registered user's todos
-    const res2: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail)}`, {}, {
-      "authorization": `Bearer ${newToken}`
-    });
-
-    expect(res2.clearUserTodos.done).toBe(true);
   });
 
+  it("tries to clear todos with an expired token", async () => {
+    //expired token test error
+    const expiredToken: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail)}`, {}, {
+      "authorization": `Bearer ${EXPIRED_TOKEN}`
+    });
+  
+    new logger("red", "should get expired error or unauthed").genLog();
+    expect(expiredToken.clearUserTodos.errors).toHaveLength(1);
+    expect(expiredToken.clearUserTodos.errors[0].message).toBe("401 unauthorized or expired token");
+  });
+
+  it("tries to clear todos with a not found user from the email input", async () => {
+    //notFound error
+    const notFound: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(NOT_FOUND_EMAIL as string)}`, {}, {
+      "authorization": `Bearer ${newToken}`
+    });
+  
+    new logger("red", "should get not found error").genLog();
+    expect(notFound.clearUserTodos.errors).toHaveLength(1);
+    expect(notFound.clearUserTodos.errors[0].message).toBe("404 Not Found");
+  });
+
+  it("tries to clear todos as a forbidden action", async () => {
+    //forbidden error
+    const forbidden: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(NOT_MY_EMAIL as string)}`, {}, {
+      "authorization": `Bearer ${newToken}`
+    });
+  
+    new logger("red", "should get forbidden error").genLog();
+    expect(forbidden.clearUserTodos.errors).toHaveLength(1);
+    expect(forbidden.clearUserTodos.errors[0].message).toBe("403 Forbidden");
+  });
+  
+  it("should successfully clear todos", async () => {
+    //delete the currently registered user's todos
+    const successClear: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail)}`, {}, {
+      "authorization": `Bearer ${newToken}`
+    });
+    expect(successClear.clearUserTodos.errors).toBeNull();
+    expect(successClear.clearUserTodos.done).toBe(true);
+  });
+});
+
+describe("deletes the todos we just made and then deletes the user", () => {
   it("checks the user's todos to see if the deleted todo is now missing", async () => {
     new logger("purple", "checking if the user's todos are gone").genLog();
     const res: GetUserTodosResponse = await request(HOST + "/graphql", `${createGetUserTodosQuery(creatorEmail)}`, {}, {
       "authorization": `Bearer ${newToken}`
     });
     expect(res.getUserTodos.errors).toBeNull();
-
+  
     //if this fails then something failed before we got here because we couldn't clear the todos before arriving here
     expect(res.getUserTodos.todos).toHaveLength(0);
   });
-
+  
   it("deletes the user", async () => {
     const connection = await connectDb();
     await User.delete({ email: REGISTER_EMAIL });
@@ -236,5 +263,4 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     expect(users).toHaveLength(0);
     connection.close();
   });
-  
 });
