@@ -65,7 +65,6 @@ export type JwtData = IJwtData;
 
 export interface IJwtData {
     username: string;
-    id: number;
     email: string;
     iat?: number;
     exp?: number;
@@ -75,7 +74,7 @@ export interface CustomError {
     field: string;
     message: string;
 }
-export type MyErrorResponse = CustomError[] | null
+export type MyErrorResponse = CustomError[];
 
 export interface AddTodoResponse {
     addTodo: {
@@ -87,6 +86,7 @@ export interface AddTodoResponse {
 export interface GetUserTodosResponse {
     getUserTodos: {
         todos?: Todo[];
+        errors: MyErrorResponse
     }
 }
 
@@ -101,7 +101,8 @@ export interface Todo {
 
 export interface ClearUserTodosResponse {
     clearUserTodos: {
-        done: boolean;
+        done: boolean | null;
+        errors: MyErrorResponse
     }
 }
 

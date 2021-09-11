@@ -44,12 +44,12 @@ export class ColorLog extends Object {
 	}
 }
 
-export function createAddTodoMutation(creatorId: number): string {
+export function createAddTodoMutation(email: string): string {
   return `
 		mutation addTodo {
 			addTodo(options: {
 				text: "some text",
-				creatorId: ${creatorId as number}
+				email: "${email}"
 			}){
 				todos {
 					text
@@ -67,10 +67,12 @@ export function createAddTodoMutation(creatorId: number): string {
 	`
 }
 
-export function createGetUserTodosQuery(creatorId: number): string {
+export function createGetUserTodosQuery(email: string): string {
   return `
 		{
-			getUserTodos(creatorId: ${creatorId}){
+			getUserTodos(
+				email: "${email}"
+			){
 				todos {
 					id
 					creatorId
@@ -87,13 +89,12 @@ export function createGetUserTodosQuery(creatorId: number): string {
 	`
 }
 
-export function createClearUserTodosMutation(email: string, creatorId: number): string {
+export function createClearUserTodosMutation(email: string): string {
   return `
 		mutation clearUserTodos {
-			clearUserTodos(options: {
-				email: "${email}",
-				creatorId: ${creatorId}
-			}){
+			clearUserTodos( 
+				email: "${email}"
+			){
 				errors {
 					field
 					message
@@ -126,10 +127,12 @@ export function createEditTodoMutation(payload: EditTodoPayload): string {
 	`;
 }
 
-export function createMeQuery(id: number): string {
+export function createMeQuery(email: string): string {
 	return `
 		{
-			me(id: ${id}){
+			me(
+				email: "${email}"
+			){
 				user {
 					token
 					id

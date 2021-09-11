@@ -8,7 +8,6 @@ import {
   Field,
   InputType,
   Arg,
-  Int,
   ObjectType,
   Ctx
 } from 'type-graphql';
@@ -29,7 +28,7 @@ class AddTodoInput {
   @Field()
   text: string;
   @Field()
-  creatorId: number;
+  email: string;
 }
 @InputType()
 class EditTodoInput {
@@ -45,16 +44,7 @@ class ClearTodoResponse {
   errors?: TodoError[] | null
 
   @Field(() => Boolean, { nullable: true })
-  done: boolean;
-}
-
-@ObjectType()
-@InputType()
-class ClearTodoInput {
-  @Field(() => String, { nullable: true })
-  email: string;
-  @Field(() => Int, { nullable: true })
-  creatorId: number;
+  done: boolean | null;
 }
 @ObjectType()
 class AddTodoResponse {
@@ -96,10 +86,28 @@ export class TodoResolver {
 
   @Query(() => GetUserTodosResponse)
   async getUserTodos(
-    @Arg("creatorId", () => Int) creatorId: number
+    @Arg("email", () => String) email: string,
+    @Ctx() { req }: MyContext
   ): Promise<GetUserTodosResponse> {
+    /// if requestor is not authorized to get the todos with their requestor ID not authorized
+  if (!req.user) {
+    return new ErrorResponse("unauthenticated", "401 Unauthenticated");
+  }
+  console.log("req checking req.user", req.user);
+  
+  //get the requestors email and compare with the creatorId owner's email (emails are unique)
+  const foundUserByEmail = await User.findOne({ where: { email } });
+  if (!foundUserByEmail) {
+    return new ErrorResponse("not found", "404 Not Found");
+  }
+
+  //does the creator Id match that of the requestor's? 
+  if (foundUserByEmail?.email !== req.user.email) {
+    return new ErrorResponse("forbidden", "403 Forbidden");
+  }
+
     try {
-      const todos = await Todo.find({ where: { creatorId }});
+      const todos = await Todo.find({ where: { creatorId: foundUserByEmail.id }});
       console.log("checking todos given the creatorId", todos);
       return {
         todos: todos
@@ -138,21 +146,30 @@ export class TodoResolver {
 
   @Mutation(() => ClearTodoResponse)
   async clearUserTodos(
-    @Arg("options", () => ClearTodoInput) options: ClearTodoInput,
+    @Arg("email", () => String) email: string,
     @Ctx() { req }: MyContext
   ): Promise<ClearTodoResponse | ErrorResponse> {
+
+    //cant delete if not authorized or even the user who is logged in trying to complete this operation
+    if (!req.user) return new ErrorResponse("unauthorized", "401 unauthorized or expired token");
+    
+    console.log("req.user", req.user);
+
+    //the requestor is not the owner of the todos using email since emails are unique per user
+    // and the requestor is embedded into the jwt information
+    const foundUserByEmail = await User.findOne({ where: { email }});
+
+    //if no user RETURN error not throw, this is for testing the correct responses
+    // because graphql will only return 200's for most everything even if the request is formatted correctly
+    // we are checking for data integrity and user honesty
+    if (!foundUserByEmail) return new ErrorResponse("not found", "404 not found");
+
+    //if user was found with email in request but does not match the requestor's email
+    if (req.user?.email !== foundUserByEmail.email) return new ErrorResponse("forbidden", "403 Forbidden");
+
     try {
-      //cant delete if not authorized or even the user who is logged in trying to complete this operation
-      if (!req.user) throw new Error("unauthorized");
-      console.log("req.user", req.user);
-      //the requestor is not the owner of the todos using email since emails are unique per user
-      // and the requestor is embedded into the jwt information
-      if (req.user.email !== options.email) throw new Error("unauthorized");
-      const user = await User.findOne({ where: { id: options.creatorId }});
-      //if no user return error
-      if (!user) throw new Error("cant complete the request at this time");
-      //get all todos by the user's creatorId
-      const todosToDelete = await Todo.find({ where: { creatorId: options.creatorId }});
+      //get all todos by the requestor's id that we found by the email input
+      const todosToDelete = await Todo.find({ where: { creatorId: foundUserByEmail.id }});
       const deletePromises = todosToDelete.map(async (todo: Todo) => {
         return Todo.delete(todo.id);
       });
@@ -170,21 +187,30 @@ export class TodoResolver {
     @Arg("options", () => AddTodoInput) options: AddTodoInput,
     @Ctx() { req }: MyContext
   ): Promise<AddTodoResponse> {
+    // TODO abstract these checks to a middlware ... learn that first
+    console.log("checking context user", req.user);
+    if (!req.user) {
+      return new ErrorResponse("unauthenticated", "401 user not authenticated");
+    }
+    const foundUserByEmail: User | undefined = await User.findOne({ where: { email: options.email }});
+    if (!foundUserByEmail) 
+      return new ErrorResponse("not found", "404 Not Found");
+
+    if (foundUserByEmail.email !== req.user.email)
+      return new ErrorResponse("forbidden", "403 Forbidden");
+
     try {
-      console.log("checking context user", req.user);
-      if (!req.user) {
-        throw new Error("user not authenticated");
-      }
       await getConnection()
       .createQueryBuilder()
       .insert()
       .into(Todo)
       .values({ text: options.text,
                 //a creator with this id MUST exist for this query to work!!
-                creatorId: options.creatorId })
+                creatorId: foundUserByEmail?.id })
                                               .returning('*')
                                               .execute();
-      const todos = await Todo.find();
+      //seeing all the todos that the user has
+      const todos = await Todo.find({ where: { creatorId: foundUserByEmail?.id } });
       console.log(`${ANSI_ESCAPES.green}`, `Someone added a todo!`, `${ANSI_ESCAPES.reset}`)
       return {
         todos: todos
