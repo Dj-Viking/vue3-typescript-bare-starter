@@ -73,7 +73,7 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     );
     expect(notFound.addTodo.errors).toHaveLength(1);
     expect(notFound.addTodo.errors[0].message).toBe("404 Not Found");
-    });
+  });
 
   it("tries to add a todo with a invalid token", async () => {
     //user not authenticated (bad token or no token)
@@ -82,6 +82,18 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
       `${createAddTodoMutation(creatorEmail)}`,
       {},
       { "authorization": `Bearer adsfadfs` }
+    );
+    expect(invalidToken.addTodo.errors).toHaveLength(1);
+    expect(invalidToken.addTodo.errors[0].message).toBe("401 user not authenticated");
+  });
+
+  it("tries to add a todo with an expired token", async () => {
+    //user not authenticated (bad token or no token)
+    const invalidToken: AddTodoResponse = await request(
+      HOST + "/graphql",
+      `${createAddTodoMutation(creatorEmail)}`,
+      {},
+      { "authorization": `Bearer ${EXPIRED_TOKEN}` }
     );
     expect(invalidToken.addTodo.errors).toHaveLength(1);
     expect(invalidToken.addTodo.errors[0].message).toBe("401 user not authenticated");
@@ -164,6 +176,30 @@ describe("checks the getting todos mutation responses", () => {
     
     expect(forbidden.getUserTodos.errors).toHaveLength(1);
     expect(forbidden.getUserTodos.errors[0].message).toBe("403 Forbidden");
+  });
+  it("tries to get user todos with invalid token", async () => {
+    //check that the response
+    const invalidToken: GetUserTodosResponse = await request(
+      HOST + "/graphql",
+      `${createGetUserTodosQuery(creatorEmail as string)}`,
+      {}, 
+      { "authorization": `Bearer asdfasdf` }
+    );
+    
+    expect(invalidToken.getUserTodos.errors).toHaveLength(1);
+    expect(invalidToken.getUserTodos.errors[0].message).toBe("401 Unauthenticated");
+  });
+  it("tries to get user todos with expired token", async () => {
+    //check that the response
+    const expired: GetUserTodosResponse = await request(
+      HOST + "/graphql",
+      `${createGetUserTodosQuery(creatorEmail as string)}`,
+      {}, 
+      { "authorization": `Bearer ${EXPIRED_TOKEN}` }
+    );
+    
+    expect(expired.getUserTodos.errors).toHaveLength(1);
+    expect(expired.getUserTodos.errors[0].message).toBe("401 Unauthenticated");
   });
 });
 
