@@ -108,14 +108,15 @@ export interface ClearUserTodosResponse {
 
 export interface EditTodoByIdResponse {
     editTodoById: {
-        errors?: MyErrorResponse
+        errors: MyErrorResponse
         todo?: null | Todo
     }
 }
 
 export interface EditTodoPayload {
-    text: string;
-    id: number | undefined;
+    text: string | undefined;
+    todoId: number | undefined;
+    email: string | undefined;
 }
 
 export interface UserEntityBase {

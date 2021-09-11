@@ -35,7 +35,9 @@ class EditTodoInput {
   @Field()
   text: string;
   @Field()
-  id: number;
+  todoId: number;
+  @Field()
+  email: string;
 }
 
 @ObjectType()
@@ -119,19 +121,37 @@ export class TodoResolver {
 
   @Mutation(() => EditTodoResponse)
   async editTodoById(
-    @Arg("options", () => EditTodoInput) options: EditTodoInput
+    @Arg("options", () => EditTodoInput) options: EditTodoInput,
+    @Ctx() { req }: MyContext
   ): Promise<EditTodoResponse> {
+
+    if (!req.user) {
+      return new ErrorResponse("unauthenticated", "401 Unauthenticated");
+    }
+    console.log("req checking req.user", req.user);
+    
+    //get the requestors email and compare with the creatorId owner's email (emails are unique)
+    const foundUserByEmail = await User.findOne({ where: { email: options.email } });
+    if (!foundUserByEmail) {
+      return new ErrorResponse("not found", "404 Not Found");
+    }
+  
+    //does the editor's email match that of the requestor's email? 
+    if (foundUserByEmail?.email !== req.user.email) {
+      return new ErrorResponse("forbidden", "403 Forbidden");
+    }
+
     try {
       const changedTodo = await getConnection()
         .getRepository(Todo)
         .createQueryBuilder("todo")
         .update<Todo>(Todo, 
                       { text: options.text })
-                                            .where("id = :id", { id: options.id })
-                                            .returning(["text", "id", "creatorId"])
-                                            .updateEntity(true)
-                                            .execute();
-      if (!changedTodo.raw[0]) return new ErrorResponse("todo", "todo not found");
+        .where("id = :id", { id: options.todoId })
+        .returning(["text", "id", "creatorId", "createdAt", "updatedAt"])
+        .updateEntity(true)
+        .execute();
+      if (!changedTodo.raw[0]) return new ErrorResponse("todo", "404 Todo Not Found");
 
       console.log('changed todo', changedTodo.raw[0]);
 
@@ -207,8 +227,8 @@ export class TodoResolver {
       .values({ text: options.text,
                 //a creator with this id MUST exist for this query to work!!
                 creatorId: foundUserByEmail?.id })
-                                                .returning('*')
-                                                .execute();
+      .returning('*')
+      .execute();
       //seeing all the todos that the user has
       const todos = await Todo.find({ where: { creatorId: foundUserByEmail?.id } });
       console.log(`${ANSI_ESCAPES.green}`, `Someone added a todo!`, `${ANSI_ESCAPES.reset}`)

@@ -205,15 +205,98 @@ describe("checks the getting todos mutation responses", () => {
 
 
 describe("checks editing a todo", () => {
+  describe("checks edit todo access control logic", () => {
+    it("tries to edit the todo with an invalid token", async () => {
+      const editTodoPayload = {
+        text: UPDATED_TODO_TEXT,
+        email: creatorEmail,
+        todoId: newTodoId
+      }
+      const invalidToken: EditTodoByIdResponse = await request(
+        HOST + "/graphql", 
+        `${createEditTodoMutation(editTodoPayload)}`,
+        {},
+        { "authorization": `Bearer asdfasdfasdf`}
+      );
+      expect(invalidToken.editTodoById.errors).toHaveLength(1);
+      expect(invalidToken.editTodoById.errors[0].message).toBe("401 Unauthenticated");
+    });
+    it("tries to edit the todo with an expired token", async () => {
+      const editTodoPayload = {
+        text: UPDATED_TODO_TEXT,
+        email: creatorEmail,
+        todoId: newTodoId
+      }
+      const expiredToken: EditTodoByIdResponse = await request(
+        HOST + "/graphql", 
+        `${createEditTodoMutation(editTodoPayload)}`,
+        {},
+        { "authorization": `Bearer ${EXPIRED_TOKEN}`}
+      );
+      expect(expiredToken.editTodoById.errors).toHaveLength(1);
+      expect(expiredToken.editTodoById.errors[0].message).toBe("401 Unauthenticated");
+    });
+    it("tries to edit the todo with a not found todoId", async () => {
+      const editTodoPayload = {
+        text: UPDATED_TODO_TEXT,
+        email: creatorEmail,
+        todoId: 0
+      }
+      const notFound: EditTodoByIdResponse = await request(
+        HOST + "/graphql", 
+        `${createEditTodoMutation(editTodoPayload)}`,
+        {},
+        { "authorization": `Bearer ${newToken}`}
+      );
+      expect(notFound.editTodoById.errors).toHaveLength(1);
+      expect(notFound.editTodoById.errors[0].message).toBe("404 Todo Not Found");
+      
+    });
+    it("tries to edit the todo with a not found user", async () => {
+      const editTodoPayload = {
+        text: UPDATED_TODO_TEXT,
+        email: NOT_FOUND_EMAIL,
+        todoId: newTodoId
+      }
+      const notFound: EditTodoByIdResponse = await request(
+        HOST + "/graphql", 
+        `${createEditTodoMutation(editTodoPayload)}`,
+        {},
+        { "authorization": `Bearer ${newToken}`}
+      );
+      expect(notFound.editTodoById.errors).toHaveLength(1);
+      expect(notFound.editTodoById.errors[0].message).toBe("404 Not Found");
+      
+    });
+    it("tries to edit the todo with a forbidden request", async () => {
+      const editTodoPayload = {
+        text: UPDATED_TODO_TEXT,
+        email: NOT_MY_EMAIL,
+        todoId: newTodoId
+      }
+      const forbidden: EditTodoByIdResponse = await request(
+        HOST + "/graphql", 
+        `${createEditTodoMutation(editTodoPayload)}`,
+        {},
+        { "authorization": `Bearer ${newToken}`}
+      );
+      expect(forbidden.editTodoById.errors).toHaveLength(1);
+      expect(forbidden.editTodoById.errors[0].message).toBe("403 Forbidden");
+    });
+  });
+  
   it("edits the todo that was just added", async () => {
     new logger("blue", "editing the todo we just added").genLog();
     const editTodoPayload = {
       text: UPDATED_TODO_TEXT,
-      id: newTodoId
+      email: creatorEmail,
+      todoId: newTodoId
     }
     const res: EditTodoByIdResponse = await request(
       HOST + "/graphql", 
-      `${createEditTodoMutation(editTodoPayload)}`
+      `${createEditTodoMutation(editTodoPayload)}`,
+      {},
+      { "authorization": `Bearer ${newToken}`}
     );
     logJson(res.editTodoById.todo);
     expect(res.editTodoById.todo?.text).toEqual(UPDATED_TODO_TEXT);

@@ -106,12 +106,13 @@ export function createClearUserTodosMutation(email: string): string {
 }
 
 export function createEditTodoMutation(payload: EditTodoPayload): string {
-  const { text, id } = payload
+  const { text, todoId, email } = payload
   return `
 		mutation editTodoById{
 			editTodoById(options: {
 				text: "${text}",
-				id: ${id}
+				email: "${email}",
+				todoId: ${todoId}
 			}){
 				errors {
 					field
