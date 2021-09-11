@@ -66,7 +66,6 @@ describe("Tests the user register", () => {
     console.log("expired with expired token", expired);
     expect(expired.me.errors).toHaveLength(1);
     expect(expired.me.errors[0].message).toBe("401 user not authenticated");
-    
   });
   
   it("checks the user me query is returning the not found error", async () => {
@@ -76,7 +75,6 @@ describe("Tests the user register", () => {
     console.log("user not found", notFound);
     expect(notFound.me.errors).toHaveLength(1);
     expect(notFound.me.errors[0].message).toBe("404 user not found");
-    
   });
   
   it("checks the user me query is returning the forbidden error", async () => {
@@ -86,7 +84,6 @@ describe("Tests the user register", () => {
     console.log("forbidden request", forbidden);
     expect(forbidden.me.errors).toHaveLength(1);
     expect(forbidden.me.errors[0].message).toBe("403 Forbidden");
-    
   });
 
 

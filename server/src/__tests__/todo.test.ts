@@ -138,8 +138,24 @@ describe("Tests the todo resolvers adding, reading, editing, and deleting", () =
     
     //expect the error length to be a number and not undefined
     // expect(notFound.getUserTodos.errors).toBeNull();
-    expect(typeof notFound.getUserTodos.errors.length).toBe("number");
+    expect(notFound.getUserTodos.errors).toHaveLength(1);
     expect(notFound.getUserTodos.errors[0].message).toBe("404 Not Found");
+  });
+  
+  it("checks the forbidden error message appears when requestor is trying to get todos that are not theirs", async () => {
+    //check that the response
+    const forbidden: GetUserTodosResponse = await request(
+      HOST + "/graphql",
+      `${createGetUserTodosQuery(NOT_MY_EMAIL as string)}`,
+      {}, 
+      { "authorization": `Bearer ${newToken}` }
+    );
+    
+    //expect the error length to be a number and not undefined
+    // expect(forbidden.getUserTodos.errors).toBeNull();
+    expect(forbidden.getUserTodos.errors).toHaveLength(1);
+    expect(forbidden.getUserTodos.errors[0].message).toBe("403 Forbidden");
+
   });
 
 

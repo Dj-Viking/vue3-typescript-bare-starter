@@ -127,10 +127,10 @@ export class TodoResolver {
         .createQueryBuilder("todo")
         .update<Todo>(Todo, 
                       { text: options.text })
-                                    .where("id = :id", { id: options.id })
-                                    .returning(["text", "id", "creatorId"])
-                                    .updateEntity(true)
-                                    .execute();
+                                            .where("id = :id", { id: options.id })
+                                            .returning(["text", "id", "creatorId"])
+                                            .updateEntity(true)
+                                            .execute();
       if (!changedTodo.raw[0]) return new ErrorResponse("todo", "todo not found");
 
       console.log('changed todo', changedTodo.raw[0]);
@@ -207,8 +207,8 @@ export class TodoResolver {
       .values({ text: options.text,
                 //a creator with this id MUST exist for this query to work!!
                 creatorId: foundUserByEmail?.id })
-                                              .returning('*')
-                                              .execute();
+                                                .returning('*')
+                                                .execute();
       //seeing all the todos that the user has
       const todos = await Todo.find({ where: { creatorId: foundUserByEmail?.id } });
       console.log(`${ANSI_ESCAPES.green}`, `Someone added a todo!`, `${ANSI_ESCAPES.reset}`)
