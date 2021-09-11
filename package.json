@@ -2,7 +2,6 @@
   "name": "vue3-typescript",
   "version": "1.0.0",
   "description": "",
-  "main": ".eslintrc.js",
   "scripts": {
     "tscheck": "cd client; npm run tscheck"
   },
