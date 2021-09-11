@@ -8,7 +8,6 @@ import {
   Mutation, 
   Ctx, 
   ObjectType,
-  Int,
   Query 
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
@@ -88,25 +87,28 @@ export class UserResolver {
   // this also lets the UI stay in a "logged in state" if the token isn't expired
   @Query(() => MeQueryResponse)
   async me(
-    @Arg("id", () => Int) id: number,
+    @Arg("email", () => String) email: string,
     @Ctx() { req }: MyContext
   ): Promise<MeQueryResponse | ErrorResponse> {
     try {
       //cant query themselves if they are not logged in with a fresh token to make a me query
-      if (!req.user) throw new Error("user not authenticated");
-      const user = await User.findOne({ where: { id }});
+      if (!req.user) return new ErrorResponse("unauthenticated", "401 user not authenticated");
+      const foundUserByEmail = await User.findOne({ where: { email }});
       // user not found
-      if (!user) throw new Error("user not found");
+      if (!foundUserByEmail) return new ErrorResponse("not found", "404 user not found");
 
-      user.token = signToken({
-        username: user.username,
-        email: user.email,
-        password: user.password
+      if (foundUserByEmail.email !== req.user.email)
+        return new ErrorResponse("forbidden", "403 Forbidden");
+
+      foundUserByEmail.token = signToken({
+        username: foundUserByEmail.username,
+        email: foundUserByEmail.email,
+        password: foundUserByEmail.password
       });
 
       return {
-        token: user.token,
-        user: user
+        token: foundUserByEmail.token,
+        user: foundUserByEmail
       }
       //if user is found sign a new token for them with a new expiration
     } catch (error) {

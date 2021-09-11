@@ -47,6 +47,7 @@ export function authMiddleware(
 
     verifyAsync(token).then((decoded) => {
       context.req.user = <JwtData>decoded;
+      //this error will throw in the console....instead of the catch block of the authmiddleware
     }).catch((err: Error) => {
       //cant use logger here because i need the whole stack in the error logs
       console.error(

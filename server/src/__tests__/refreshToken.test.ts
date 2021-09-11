@@ -11,13 +11,16 @@ import {
 } from "../../src/constants";
 import { MeQueryResponse, RegisterResponse } from "../types";
 import { ColorLog, logJson, createMeQuery } from "../__tests__/utils/helpers";
-import auth from "../utils/AuthClass";
+
+const {
+  NOT_FOUND_EMAIL,
+  NOT_MY_EMAIL
+} = process.env;
 
 let connection;
 const logger = ColorLog;
 let newToken: string = "";
-let oldToken: string = "";
-let userId: number = 0;
+let userEmail: string = "";
 
 const {
   EXPIRED_TOKEN
@@ -33,8 +36,8 @@ describe("Tests the user register", () => {
     
     expect(res.register.token).toBeTruthy();
     expect(typeof res.register.user.id).toBe("number");
-    userId = res.register.user.id;
-    oldToken = res.register.token;
+    userEmail = res.register.user.email;
+    newToken = res.register.token;
     expect(res.register.errors).toBeNull();
     expect(res.register.user.email).toEqual(REGISTER_EMAIL);
   });
@@ -55,46 +58,43 @@ describe("Tests the user register", () => {
     expect(res.register.errors).toHaveLength(1);
   });
 
+  it("checks the me query is returning the unauthenticated error", async () => {
+    //expired or unauthenticated token test
+    const expired: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(userEmail)}`, {}, {
+      "authorization": `Bearer ${EXPIRED_TOKEN}`
+    });
+    console.log("expired with expired token", expired);
+    expect(expired.me.errors).toHaveLength(1);
+    expect(expired.me.errors[0].message).toBe("401 user not authenticated");
+  });
+  
+  it("checks the user me query is returning the not found error", async () => {
+    const notFound: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(NOT_FOUND_EMAIL as string)}`, {}, {
+      "authorization": `Bearer ${newToken}`
+    });
+    console.log("user not found", notFound);
+    expect(notFound.me.errors).toHaveLength(1);
+    expect(notFound.me.errors[0].message).toBe("404 user not found");
+  });
+  
+  it("checks the user me query is returning the forbidden error", async () => {
+    const forbidden: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(NOT_MY_EMAIL as string)}`, {}, {
+      "authorization": `Bearer ${newToken}`
+    });
+    console.log("forbidden request", forbidden);
+    expect(forbidden.me.errors).toHaveLength(1);
+    expect(forbidden.me.errors[0].message).toBe("403 Forbidden");
+  });
+
 
   it("checks that we can perform a me query with our new token after registering and also get back a new token", async () => {
     new logger("yellow", "testing mequery to get a refresh token").genLog();
     
-    const res: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(userId)}`, {}, {
-      "authorization": `Bearer ${oldToken}`
+    const res: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(userEmail)}`, {}, {
+      "authorization": `Bearer ${newToken}`
     });
-    const isExpired = await auth.isTokenExpired(res.me.token as string);
-    switch(typeof isExpired){
-      case "boolean": expect(isExpired).toBe(false);
-      break;
-      //if we are here then the test is forced to fail because our util func returning a string means there was an error
-      //in our process of creating a user with a token that should be fresh
-      case "string": expect(isExpired).toBeTruthy();
-      break;
-      default: break;
-    }
 
     console.log("errors length property should be undefined: ", res.me.errors?.length);
-
-    //expired token test
-    const res2: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(userId)}`, {}, {
-      "authorization": `Bearer ${EXPIRED_TOKEN}`
-    });
-
-    console.log("res2 with expired token", res2);
-
-    const isExpired2 = await auth.isTokenExpired(res2.me.token as string);
-    switch(typeof isExpired2){
-      //for res2
-      case "boolean": expect(isExpired2).toBe(true);
-      break;
-      //for the expired token the case will always be typeof "string"
-      //if we are here then the test is forced to fail because our util func returning a string means there was an error
-      //in our process of creating a user with a token that should be fresh
-      //for res2
-      case "string": expect(isExpired2).toBeTruthy();
-      break;
-      default: break;
-    }
 
     //if the length of the actual array is 0 for some reason the length property is set to typeof "undefined"
     expect(res.me.errors?.length).toBe(undefined);
