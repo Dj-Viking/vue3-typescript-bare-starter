@@ -129,9 +129,11 @@ describe("checks the getting todos mutation responses", () => {
     //make query for get todo by id
     new logger("purple", "getting the todo we just made from the id generated from the add todo response").genLog();
     // TODO add auth only requestor can get their todos
-    const res: GetUserTodosResponse = await request(HOST + "/graphql", `${createGetUserTodosQuery(creatorEmail)}`, {}, {
-      "authorization": `Bearer ${newToken}`
-    });
+    const res: GetUserTodosResponse = await request(
+      HOST + "/graphql", `${createGetUserTodosQuery(creatorEmail)}`,
+      {},
+      { "authorization": `Bearer ${newToken}` }
+    );
     expect(res.getUserTodos.errors).toBeNull();
     expect(res.getUserTodos.todos?.length).toBeTruthy();
     expect(res.getUserTodos.todos).toHaveLength(1);
@@ -173,7 +175,10 @@ describe("checks editing a todo", () => {
       text: UPDATED_TODO_TEXT,
       id: newTodoId
     }
-    const res: EditTodoByIdResponse = await request(HOST + "/graphql", `${createEditTodoMutation(editTodoPayload)}`);
+    const res: EditTodoByIdResponse = await request(
+      HOST + "/graphql", 
+      `${createEditTodoMutation(editTodoPayload)}`
+    );
     logJson(res.editTodoById.todo);
     expect(res.editTodoById.todo?.text).toEqual(UPDATED_TODO_TEXT);
   });
@@ -184,9 +189,12 @@ describe("deletes the todos", () => {
   it("tries to delete todos with an invalid token", async () => {
     new logger("purple", "deleting the user's todos that we made").genLog();  
     //malformed token test error
-    const invalidToken: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail)}`, {}, {
-      "authorization": `Bearer al;kdjf;asfj`
-    });
+    const invalidToken: ClearUserTodosResponse = await request(
+      HOST + "/graphql", 
+      `${createClearUserTodosMutation(creatorEmail)}`, 
+      {},
+      { "authorization": `Bearer al;kdjf;asfj` }
+    );
     new logger("red", "should get expired error or unauthed because of a mangled, missing, or invalid token").genLog();
     expect(invalidToken.clearUserTodos.errors).toHaveLength(1);
     expect(invalidToken.clearUserTodos.errors[0].message).toBe("401 unauthorized or expired token");
@@ -195,9 +203,12 @@ describe("deletes the todos", () => {
 
   it("tries to clear todos with an expired token", async () => {
     //expired token test error
-    const expiredToken: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail)}`, {}, {
-      "authorization": `Bearer ${EXPIRED_TOKEN}`
-    });
+    const expiredToken: ClearUserTodosResponse = await request(
+      HOST + "/graphql", 
+      `${createClearUserTodosMutation(creatorEmail)}`, 
+      {},
+      { "authorization": `Bearer ${EXPIRED_TOKEN}` }
+    );
   
     new logger("red", "should get expired error or unauthed").genLog();
     expect(expiredToken.clearUserTodos.errors).toHaveLength(1);
@@ -206,9 +217,12 @@ describe("deletes the todos", () => {
 
   it("tries to clear todos with a not found user from the email input", async () => {
     //notFound error
-    const notFound: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(NOT_FOUND_EMAIL as string)}`, {}, {
-      "authorization": `Bearer ${newToken}`
-    });
+    const notFound: ClearUserTodosResponse = await request(
+      HOST + "/graphql", 
+      `${createClearUserTodosMutation(NOT_FOUND_EMAIL as string)}`, 
+      {},
+      { "authorization": `Bearer ${newToken}` }
+    );
   
     new logger("red", "should get not found error").genLog();
     expect(notFound.clearUserTodos.errors).toHaveLength(1);
@@ -217,9 +231,12 @@ describe("deletes the todos", () => {
 
   it("tries to clear todos as a forbidden action", async () => {
     //forbidden error
-    const forbidden: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(NOT_MY_EMAIL as string)}`, {}, {
-      "authorization": `Bearer ${newToken}`
-    });
+    const forbidden: ClearUserTodosResponse = await request(
+      HOST + "/graphql", 
+      `${createClearUserTodosMutation(NOT_MY_EMAIL as string)}`,
+      {},
+      { "authorization": `Bearer ${newToken}` }
+    );
   
     new logger("red", "should get forbidden error").genLog();
     expect(forbidden.clearUserTodos.errors).toHaveLength(1);
@@ -228,9 +245,12 @@ describe("deletes the todos", () => {
   
   it("should successfully clear todos", async () => {
     //delete the currently registered user's todos
-    const successClear: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail)}`, {}, {
-      "authorization": `Bearer ${newToken}`
-    });
+    const successClear: ClearUserTodosResponse = await request(
+      HOST + "/graphql", 
+      `${createClearUserTodosMutation(creatorEmail)}`,
+      {},
+      { "authorization": `Bearer ${newToken}` }
+    );
     expect(successClear.clearUserTodos.errors).toBeNull();
     expect(successClear.clearUserTodos.done).toBe(true);
   });
@@ -239,9 +259,12 @@ describe("deletes the todos", () => {
 describe("deletes the todos we just made and then deletes the user", () => {
   it("checks the user's todos to see if the deleted todo is now missing", async () => {
     new logger("purple", "checking if the user's todos are gone").genLog();
-    const res: GetUserTodosResponse = await request(HOST + "/graphql", `${createGetUserTodosQuery(creatorEmail)}`, {}, {
-      "authorization": `Bearer ${newToken}`
-    });
+    const res: GetUserTodosResponse = await request(
+      HOST + "/graphql", 
+      `${createGetUserTodosQuery(creatorEmail)}`,
+      {},
+      { "authorization": `Bearer ${newToken}` }
+    );
     expect(res.getUserTodos.errors).toBeNull();
   
     //if this fails then something failed before we got here because we couldn't clear the todos before arriving here
