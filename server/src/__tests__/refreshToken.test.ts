@@ -60,10 +60,22 @@ describe("Tests the user register", () => {
 
   it("checks the me query is returning the unauthenticated error", async () => {
     //expired or unauthenticated token test
+    const invalidToken: MeQueryResponse = await request(
+      HOST + "/graphql", 
+      `${createMeQuery(userEmail)}`,
+      {},
+      { "authorization": `Bearer asdfasdf` }
+    );
+    console.log("request with invalid token", invalidToken);
+    expect(invalidToken.me.errors).toHaveLength(1);
+    expect(invalidToken.me.errors[0].message).toBe("401 user not authenticated");
+  });
+  it("checks the me query is returning the unauthenticated error", async () => {
+    //expired or unauthenticated token test
     const expired: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(userEmail)}`, {}, {
       "authorization": `Bearer ${EXPIRED_TOKEN}`
     });
-    console.log("expired with expired token", expired);
+    console.log("request with expired token", expired);
     expect(expired.me.errors).toHaveLength(1);
     expect(expired.me.errors[0].message).toBe("401 user not authenticated");
   });
