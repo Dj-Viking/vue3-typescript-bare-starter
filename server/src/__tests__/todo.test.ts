@@ -147,8 +147,6 @@ describe("checks the getting todos mutation responses", () => {
       { "authorization": `Bearer ${newToken}` }
     );
     
-    //expect the error length to be a number and not undefined
-    // expect(notFound.getUserTodos.errors).toBeNull();
     expect(notFound.getUserTodos.errors).toHaveLength(1);
     expect(notFound.getUserTodos.errors[0].message).toBe("404 Not Found");
   });
@@ -162,8 +160,6 @@ describe("checks the getting todos mutation responses", () => {
       { "authorization": `Bearer ${newToken}` }
     );
     
-    //expect the error length to be a number and not undefined
-    // expect(forbidden.getUserTodos.errors).toBeNull();
     expect(forbidden.getUserTodos.errors).toHaveLength(1);
     expect(forbidden.getUserTodos.errors[0].message).toBe("403 Forbidden");
   });
@@ -186,9 +182,7 @@ describe("checks editing a todo", () => {
 describe("deletes the todos", () => {
 
   it("tries to delete todos with an invalid token", async () => {
-    new logger("purple", "deleting the user's todos that we made").genLog();
-    // TODO write tests to verify the access control in the resolver is working for this mutation
-  
+    new logger("purple", "deleting the user's todos that we made").genLog();  
     //malformed token test error
     const invalidToken: ClearUserTodosResponse = await request(HOST + "/graphql", `${createClearUserTodosMutation(creatorEmail)}`, {}, {
       "authorization": `Bearer al;kdjf;asfj`
