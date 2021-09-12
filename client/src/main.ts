@@ -13,6 +13,8 @@ import {
 } from "@apollo/client/core";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 
+import "bulma";
+
 //init apollo cache
 const cache = new InMemoryCache();
 

@@ -26,6 +26,15 @@ export interface UserState {
     todos: Todo[];
   };
 }
+
+export interface UserEntityBase {
+  id: number;
+  username: string;
+  email: string;
+  token: string | null;
+  createdAt: number;
+  updatedAt: number;
+}
 export interface TodosState {
   todos: Array<Todo>;
 }
@@ -46,3 +55,24 @@ export type RootCommitType =
   | "todos/SET_TODOS"
   | "todos/DELETE_TODO"
   | "todos/EDIT_TODO";
+
+export interface CustomError {
+  field: string;
+  message: string;
+}
+export type MyErrorResponse = CustomError[] | null;
+
+export interface RegisterResponse {
+  register: {
+    errors: MyErrorResponse;
+    token: string | null;
+    user: UserEntityBase | null;
+  };
+}
+export interface LoginResponse {
+  login: {
+    errors: MyErrorResponse;
+    token: string | null;
+    user: UserEntityBase | null;
+  };
+}
