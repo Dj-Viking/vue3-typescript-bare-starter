@@ -25,7 +25,7 @@
 <script lang="ts">
 import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { defineComponent, inject, ref } from "vue";
+import { defineComponent, inject, ref, onMounted } from "vue";
 import BaseLayout from "../components/BaseLayout.vue";
 import { createLoginMutation } from "../graphql/mutations/myMutations";
 import { LoginResponse } from "../types";
@@ -65,6 +65,10 @@ export default defineComponent({
       globalEmail = result.data.login.user.email;
       auth.setToken(result.data.login.user.token);
       auth.setEmail(globalEmail as string);
+    });
+
+    onMounted(() => {
+      document.title = "Login";
     });
 
     return {
