@@ -201,6 +201,7 @@ export class UserResolver {
       password: user.password
     });
     return {
+      token: user.token,
       user
     };
   }
@@ -217,10 +218,10 @@ export class UserResolver {
       .createQueryBuilder("user")
       .update<User>(User, 
                     { token: "" })
-                                  .where("email = :email", { email: email })
-                                  .returning(["id", "username", "createdAt", "updatedAt", "token", "email"])
-                                  .updateEntity(true)
-                                  .execute();
+      .where("email = :email", { email: email })
+      .returning(["id", "username", "createdAt", "updatedAt", "token", "email"])
+      .updateEntity(true)
+      .execute();
       if (!changedUser) return new ErrorResponse("user", "user not found");
 
       console.log('changed user', changedUser.raw[0]);

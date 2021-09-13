@@ -1,12 +1,14 @@
 <template>
-  <nav>
-    <router-link class="link" :to="'/'">Home</router-link>
-    <span class="divider">|</span>
-    <router-link class="link" :to="'/login'">Login</router-link>
-    <span class="divider">|</span>
-    <router-link class="link" :to="'/signup'">Signup</router-link>
-  </nav>
-  <slot />
+  <div>
+    <nav>
+      <router-link class="link" :to="'/'">Home</router-link>
+      <span class="divider">|</span>
+      <router-link class="link" :to="'/login'">Login</router-link>
+      <span class="divider">|</span>
+      <router-link class="link" :to="'/signup'">Signup</router-link>
+    </nav>
+    <slot />
+  </div>
 </template>
 
 <script lang="ts">

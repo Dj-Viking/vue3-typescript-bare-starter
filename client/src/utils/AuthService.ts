@@ -11,15 +11,17 @@ class AuthService {
     });
   }
 
-  public async setToken(token: string): Promise<void | string> {
+  public setToken(token: string): void {
     // Saves user token to localStorage
     let encrypted = "";
-    return new Promise((resolve) => {
-      //encrypt token before setting to storage
-      encrypted = Buffer.from(token).toString("base64");
-      localStorage.setItem("id_token", encrypted);
-      resolve(token);
-    });
+    //encrypt token before setting to storage
+    encrypted = Buffer.from(token).toString("base64");
+    localStorage.setItem("id_token", encrypted);
+    return;
+  }
+
+  public setEmail(email: string): void {
+    localStorage.setItem("global_email", email);
   }
 
   public async clearToken(): Promise<void | Error> {

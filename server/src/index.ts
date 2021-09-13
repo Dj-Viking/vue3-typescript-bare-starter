@@ -23,7 +23,7 @@ const {
   CORS_ALLOWED
 } = process.env;
 
-(async function(): Promise<void>{
+(async function(): Promise<void> {
   console.log("hello world");
   //connect to db
   await createConnection({
