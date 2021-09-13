@@ -8,7 +8,10 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "cy:dev": "cypress open",
+    "create:constant": "ts-node ./tests/scripts/createConstantCli.ts",
+    "create:fixture": "ts-node ./tests/scripts/createFixtureCli.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.4.11",
@@ -28,9 +31,21 @@
     "register-service-worker": "^1.7.1",
     "vue": "^3.2.11",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0-0",
+    "pngjs": "^6.0.0",
+    "pixelmatch": "^5.2.1"
   },
   "devDependencies": {
+    "ts-node": "10.2.1",
+    "cypress": "8.3.1",
+    "istanbul-lib-coverage": "^3.0.0",
+    "@cypress/code-coverage": "^3.9.7",
+    "cypress-file-upload": "^5.0.8",
+    "cypress-image-snapshot": "4.0.1",
+    "@types/cypress-image-snapshot": "^3.1.5",
+    "@types/node": "^15.12.4",
+    "@types/pixelmatch": "^5.2.3",
+    "@types/pngjs": "^6.0.0",
     "@juit/vue-ts-checker": "^1.0.3",
     "@types/jest": "^24.0.19",
     "@types/jsonwebtoken": "^8.5.5",

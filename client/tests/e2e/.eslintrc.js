@@ -6,5 +6,6 @@ module.exports = {
   },
   rules: {
     strict: "off",
+    semi: ["error", "always"],
   },
 };

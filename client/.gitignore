@@ -1,4 +1,5 @@
 node_modules
 .DS_Store
-.cypress.env.json
+cypress.env.json
 
+/tests/e2e/screenshots

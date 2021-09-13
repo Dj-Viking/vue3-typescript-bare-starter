@@ -8,12 +8,15 @@
 
 // /* eslint-disable import/no-extraneous-dependencies, global-require */
 // const webpack = require('@cypress/webpack-preprocessor')
+// eslint-disable-next-line
+const registerCodeCoverageTasks = require("@cypress/code-coverage/task");
 
 module.exports = (on, config) => {
   // on('file:preprocessor', webpack({
   //  webpackOptions: require('@vue/cli-service/webpack.config'),
   //  watchOptions: {}
   // }))
+  on("task", registerCodeCoverageTasks(on, config));
 
   return Object.assign({}, config, {
     fixturesFolder: "tests/e2e/fixtures",
