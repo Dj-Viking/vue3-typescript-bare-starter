@@ -63,7 +63,7 @@ export default defineComponent({
     onLoginDone((result) => {
       loginResponse.value = result.data as LoginResponse;
       globalEmail = result.data.login.user.email;
-      auth.setToken(result.data.login.user.token);
+      auth.setToken(result.data.login.token);
       auth.setEmail(globalEmail as string);
     });
 

@@ -201,6 +201,7 @@ export class UserResolver {
       password: user.password
     });
     return {
+      token: user.token,
       user
     };
   }
