@@ -78,8 +78,9 @@ export default defineComponent({
   },
   methods: {
     // to make tscheck compiler happy.
-    readEvent(event: Event) {
-      console.log(event);
+    // eslint-disable-next-line
+    readEvent(_event: Event) {
+      //do nothing
     },
   },
 });

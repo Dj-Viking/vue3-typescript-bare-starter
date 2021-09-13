@@ -98,8 +98,9 @@ export default defineComponent({
   },
   methods: {
     //to make the ts check compiler happy
-    readEvent(event: Event): void {
-      console.log(event);
+    // eslint-disable-next-line
+    readEvent(_event: Event): void {
+      // do nothing
     },
   },
 });
