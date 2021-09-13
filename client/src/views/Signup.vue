@@ -74,6 +74,7 @@ import { createRegisterMutation } from "../graphql/mutations/myMutations";
 import { RegisterResponse } from "../types";
 import auth from "../utils/AuthService";
 import router from "../router";
+import { FetchResult } from "@apollo/client/core";
 
 export default defineComponent({
   name: "Signup",
@@ -113,31 +114,39 @@ export default defineComponent({
       }
     );
 
-    onRegisterDone((result) => {
-      if (result.data.register.errors) {
-        showError.value = true;
-        errMsg.value = result.data.register.errors[0].message;
-        setTimeout(() => {
-          showError.value = false;
-          errMsg.value = "";
-        }, 2000);
-      } else {
-        isLoading.value = true;
-        successMsg.value = "Success! Teleporting to Home Page!";
-        showSuccess.value = true;
-        setTimeout(() => {
-          isLoading.value = false;
-          showSuccess.value = false;
-          successMsg.value = "";
-          registerResponse.value = result.data as RegisterResponse;
-          submitted.value = false;
-          globalEmail = result?.data?.register.user.email;
-          auth.setToken(result.data.register.token);
-          auth.setEmail(globalEmail as string);
-          router.push("/");
-        }, 2000);
+    onRegisterDone(
+      (
+        result: FetchResult<
+          RegisterResponse,
+          Record<string, unknown>,
+          Record<string, unknown>
+        >
+      ) => {
+        if (result?.data?.register.errors) {
+          showError.value = true;
+          errMsg.value = result?.data?.register.errors[0].message as string;
+          setTimeout(() => {
+            showError.value = false;
+            errMsg.value = "";
+          }, 2000);
+        } else {
+          isLoading.value = true;
+          successMsg.value = "Success! Teleporting to Home Page!";
+          showSuccess.value = true;
+          setTimeout(() => {
+            isLoading.value = false;
+            showSuccess.value = false;
+            successMsg.value = "";
+            registerResponse.value = result?.data as RegisterResponse;
+            submitted.value = false;
+            globalEmail = result?.data?.register.user?.email;
+            auth.setToken(result?.data?.register.token as string);
+            auth.setEmail(globalEmail as string);
+            router.push("/");
+          }, 2000);
+        }
       }
-    });
+    );
     function initFields(): void {
       submitted.value = false;
       email.value = "";

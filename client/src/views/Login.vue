@@ -66,6 +66,7 @@ import { createLoginMutation } from "../graphql/mutations/myMutations";
 import { LoginResponse } from "../types";
 import auth from "../utils/AuthService";
 import router from "../router";
+import { FetchResult } from "@apollo/client/core";
 
 export default defineComponent({
   name: "Login",
@@ -101,30 +102,38 @@ export default defineComponent({
       }
     );
 
-    onLoginDone((result) => {
-      if (result.data.login.errors) {
-        showError.value = true;
-        errMsg.value = result.data.login.errors[0].message;
-        setTimeout(() => {
-          showError.value = false;
-          errMsg.value = "";
-        }, 2000);
-      } else {
-        isLoading.value = true;
-        successMsg.value = "Success! Teleporting to Home Page!";
-        showSuccess.value = true;
-        setTimeout(() => {
-          isLoading.value = false;
-          showSuccess.value = false;
-          successMsg.value = "";
-          loginResponse.value = result.data as LoginResponse;
-          globalEmail = result.data.login.user.email;
-          auth.setToken(result.data.login.token);
-          auth.setEmail(globalEmail as string);
-          router.push("/");
-        }, 2000);
+    onLoginDone(
+      (
+        result: FetchResult<
+          LoginResponse,
+          Record<string, unknown>,
+          Record<string, unknown>
+        >
+      ) => {
+        if (result?.data?.login.errors) {
+          showError.value = true;
+          errMsg.value = result?.data?.login.errors[0].message as string;
+          setTimeout(() => {
+            showError.value = false;
+            errMsg.value = "";
+          }, 2000);
+        } else {
+          isLoading.value = true;
+          successMsg.value = "Success! Teleporting to Home Page!";
+          showSuccess.value = true;
+          setTimeout(() => {
+            isLoading.value = false;
+            showSuccess.value = false;
+            successMsg.value = "";
+            loginResponse.value = result.data as LoginResponse;
+            globalEmail = result?.data?.login.user?.email;
+            auth.setToken(result?.data?.login.token as string);
+            auth.setEmail(globalEmail as string);
+            router.push("/");
+          }, 2000);
+        }
       }
-    });
+    );
 
     onMounted(() => {
       document.title = "Login";
