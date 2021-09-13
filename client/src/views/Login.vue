@@ -83,7 +83,7 @@ export default defineComponent({
   methods: {
     // to make tscheck compiler happy.
     // eslint-disable-next-line
-    readEvent(_event: Event) {
+    readEvent(_event: Event): void {
       //do nothing
     },
   },
