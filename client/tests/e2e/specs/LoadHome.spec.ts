@@ -1,6 +1,12 @@
-import { LOCALHOST_URL } from "../../constants";
+import { ACTUALS_LOADHOMESPEC_PATH, LOCALHOST_URL } from "../../constants";
 
 describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
+  it("checks the task defined in plugins", () => {
+    cy.task("deleteActuals", ACTUALS_LOADHOMESPEC_PATH).then((dirOrNull) => {
+      console.log(dirOrNull);
+    });
+  });
+
   it("visit's home page", () => {
     cy.visit(LOCALHOST_URL);
   });

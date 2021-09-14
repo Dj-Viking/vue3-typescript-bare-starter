@@ -3,3 +3,5 @@ node_modules
 cypress.env.json
 
 /tests/e2e/screenshots
+.nyc_output
+coverage

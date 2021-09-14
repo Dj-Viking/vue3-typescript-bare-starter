@@ -11,7 +11,8 @@
     "lint": "vue-cli-service lint",
     "cy:dev": "cypress open",
     "create:constant": "ts-node ./tests/scripts/createConstantCli.ts",
-    "create:fixture": "ts-node ./tests/scripts/createFixtureCli.ts"
+    "create:fixture": "ts-node ./tests/scripts/createFixtureCli.ts",
+    "deleteactuals": "ts-node ./tests/scripts/deleteActuals.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.4.11",
