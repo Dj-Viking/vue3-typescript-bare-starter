@@ -1,4 +1,4 @@
 {
   "pluginsFile": "tests/e2e/plugins/index.js", 
-  "screenshotsFolder": "tests/e2e/screenshots/actuals"
+  "screenshotsFolder": "tests/e2e/fixtures/screenshots/actuals"
 }

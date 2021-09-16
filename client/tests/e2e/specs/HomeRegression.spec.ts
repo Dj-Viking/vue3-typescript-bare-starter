@@ -1,49 +1,27 @@
-import {
-  ACTUALS_LOADHOMESPEC_PATH,
-  BASE_HOMELINK_VIEW_FIXTURE,
-  LOCALHOST_URL,
-  ACTUAL_HOMELINK_VIEW_FIXTURE,
-} from "../../constants";
-
-import { PNG, PNGWithMetadata } from "pngjs";
 import pixelmatch from "pixelmatch";
+import {
+  ACTUAL_HOME_FULL_PAGE,
+  BASE_HOME_FULL_PAGE,
+  LOCALHOST_URL,
+} from "tests/constants";
+import { PNG, PNGWithMetadata } from "pngjs";
 // import pixelmatch from "pixelmatch";
 
 let baselinePng: PNGWithMetadata;
 let actualPng: PNGWithMetadata;
 
-describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
-  it("checks the task defined in plugins", () => {
-    cy.task("deleteActuals", ACTUALS_LOADHOMESPEC_PATH).then((dirOrNull) => {
-      console.log(dirOrNull);
-    });
-  });
-
-  it("visit's home page", () => {
+describe("regression", () => {
+  it("visits the local host page", () => {
     cy.visit(LOCALHOST_URL);
   });
-  it("checks the home link", () => {
-    cy.get("a.link").contains("Home").should("have.length", 1);
-  });
-  it("checks the login link", () => {
-    cy.get("a.link").contains("Login").should("have.length", 1);
-  });
-  it("checks the signup link", () => {
-    cy.get("a.link").contains("Signup").should("have.length", 1);
-  });
-  it("screenshots-the-home-view-window", () => {
-    cy.get("a.link").contains("Home").screenshot();
-  });
-  it("screenshots-the-whole-home-page", () => {
+  it("screenshots the homepage", () => {
     cy.get("html").screenshot();
   });
-});
 
-describe("regression-test-home-link", () => {
   it("get the baseline png of home link", () => {
     cy.fixture(
-      /screenshots-the-home-view-window.png/g.test(BASE_HOMELINK_VIEW_FIXTURE)
-        ? BASE_HOMELINK_VIEW_FIXTURE
+      /screenshots-the-home-view-window.png/g.test(BASE_HOME_FULL_PAGE)
+        ? BASE_HOME_FULL_PAGE
         : "not found"
     )
       .then(Cypress.Blob.base64StringToBlob)
@@ -58,8 +36,8 @@ describe("regression-test-home-link", () => {
 
   it("get the actual baseline png of the home link", () => {
     cy.fixture(
-      /screenshots-the-home-view-window.png/.test(ACTUAL_HOMELINK_VIEW_FIXTURE)
-        ? ACTUAL_HOMELINK_VIEW_FIXTURE
+      /screenshots-the-home-view-window.png/.test(ACTUAL_HOME_FULL_PAGE)
+        ? ACTUAL_HOME_FULL_PAGE
         : "not found"
     )
       .then(Cypress.Blob.base64StringToBlob)
