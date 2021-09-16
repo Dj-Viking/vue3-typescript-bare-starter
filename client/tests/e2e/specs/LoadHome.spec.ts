@@ -34,9 +34,6 @@ describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
   it("screenshots-the-home-view-window", () => {
     cy.get("a.link").contains("Home").screenshot();
   });
-  it("screenshots-the-whole-home-page", () => {
-    cy.get("html").screenshot();
-  });
 });
 
 describe("regression-test-home-link", () => {

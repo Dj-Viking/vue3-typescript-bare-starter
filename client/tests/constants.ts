@@ -14,7 +14,7 @@ export const ACTUALS_LOADHOMESPEC_PATH =
  * path the the base home link screenshot fixture
  */
 export const BASE_HOMELINK_VIEW_FIXTURE =
-  "./screenshots/base/Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png";
+  "/screenshots/base/LoadHome.spec.ts/Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png";
 
 /**
  * path to the actual home link screenshot fixture
