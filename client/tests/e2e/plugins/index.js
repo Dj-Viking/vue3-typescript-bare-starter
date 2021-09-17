@@ -19,9 +19,11 @@
 // eslint-disable-next-line
 // const registerCodeCoverageTasks = require("@cypress/code-coverage/task");
 // eslint-disable-next-line
-// const fs = require("fs");
+// const fs = require("fs")
 // eslint-disable-next-line
 const { deleteActuals } = require("../../utils/deleteActuals");
+// eslint-disable-next-line
+const { writeDiff } = require("../../utils/writeDiff");
 
 module.exports = (on, config) => {
   // on('file:preprocessor', webpack({
@@ -33,6 +35,13 @@ module.exports = (on, config) => {
     deleteActuals: function (path) {
       deleteActuals(path);
       return null;
+    },
+
+    writeDiff: function (args) {
+      console.log("args to pass to diff", args);
+      const result = writeDiff(args);
+      console.log("result", result);
+      return result;
     },
   });
 

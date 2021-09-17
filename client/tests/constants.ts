@@ -21,6 +21,11 @@ export const BASE_HOMELINK_VIEW_FIXTURE =
  */
 export const ACTUAL_HOMELINK_VIEW_FIXTURE =
   "/screenshots/actuals/LoadHome.spec.ts/Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png";
+/**
+ * path to the actual home link screenshot fixture
+ */
+export const DIFF_HOMELINK_FIXTURE_WRITEPATH =
+  "./tests/e2e/fixtures/screenshots/diff/LoadHome.spec.ts -- diff-the-home-view-link.png";
 
 /**
  * path to the actual home link screenshot fixture

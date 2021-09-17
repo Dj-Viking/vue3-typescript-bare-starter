@@ -12,7 +12,8 @@
     "cy:dev": "cypress open",
     "create:constant": "ts-node ./tests/scripts/createConstantCli.ts",
     "create:fixture": "ts-node ./tests/scripts/createFixtureCli.ts",
-    "deleteactuals": "ts-node ./tests/scripts/deleteActuals.ts"
+    "deleteactuals": "ts-node ./tests/scripts/deleteActuals.ts",
+    "diff": "ts-node ./tests/utils/writeDiff.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.4.11",

@@ -3,6 +3,7 @@ import {
   BASE_HOMELINK_VIEW_FIXTURE,
   LOCALHOST_URL,
   ACTUAL_HOMELINK_VIEW_FIXTURE,
+  DIFF_HOMELINK_FIXTURE_WRITEPATH,
 } from "../../constants";
 
 import { PNG, PNGWithMetadata } from "pngjs";
@@ -10,7 +11,10 @@ import pixelmatch from "pixelmatch";
 // import pixelmatch from "pixelmatch";
 
 let baselinePng: PNGWithMetadata;
+let baselineBlob: Blob;
 let actualPng: PNGWithMetadata;
+let actualBlob: Blob;
+let diff: PNG;
 
 describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
   it("checks the task defined in plugins", () => {
@@ -45,6 +49,7 @@ describe("regression-test-home-link", () => {
     )
       .then(Cypress.Blob.base64StringToBlob)
       .then(async (fileBlob: Blob) => {
+        baselineBlob = fileBlob;
         const fileArrayBuffer = await fileBlob.arrayBuffer();
         baselinePng = PNG.sync.read(
           Buffer.from(new Uint8Array(fileArrayBuffer))
@@ -61,15 +66,32 @@ describe("regression-test-home-link", () => {
     )
       .then(Cypress.Blob.base64StringToBlob)
       .then(async (fileBlob: Blob) => {
+        actualBlob = fileBlob;
         const fileArrayBuffer = await fileBlob.arrayBuffer();
         actualPng = PNG.sync.read(Buffer.from(new Uint8Array(fileArrayBuffer)));
         console.log("actual png", actualPng);
       });
   });
 
+  it("write the diff to disk", () => {
+    console.log("write diff task args", {
+      path: DIFF_HOMELINK_FIXTURE_WRITEPATH,
+      baselineBlob,
+      actualBlob,
+    });
+
+    cy.task("writeDiff", {
+      path: DIFF_HOMELINK_FIXTURE_WRITEPATH,
+      baselineBlob,
+      actualBlob,
+    }).then((resultOrNull) => {
+      console.log("diff result", resultOrNull);
+    });
+  });
+
   it("calculate the diff between base and actual", () => {
     const { width, height } = baselinePng;
-    const diff = new PNG({ width, height });
+    diff = new PNG({ width, height });
     console.log("diff image", diff);
     const threshold = 0.1;
 
