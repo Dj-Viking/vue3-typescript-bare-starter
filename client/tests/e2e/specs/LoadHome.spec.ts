@@ -13,9 +13,10 @@ import pixelmatch from "pixelmatch";
 let baselinePng: PNGWithMetadata;
 let actualPng: PNGWithMetadata;
 let diff: PNG;
+let matchNum = 123;
 
 describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
-  it("checks the task defined in plugins", () => {
+  it("runs the delete actual png task plugin", () => {
     cy.task("deleteActuals", ACTUALS_LOADHOMESPEC_PATH).then((dirOrNull) => {
       console.log(dirOrNull);
     });
@@ -24,15 +25,15 @@ describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
   it("visit's home page", () => {
     cy.visit(LOCALHOST_URL);
   });
-  it("checks the home link", () => {
-    cy.get("a.link").contains("Home").should("have.length", 1);
-  });
-  it("checks the login link", () => {
-    cy.get("a.link").contains("Login").should("have.length", 1);
-  });
-  it("checks the signup link", () => {
-    cy.get("a.link").contains("Signup").should("have.length", 1);
-  });
+  // it("checks the home link", () => {
+  //   cy.get("a.link").contains("Home").should("have.length", 1);
+  // });
+  // it("checks the login link", () => {
+  //   cy.get("a.link").contains("Login").should("have.length", 1);
+  // });
+  // it("checks the signup link", () => {
+  //   cy.get("a.link").contains("Signup").should("have.length", 1);
+  // });
   it("screenshots-the-home-view-window", () => {
     cy.get("a.link").contains("Home").screenshot();
   });
@@ -89,7 +90,7 @@ describe("regression-test-home-link", () => {
     console.log("diff image", diff);
     const threshold = 0.1;
 
-    const matchNum: number = pixelmatch(
+    matchNum = pixelmatch(
       baselinePng.data,
       actualPng.data,
       diff.data,
@@ -97,6 +98,13 @@ describe("regression-test-home-link", () => {
       height,
       { threshold }
     );
+
+    console.log("\x1b[33m", "match num value", matchNum, "\x1b[00m");
+
+    if (matchNum === 0) {
+      //run the delete diff task since the pictures match we dont need to see the diff image.
+      cy.task("deleteDiff", "LoadHome.spec.ts");
+    }
 
     expect(matchNum).to.equal(0);
   });

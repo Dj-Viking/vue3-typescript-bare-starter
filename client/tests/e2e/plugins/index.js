@@ -24,6 +24,8 @@
 const { deleteActuals } = require("../../utils/deleteActuals");
 // eslint-disable-next-line
 const { writeDiff } = require("../../utils/writeDiff");
+// eslint-disable-next-line
+const { deleteDiff } = require("../../utils/deleteDiff");
 
 module.exports = (on, config) => {
   // on('file:preprocessor', webpack({
@@ -40,6 +42,13 @@ module.exports = (on, config) => {
     writeDiff: async function (args) {
       console.log("args to pass to diff", args);
       const result = await writeDiff(args);
+      console.log("result", result);
+      return result;
+    },
+
+    deleteDiff: async function (args) {
+      console.log("args to pass to delete diff", args);
+      const result = await deleteDiff(args);
       console.log("result", result);
       return result;
     },

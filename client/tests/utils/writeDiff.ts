@@ -67,7 +67,7 @@ export async function writeDiff(args: {
           error: null,
         } as IWriteDiffResult);
         // return dir;
-      }, 1000);
+      }, 200);
     });
   } catch (error) {
     const err = error as Error;

@@ -1,19 +1,29 @@
 import fs from "fs";
+import { ColorLog } from "../../../server/src/__tests__/utils/helpers";
+
+const logger = ColorLog;
 
 interface IDeleteDiffResult {
   complete: boolean;
   error: null | Error;
 }
 
-export async function deleteDiff(testName: string): Promise<IDeleteDiffResult> {
+(async function testDeleteDiff(testName: string): Promise<IDeleteDiffResult> {
   try {
+    // const something = true;
+    // if (something) {
+    //   _resolve((() => console.log(something))());
+    // } else {
+    //   _reject();
+    // }
     const dir: Array<string> = fs.readdirSync(
       `./tests/e2e/fixtures/screenshots/diff/${testName}`
     );
-    console.log("\x1b[32m", "diff directory", dir, "\x1b[00m");
+    console.log("\x1b[33m", "diff directory", dir, "\x1b[00m");
 
     if (dir.length) {
       console.log("diff directory has something", dir);
+
       fs.unlink(
         `./tests/e2e/fixtures/screenshots/diff/${testName}/diff.png`,
         (err) => {
@@ -33,9 +43,10 @@ export async function deleteDiff(testName: string): Promise<IDeleteDiffResult> {
     }
   } catch (error) {
     const err = error as Error;
+    new logger("red", err.message as Error["message"]).genLog();
     return {
       complete: true,
       error: err,
     };
   }
-}
+})("LoadHome.spec.ts").then(console.log);

@@ -14,7 +14,8 @@
     "create:fixture": "ts-node ./tests/scripts/createFixtureCli.ts",
     "deleteactuals": "ts-node ./tests/scripts/deleteActuals.ts",
     "diff": "ts-node ./tests/utils/writeDiff.ts",
-    "testWriteDiff": "ts-node ./tests/utils/testWriteDiff.ts"
+    "testWriteDiff": "ts-node ./tests/utils/testWriteDiff.ts",
+    "testDeleteDiff": "ts-node ./tests/utils/testDeleteDiff.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.4.11",
