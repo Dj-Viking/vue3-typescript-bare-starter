@@ -11,7 +11,15 @@ import pixelmatch from "pixelmatch";
 // import pixelmatch from "pixelmatch";
 
 let baselinePng: PNGWithMetadata;
+const baseDimensions = {
+  width: 0,
+  height: 0,
+};
 let actualPng: PNGWithMetadata;
+const actualDimensions = {
+  width: 0,
+  height: 0,
+};
 let diff: PNG;
 let matchNum = 123;
 
@@ -34,8 +42,11 @@ describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
   // it("checks the signup link", () => {
   //   cy.get("a.link").contains("Signup").should("have.length", 1);
   // });
+  // it("screenshots-the-home-view-window", () => {
+  //   cy.get("a.link").contains("Home").screenshot();
+  // });
   it("screenshots-the-home-view-window", () => {
-    cy.get("a.link").contains("Home").screenshot();
+    cy.get("html").screenshot({ capture: "viewport" });
   });
 });
 
@@ -52,6 +63,8 @@ describe("regression-test-home-link", () => {
         baselinePng = PNG.sync.read(
           Buffer.from(new Uint8Array(fileArrayBuffer))
         );
+        baseDimensions.height = baselinePng.height;
+        baseDimensions.width = baselinePng.width;
         console.log("baseline png", baselinePng);
       });
   });
@@ -66,11 +79,15 @@ describe("regression-test-home-link", () => {
       .then(async (fileBlob: Blob) => {
         const fileArrayBuffer = await fileBlob.arrayBuffer();
         actualPng = PNG.sync.read(Buffer.from(new Uint8Array(fileArrayBuffer)));
+        actualDimensions.height = actualPng.height;
+        actualDimensions.width = actualPng.width;
         console.log("actual png", actualPng);
       });
   });
 
-  it("write the diff to disk", () => {
+  it("write the diff to disk only if the dimensions are the same", () => {
+    expect(baseDimensions.height).to.equal(actualDimensions.height);
+    expect(baseDimensions.width).to.equal(actualDimensions.width);
     console.log("write diff task args", {
       testName: "LoadHome.spec.ts",
       writePath: DIFF_HOMELINK_FIXTURE_WRITEPATH_PARTIAL,
