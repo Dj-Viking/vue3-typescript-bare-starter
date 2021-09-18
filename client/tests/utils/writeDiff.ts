@@ -39,7 +39,7 @@ export async function writeDiff(args: {
 
       let actual: PNGWithMetadata;
 
-      //WAITING FOR READS TO FINISH??? NOT SURE WHY IM GETTING THIS ERROR FROM PIXEL MATCH IN THIS TEST: There are some read requests waitng on finished stream
+      //WAITING FOR READS TO FINISH??? NOT SURE WHY IM GETTING THIS ERROR FROM pngjs package IN THIS TEST: There are some read requests waitng on finished stream
       // OKAY THIS WORKED YAY
       setTimeout(() => {
         actual = PNG.sync.read(actualPng);

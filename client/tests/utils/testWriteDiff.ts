@@ -3,8 +3,8 @@ import fs from "fs";
 import Pixelmatch from "pixelmatch";
 import { PNG, PNGWithMetadata } from "pngjs";
 import {
-  PATH_TO_ACTUAL_FROM_TEST_FUNCTION,
-  PATH_TO_BASE_FROM_TEST_FUNCTION,
+  PATH_TO_ACTUAL_FROM_TASK_FUNCTION,
+  PATH_TO_BASE_FROM_TASK_FUNCTION,
 } from "../constants";
 
 (async function () {
@@ -21,11 +21,11 @@ import {
     console.log("directory", dir);
 
     // resolve(console.log("diff directory", dir));
-    const baseFile = fs.readFileSync(PATH_TO_BASE_FROM_TEST_FUNCTION);
+    const baseFile = fs.readFileSync(PATH_TO_BASE_FROM_TASK_FUNCTION);
     // resolve(console.log("file", file));
     const basePng: PNGWithMetadata = PNG.sync.read(baseFile);
     console.log("basepng", basePng);
-    const actualFile = fs.readFileSync(PATH_TO_ACTUAL_FROM_TEST_FUNCTION);
+    const actualFile = fs.readFileSync(PATH_TO_ACTUAL_FROM_TASK_FUNCTION);
     const actualPng: PNGWithMetadata = PNG.sync.read(actualFile);
     console.log("actual png", actualPng);
 
