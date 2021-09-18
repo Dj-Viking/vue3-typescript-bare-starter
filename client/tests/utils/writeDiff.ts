@@ -1,10 +1,6 @@
 import fs from "fs";
 import Pixelmatch from "pixelmatch";
 import { PNGWithMetadata, PNG } from "pngjs";
-import {
-  PATH_TO_ACTUAL_FROM_TASK_FUNCTION,
-  PATH_TO_BASE_FROM_TASK_FUNCTION,
-} from "tests/constants";
 
 interface IWriteDiffResult {
   complete: boolean;
@@ -18,21 +14,41 @@ interface IWriteDiffResult {
 export async function writeDiff(args: {
   testName: string;
   writePath: string;
+  fileName: string;
 }): Promise<IWriteDiffResult> {
-  const { writePath, testName } = args;
+  const { fileName, writePath, testName } = args;
   try {
     // eslint-disable-next-line
     return new Promise((resolve, _reject) => {
       const dir: Array<string> = fs.readdirSync(
-        "./tests/e2e/fixtures/screenshots/diff/LoadHome.spec.ts"
+        `./tests/e2e/fixtures/screenshots/diff/${testName}`
       );
       console.log("diff directory", dir);
+      const baseDir: Array<string> = fs.readdirSync(
+        `./tests/e2e/fixtures/screenshots/base/${testName}`
+      );
+      console.log("base dir", baseDir);
+      const actualsDir: Array<string> = fs.readdirSync(
+        `./tests/e2e/fixtures/screenshots/base/${testName}`
+      );
+      console.log("actuals dir", actualsDir);
 
       //do the pixelmatch here to create the diff image i guess thats how it works?
       // to modify the diff data after the pixelmatch function?? not sure yet
-      // const diff = new PNG({ width, height });
-      const basePng = fs.readFileSync(PATH_TO_BASE_FROM_TASK_FUNCTION);
-      const actualPng = fs.readFileSync(PATH_TO_ACTUAL_FROM_TASK_FUNCTION);
+
+      //get the base and actual based on
+      const basePng = fs.readFileSync(
+        `./tests/e2e/fixtures/screenshots/base/${testName}/${fileName}`
+      );
+      if (basePng) {
+        console.log("found base png", basePng);
+      }
+      const actualPng = fs.readFileSync(
+        `./tests/e2e/fixtures/screenshots/actuals/${testName}/${fileName}`
+      );
+      if (actualPng) {
+        console.log("found actual png", actualPng);
+      }
 
       const base: PNGWithMetadata = PNG.sync.read(basePng);
       console.log("base img", base);

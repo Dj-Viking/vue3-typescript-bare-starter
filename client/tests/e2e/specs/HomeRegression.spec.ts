@@ -1,28 +1,50 @@
-import pixelmatch from "pixelmatch";
+// import pixelmatch from "pixelmatch";
 import {
-  ACTUAL_HOME_FULL_PAGE,
-  BASE_HOME_FULL_PAGE,
+  ACTUAL_HOME_FULL_PAGE_FIXTURE,
+  BASE_HOME_FULL_PAGE_FIXTURE,
   LOCALHOST_URL,
+  DIFF_FIXTURE_FOLDER_PATH,
+  ACTUALS_HOMEREGRESSIONSPEC_PATH,
 } from "tests/constants";
 import { PNG, PNGWithMetadata } from "pngjs";
+import Pixelmatch from "pixelmatch";
 // import pixelmatch from "pixelmatch";
 
 let baselinePng: PNGWithMetadata;
+const baseDimensions = {
+  width: 0,
+  height: 0,
+};
 let actualPng: PNGWithMetadata;
+const actualDimensions = {
+  width: 0,
+  height: 0,
+};
+let diff: PNG;
+let matchNum = 123;
 
-describe("regression", () => {
-  it("visits the local host page", () => {
+describe("home-page-regression", () => {
+  it("deletes any actuals for this test before we enter the page", () => {
+    cy.task("deleteActuals", ACTUALS_HOMEREGRESSIONSPEC_PATH).then(
+      (dirOrNull) => {
+        console.log("delete actuals response dir or null", dirOrNull);
+      }
+    );
+  });
+  it("visits the home page", () => {
     cy.visit(LOCALHOST_URL);
   });
-  it("screenshots the homepage", () => {
-    cy.get("html").screenshot();
+  it("screenshots-the-entire-page", () => {
+    cy.get("html").screenshot({ capture: "viewport" });
   });
+});
 
-  it("get the baseline png of home link", () => {
+describe("compares base with actual", () => {
+  it("get the baseline png of the home page", () => {
     cy.fixture(
-      /screenshots-the-home-view-window.png/g.test(BASE_HOME_FULL_PAGE)
-        ? BASE_HOME_FULL_PAGE
-        : "not found"
+      /home-page-regression/g.test(BASE_HOME_FULL_PAGE_FIXTURE)
+        ? BASE_HOME_FULL_PAGE_FIXTURE
+        : "home page base png found"
     )
       .then(Cypress.Blob.base64StringToBlob)
       .then(async (fileBlob: Blob) => {
@@ -30,31 +52,53 @@ describe("regression", () => {
         baselinePng = PNG.sync.read(
           Buffer.from(new Uint8Array(fileArrayBuffer))
         );
-        console.log("baseline png", baselinePng);
+        baseDimensions.height = baselinePng.height;
+        baseDimensions.width = baselinePng.width;
+        console.log("baseline home page png", baselinePng);
       });
   });
 
-  it("get the actual baseline png of the home link", () => {
+  it("get the actual screenshotted png of the home page", () => {
     cy.fixture(
-      /screenshots-the-home-view-window.png/.test(ACTUAL_HOME_FULL_PAGE)
-        ? ACTUAL_HOME_FULL_PAGE
-        : "not found"
+      /home-page-regression/g.test(ACTUAL_HOME_FULL_PAGE_FIXTURE)
+        ? ACTUAL_HOME_FULL_PAGE_FIXTURE
+        : "actual png not found"
     )
       .then(Cypress.Blob.base64StringToBlob)
       .then(async (fileBlob: Blob) => {
         const fileArrayBuffer = await fileBlob.arrayBuffer();
         actualPng = PNG.sync.read(Buffer.from(new Uint8Array(fileArrayBuffer)));
-        console.log("actual png", actualPng);
+        actualDimensions.height = actualPng.height;
+        actualDimensions.width = actualPng.width;
+        console.log("home page actual png", actualPng);
       });
+  });
+
+  it("write the diff to disk only if the dimensions are the same", () => {
+    expect(baseDimensions.height).to.equal(actualDimensions.height);
+    expect(baseDimensions.width).to.equal(actualDimensions.width);
+    console.log("write diff task args", {
+      testName: "HomeRegression.spec.ts",
+      writePath: DIFF_FIXTURE_FOLDER_PATH,
+      fileName: "home-page-regression -- screenshots-the-entire-page.png",
+    });
+
+    cy.task("writeDiff", {
+      testName: "HomeRegression.spec.ts",
+      writePath: DIFF_FIXTURE_FOLDER_PATH,
+      fileName: "home-page-regression -- screenshots-the-entire-page.png",
+    }).then((resultOrNull) => {
+      console.log("write home page diff result", resultOrNull);
+    });
   });
 
   it("calculate the diff between base and actual", () => {
     const { width, height } = baselinePng;
-    const diff = new PNG({ width, height });
-    console.log("diff image", diff);
+    diff = new PNG({ width, height });
+    console.log("home page inital diff png", diff);
     const threshold = 0.1;
 
-    const matchNum: number = pixelmatch(
+    matchNum = Pixelmatch(
       baselinePng.data,
       actualPng.data,
       diff.data,
@@ -62,7 +106,10 @@ describe("regression", () => {
       height,
       { threshold }
     );
-
+    console.log("\x1b[32m", "match num value", matchNum, "\x1b[00m");
+    if (matchNum === 0) {
+      cy.task("deleteDiff", "HomeRegression.spec.ts");
+    }
     expect(matchNum).to.equal(0);
   });
 });

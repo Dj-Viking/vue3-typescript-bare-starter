@@ -40,7 +40,7 @@ module.exports = (on, config) => {
     },
 
     writeDiff: async function (args) {
-      console.log("args to pass to diff", args);
+      console.log("args to pass to write diff", args);
       const result = await writeDiff(args);
       console.log("result", result);
       return result;

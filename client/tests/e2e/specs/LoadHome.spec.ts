@@ -3,12 +3,11 @@ import {
   BASE_HOMELINK_VIEW_FIXTURE,
   LOCALHOST_URL,
   ACTUAL_HOMELINK_VIEW_FIXTURE,
-  DIFF_HOMELINK_FIXTURE_WRITEPATH_PARTIAL,
+  DIFF_FIXTURE_FOLDER_PATH,
 } from "../../constants";
 
 import { PNG, PNGWithMetadata } from "pngjs";
-import pixelmatch from "pixelmatch";
-// import pixelmatch from "pixelmatch";
+import Pixelmatch from "pixelmatch";
 
 let baselinePng: PNGWithMetadata;
 const baseDimensions = {
@@ -33,24 +32,24 @@ describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
   it("visit's home page", () => {
     cy.visit(LOCALHOST_URL);
   });
-  // it("checks the home link", () => {
-  //   cy.get("a.link").contains("Home").should("have.length", 1);
-  // });
-  // it("checks the login link", () => {
-  //   cy.get("a.link").contains("Login").should("have.length", 1);
-  // });
-  // it("checks the signup link", () => {
-  //   cy.get("a.link").contains("Signup").should("have.length", 1);
-  // });
-  // it("screenshots-the-home-view-window", () => {
-  //   cy.get("a.link").contains("Home").screenshot();
-  // });
-  it("screenshots-the-home-view-window", () => {
-    cy.get("html").screenshot({ capture: "viewport" });
+  it("checks the home link", () => {
+    cy.get("a.link").contains("Home").should("have.length", 1);
   });
+  it("checks the login link", () => {
+    cy.get("a.link").contains("Login").should("have.length", 1);
+  });
+  it("checks the signup link", () => {
+    cy.get("a.link").contains("Signup").should("have.length", 1);
+  });
+  it("screenshots-the-home-view-window", () => {
+    cy.get("a.link").contains("Home").screenshot({ capture: "viewport" });
+  });
+  // it("screenshots-the-home-view-window", () => {
+  //   cy.get("html").screenshot({ capture: "viewport" });
+  // });
 });
 
-describe("regression-test-home-link", () => {
+describe("unit-test-home-link", () => {
   it("get the baseline png of home link", () => {
     cy.fixture(
       /screenshots-the-home-view-window.png/g.test(BASE_HOMELINK_VIEW_FIXTURE)
@@ -69,11 +68,11 @@ describe("regression-test-home-link", () => {
       });
   });
 
-  it("get the actual baseline png of the home link", () => {
+  it("get the actual png of the home link", () => {
     cy.fixture(
       /screenshots-the-home-view-window.png/.test(ACTUAL_HOMELINK_VIEW_FIXTURE)
         ? ACTUAL_HOMELINK_VIEW_FIXTURE
-        : "not found"
+        : "actual png not found"
     )
       .then(Cypress.Blob.base64StringToBlob)
       .then(async (fileBlob: Blob) => {
@@ -90,24 +89,28 @@ describe("regression-test-home-link", () => {
     expect(baseDimensions.width).to.equal(actualDimensions.width);
     console.log("write diff task args", {
       testName: "LoadHome.spec.ts",
-      writePath: DIFF_HOMELINK_FIXTURE_WRITEPATH_PARTIAL,
+      writePath: DIFF_FIXTURE_FOLDER_PATH,
+      fileName:
+        "Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png",
     });
 
     cy.task("writeDiff", {
       testName: "LoadHome.spec.ts",
-      writePath: DIFF_HOMELINK_FIXTURE_WRITEPATH_PARTIAL,
+      writePath: DIFF_FIXTURE_FOLDER_PATH,
+      fileName:
+        "Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png",
     }).then((resultOrNull) => {
-      console.log("write diff result", resultOrNull);
+      console.log("home link write diff result", resultOrNull);
     });
   });
 
   it("calculate the diff between base and actual", () => {
     const { width, height } = baselinePng;
     diff = new PNG({ width, height });
-    console.log("diff image", diff);
+    console.log("home link initial diff image", diff);
     const threshold = 0.1;
 
-    matchNum = pixelmatch(
+    matchNum = Pixelmatch(
       baselinePng.data,
       actualPng.data,
       diff.data,
@@ -116,7 +119,7 @@ describe("regression-test-home-link", () => {
       { threshold }
     );
 
-    console.log("\x1b[33m", "match num value", matchNum, "\x1b[00m");
+    console.log("\x1b[32m", "match num value", matchNum, "\x1b[00m");
 
     if (matchNum === 0) {
       //run the delete diff task since the pictures match we dont need to see the diff image.
