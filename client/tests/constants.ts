@@ -24,8 +24,20 @@ export const ACTUAL_HOMELINK_VIEW_FIXTURE =
 /**
  * path to the actual home link screenshot fixture
  */
-export const DIFF_HOMELINK_FIXTURE_WRITEPATH =
-  "./tests/e2e/fixtures/screenshots/diff/LoadHome.spec.ts -- diff-the-home-view-link.png";
+export const DIFF_HOMELINK_FIXTURE_WRITEPATH_PARTIAL =
+  "./tests/e2e/fixtures/screenshots/diff";
+
+/**
+ * match num calculation path to the base png file
+ */
+export const PATH_TO_ACTUAL_FROM_TASK_FUNCTION =
+  "./tests/e2e/fixtures/screenshots/actuals/LoadHome.spec.ts/Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png";
+
+/**
+ * match num calculation path to the base png file
+ */
+export const PATH_TO_BASE_FROM_TASK_FUNCTION =
+  "./tests/e2e/fixtures/screenshots/base/LoadHome.spec.ts/Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png";
 
 /**
  * path to the actual home link screenshot fixture
