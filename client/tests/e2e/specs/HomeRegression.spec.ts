@@ -4,6 +4,7 @@ import {
   LOCALHOST_URL,
   DIFF_FIXTURE_FOLDER_PATH,
   ACTUALS_HOMEREGRESSIONSPEC_PATH,
+  HOME_SCREENSHOT_FILE_NAME,
 } from "tests/constants";
 import { PNG, PNGWithMetadata } from "pngjs";
 import Pixelmatch from "pixelmatch";
@@ -78,7 +79,7 @@ describe("compares base with actual", () => {
     console.log("write diff task args", {
       testName: "HomeRegression.spec.ts",
       writePath: DIFF_FIXTURE_FOLDER_PATH,
-      fileName: "home-page-regression -- screenshots-the-entire-page.png",
+      fileName: HOME_SCREENSHOT_FILE_NAME,
     });
 
     cy.task("writeDiff", {
@@ -93,7 +94,7 @@ describe("compares base with actual", () => {
   it("calculate the diff between base and actual", () => {
     const { width, height } = baselinePng;
     diff = new PNG({ width, height });
-    console.log("home page inital diff png", diff);
+    console.log("home page initial diff png", diff);
     const threshold = 0.1;
 
     matchNum = Pixelmatch(

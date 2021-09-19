@@ -48,13 +48,31 @@ export const PATH_TO_BASE_FROM_TASK_FUNCTION =
   "./tests/e2e/fixtures/screenshots/base/LoadHome.spec.ts/Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png";
 
 /**
- * path to the actual home link screenshot fixture
+ * path to the actual home page screenshot fixture
  */
 export const BASE_HOME_FULL_PAGE_FIXTURE =
   "/screenshots/base/HomeRegression.spec.ts/home-page-regression -- screenshots-the-entire-page";
 
 /**
- * path to the actual home link screenshot fixture
+ * path to the actual home page screenshot fixture
  */
 export const ACTUAL_HOME_FULL_PAGE_FIXTURE =
   "/screenshots/actuals/HomeRegression.spec.ts/home-page-regression -- screenshots-the-entire-page";
+
+/**
+ * path to the actual login page screenshot fixture
+ */
+export const BASE_LOGIN_FULL_PAGE_FIXTURE =
+  "/screenshots/base/LoginRegression.spec.ts/login-page-regression -- screenshots-the-login-page";
+
+/**
+ * path to the actual login page screenshot fixture
+ */
+export const ACTUAL_LOGIN_FULL_PAGE_FIXTURE =
+  "/screenshots/actuals/LoginRegression.spec.ts/login-page-regression -- screenshots-the-login-page";
+
+export const LOGIN_SCREENSHOT_FILE_NAME =
+  "login-page-regression -- screenshots-the-login-page.png";
+
+export const HOME_SCREENSHOT_FILE_NAME =
+  "home-page-regression -- screenshots-the-entire-page.png";

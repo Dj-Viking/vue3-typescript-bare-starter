@@ -28,6 +28,21 @@ const { writeDiff } = require("../../utils/writeDiff");
 const { deleteDiff } = require("../../utils/deleteDiff");
 
 module.exports = (on, config) => {
+  on("before:browser:launch", (browser = { name: "" }, launchOptions) => {
+    if (browser.name === "chrome") {
+      launchOptions.args.push("--cast-initial-screen-width=1280");
+      launchOptions.args.push("--cast-initial-screen-height=720");
+
+      return launchOptions;
+    }
+
+    if (browser.name === "electron") {
+      launchOptions.args.width = 1280;
+      launchOptions.args.height = 720;
+
+      return launchOptions;
+    }
+  });
   // on('file:preprocessor', webpack({
   //  webpackOptions: require('@vue/cli-service/webpack.config'),
   //  watchOptions: {}
