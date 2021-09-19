@@ -16,6 +16,9 @@ export const ACTUALS_LOADHOMESPEC_PATH =
 export const ACTUALS_HOMEREGRESSIONSPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/HomeRegression.spec.ts";
 
+export const ACTUALS_LOGINREGRESSIONSPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/LoginRegression.spec.ts";
+
 /**
  * path the the base home link screenshot fixture
  */

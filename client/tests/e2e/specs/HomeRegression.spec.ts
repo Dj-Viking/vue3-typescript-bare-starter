@@ -1,4 +1,3 @@
-// import pixelmatch from "pixelmatch";
 import {
   ACTUAL_HOME_FULL_PAGE_FIXTURE,
   BASE_HOME_FULL_PAGE_FIXTURE,
@@ -8,7 +7,6 @@ import {
 } from "tests/constants";
 import { PNG, PNGWithMetadata } from "pngjs";
 import Pixelmatch from "pixelmatch";
-// import pixelmatch from "pixelmatch";
 
 let baselinePng: PNGWithMetadata;
 const baseDimensions = {
