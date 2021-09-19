@@ -10,6 +10,11 @@ export const LOCALHOST_URL = "http://localhost:8080/";
 export const ACTUALS_LOADHOMESPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/LoadHome.spec.ts";
 /**
+ * screenshots base directory
+ */
+export const SCREENSHOTS_BASE_PATH =
+  "../client/tests/e2e/fixtures/screenshots/base";
+/**
  * path to the actuals screenshots folder
  * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
  */

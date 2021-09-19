@@ -5,6 +5,18 @@
 npm install
 ```
 
+## Shell Script info
+for the accepting of changes
+pass in an environment variable before typing the npm script
+```sh
+SPECNAME='somespecname.spec.ts'
+```
+
+* Example
+```sh
+SPECNAME='HomeRegression.spec.ts' npm run acceptChanges
+```
+
 ### Compiles and hot-reloads for development
 * I have added a build task in the .vscode directory which does a vue template type checking script
 it will also run when `npm run serve` is executed in the shell before vue-cli-service starts the dev server. 
