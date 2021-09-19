@@ -15,7 +15,16 @@ export const ACTUALS_LOADHOMESPEC_PATH =
  */
 export const ACTUALS_HOMEREGRESSIONSPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/HomeRegression.spec.ts";
-
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
+export const ACTUALS_SIGNUPREGRESSIONSPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/SignupRegression.spec.ts";
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
 export const ACTUALS_LOGINREGRESSIONSPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/LoginRegression.spec.ts";
 
@@ -68,11 +77,33 @@ export const BASE_LOGIN_FULL_PAGE_FIXTURE =
 /**
  * path to the actual login page screenshot fixture
  */
+export const BASE_SIGNUP_FULL_PAGE_FIXTURE =
+  "/screenshots/base/SignupRegression.spec.ts/signup-page-regression -- screenshots-the-signup-page";
+/**
+ * path to the actual login page screenshot fixture
+ */
+export const ACTUAL_SIGNUP_FULL_PAGE_FIXTURE =
+  "/screenshots/actuals/SignupRegression.spec.ts/signup-page-regression -- screenshots-the-signup-page";
+/**
+ * path to the actual login page screenshot fixture
+ */
 export const ACTUAL_LOGIN_FULL_PAGE_FIXTURE =
   "/screenshots/actuals/LoginRegression.spec.ts/login-page-regression -- screenshots-the-login-page";
 
+/**
+ * the actual file name including the extension
+ */
 export const LOGIN_SCREENSHOT_FILE_NAME =
   "login-page-regression -- screenshots-the-login-page.png";
 
+/**
+ * the actual file name including the extension
+ */
 export const HOME_SCREENSHOT_FILE_NAME =
   "home-page-regression -- screenshots-the-entire-page.png";
+
+/**
+ * the actual file name including the extension
+ */
+export const SIGNUP_SCREENSHOT_FILE_NAME =
+  "signup-page-regression -- screenshots-the-signup-page.png";
