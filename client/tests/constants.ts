@@ -1,6 +1,17 @@
-let EMAIL: string, PASSWORD: string;
-
+let EMAIL: string,
+  PASSWORD: string,
+  USERNAME: string,
+  REGISTER_EMAIL: string,
+  REGISTER_PASSWORD: string,
+  REGISTER_USERNAME: string;
 if (typeof Cypress !== "undefined") {
+  /**
+   * CYPRESS ENV EMAIL
+   */
+  USERNAME =
+    Cypress && Cypress.env("USERNAME")
+      ? Cypress.env("USERNAME")
+      : "please define USERNAME in cypress.env.json";
   /**
    * CYPRESS ENV EMAIL
    */
@@ -15,8 +26,43 @@ if (typeof Cypress !== "undefined") {
     Cypress && Cypress.env("PASSWORD")
       ? Cypress.env("PASSWORD")
       : "please define PASSWORD in cypress.env.json";
+  /**
+   * CYPRESS ENV REGISTER_PASSWORD
+   */
+  REGISTER_PASSWORD =
+    Cypress && Cypress.env("REGISTER_PASSWORD")
+      ? Cypress.env("REGISTER_PASSWORD")
+      : "please define REGISTER_PASSWORD in cypress.env.json";
+  /**
+   * CYPRESS ENV REGISTER_EMAIL
+   */
+  REGISTER_EMAIL =
+    Cypress && Cypress.env("REGISTER_EMAIL")
+      ? Cypress.env("REGISTER_EMAIL")
+      : "please define REGISTER_EMAIL in cypress.env.json";
+  /**
+   * CYPRESS ENV REGISTER_EMAIL
+   */
+  REGISTER_EMAIL =
+    Cypress && Cypress.env("REGISTER_EMAIL")
+      ? Cypress.env("REGISTER_EMAIL")
+      : "please define REGISTER_EMAIL in cypress.env.json";
+  /**
+   * CYPRESS ENV REGISTER_EMAIL
+   */
+  REGISTER_USERNAME =
+    Cypress && Cypress.env("REGISTER_USERNAME")
+      ? Cypress.env("REGISTER_USERNAME")
+      : "please define REGISTER_USERNAME in cypress.env.json";
 }
-export { EMAIL, PASSWORD };
+export {
+  USERNAME,
+  EMAIL,
+  PASSWORD,
+  REGISTER_EMAIL,
+  REGISTER_PASSWORD,
+  REGISTER_USERNAME,
+};
 
 /**
  * localhost domain for the vue app

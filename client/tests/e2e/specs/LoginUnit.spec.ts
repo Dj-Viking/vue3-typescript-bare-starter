@@ -21,7 +21,7 @@ describe("tests login with incorrect credentials, has error message", () => {
     cy.get("button").contains("Login").should("have.length", 1).click();
   });
   it("checks that error message appears", () => {
-    cy.get("p")
+    cy.get("p.has-text-danger")
       .contains("Error: Incorrect Credentials")
       .should("have.length", 1);
   });
@@ -43,7 +43,7 @@ describe("tests the login with correct credentials works, has success message, a
   });
   it("checks that success message appears ", () => {
     cy.wait(100);
-    cy.get("p")
+    cy.get("p.has-text-success")
       .contains("Success! Teleporting to Home Page!")
       .should("have.length", 1);
   });
