@@ -34,7 +34,7 @@ describe("home-page-regression", () => {
     cy.visit(LOCALHOST_URL);
   });
   it("screenshots-the-entire-page", () => {
-    cy.get("html").screenshot({ capture: "viewport" });
+    cy.get("html").screenshot({ capture: "runner" });
   });
 });
 

@@ -1,6 +1,6 @@
 {
   "pluginsFile": "tests/e2e/plugins/index.js", 
   "screenshotsFolder": "tests/e2e/fixtures/screenshots/actuals",
-  "viewportHeight": 720,
-  "viewportWidth": 1280
+  "viewportHeight": 1200,
+  "viewportWidth": 1400
 }
