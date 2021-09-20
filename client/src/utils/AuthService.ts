@@ -4,10 +4,11 @@ class AuthService {
     return new Promise((resolve) => {
       // Retrieves the user token from localStorage
       const token = localStorage.getItem("id_token");
+      if (!token) resolve(null);
       //will be encrypted lets decrypt it
       decrypted = Buffer.from(token as string, "base64").toString();
       if (decrypted) resolve(decrypted);
-      else return resolve(null);
+      else resolve(null);
     });
   }
 
