@@ -12,15 +12,8 @@ import {
   InMemoryCache,
 } from "@apollo/client/core";
 import { DefaultApolloClient } from "@vue/apollo-composable";
-
-import "bulma";
-
 import auth from "./utils/AuthService";
-
-let token: string | null = "";
-(async () => {
-  token = await auth.getToken();
-})();
+import "bulma";
 
 //init apollo cache
 const cache = new InMemoryCache();
@@ -30,7 +23,7 @@ const authMiddleware = new ApolloLink((operation, next) => {
   operation.setContext(({ headers = {} }) => ({
     headers: {
       ...headers,
-      authorization: `Bearer ${token ? token : null}`,
+      authorization: `Bearer ${auth.getToken() || null}`,
     },
   }));
   return next(operation);
@@ -44,7 +37,7 @@ const httpLink = createHttpLink({
       ? "http://localhost:4000/graphql"
       : "/graphql",
   headers: {
-    authorization: `Bearer ${token ? token : null}`,
+    authorization: `Bearer ${auth.getToken() || null}`,
   },
   credentials: "include",
 });

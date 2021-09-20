@@ -1,3 +1,23 @@
+let EMAIL: string, PASSWORD: string;
+
+if (typeof Cypress !== "undefined") {
+  /**
+   * CYPRESS ENV EMAIL
+   */
+  EMAIL =
+    Cypress && Cypress.env("EMAIL")
+      ? Cypress.env("EMAIL")
+      : "please define EMAIL in cypress.env.json";
+  /**
+   * CYPRESS ENV PASSWORD
+   */
+  PASSWORD =
+    Cypress && Cypress.env("PASSWORD")
+      ? Cypress.env("PASSWORD")
+      : "please define PASSWORD in cypress.env.json";
+}
+export { EMAIL, PASSWORD };
+
 /**
  * localhost domain for the vue app
  */

@@ -28,6 +28,8 @@ export function authMiddleware(
   try {
     // allows token to be sent via req.body, req.query, or headers
     let token = context.req.headers.authorization;
+    // console.log("token sent in headers", Date.now(), token);
+    
     
     // console.log("got token from middleware??", token);
     

@@ -20,6 +20,7 @@
       <input
         class="input mt-4"
         type="text"
+        name="email"
         v-model="email"
         placeholder="example@mail.com"
         required
@@ -28,6 +29,7 @@
       <input
         class="input mt-4"
         type="password"
+        name="password"
         v-model="password"
         placeholder="*****************"
         required

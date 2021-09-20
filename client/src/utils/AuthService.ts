@@ -1,15 +1,14 @@
 class AuthService {
-  public async getToken(): Promise<string | null> {
+  public getToken(): string | null {
     let decrypted = "";
-    return new Promise((resolve) => {
-      // Retrieves the user token from localStorage
-      const token = localStorage.getItem("id_token");
-      if (!token) resolve(null);
-      //will be encrypted lets decrypt it
-      decrypted = Buffer.from(token as string, "base64").toString();
-      if (decrypted) resolve(decrypted);
-      else resolve(null);
-    });
+
+    // Retrieves the user token from localStorage
+    const token = localStorage.getItem("id_token");
+    if (!token) return null;
+    //will be encrypted lets decrypt it
+    decrypted = Buffer.from(token as string, "base64").toString();
+    if (decrypted) return decrypted;
+    else return null;
   }
 
   public setToken(token: string): void {
