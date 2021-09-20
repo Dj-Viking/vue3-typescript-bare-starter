@@ -10,8 +10,8 @@ import {
 let unique_username = "";
 let unique_email = "";
 
-describe("login-unit-test, tests login functionality", () => {
-  it("visits the site login page", () => {
+describe("signup-unit-test, tests signup functionality", () => {
+  it("visits the site signup page", () => {
     cy.visit(LOCALHOST_URL);
   });
   it("clicks signup router link to navigate to the signup page", () => {
