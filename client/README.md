@@ -6,7 +6,8 @@ npm install
 ```
 
 ## Shell Script info
-for the accepting of changes
+
+* for the accepting of regression changes
 pass in an environment variable before typing the npm script
 ```sh
 SPECNAME='somespecname.spec.ts'
@@ -16,6 +17,15 @@ SPECNAME='somespecname.spec.ts'
 ```sh
 SPECNAME='HomeRegression.spec.ts' npm run acceptChanges
 ```
+
+* When creating a new regression test for a particular view, one must create the directories to place the base, actual, and diff screenshots 
+* here is a script that will create those directories by passing the name of the test file as the first argument after the script
+
+```sh
+npm run regressionDirs:create 'yournewspecname.spec.ts'
+```
+
+---
 
 ### Compiles and hot-reloads for development
 * I have added a build task in the .vscode directory which does a vue template type checking script
@@ -29,21 +39,6 @@ npm run serve
 ### Compiles and minifies for production
 ```sh
 npm run build
-```
-
-### Run your unit tests
-```sh
-npm run test:unit
-```
-
-### Run your end-to-end tests
-```sh
-npm run test:e2e
-```
-
-### Lints and fixes files
-```sh
-npm run lint
 ```
 
 ### Customize configuration
