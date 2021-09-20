@@ -3,6 +3,8 @@
 # accept the changes of an actual screenshot and copy it from the actuals folder
 # into the base folder of the given test name
 
+# make sure the directory we are moving the file from only has one file in it
+
 # TESTNAME=$1
 echo 'spec we are accepting changes for: '
 echo $SPECNAME

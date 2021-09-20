@@ -4,6 +4,7 @@ import { ColorLog } from "../../../server/src/__tests__/utils/helpers";
 const logger = ColorLog;
 
 export function deleteActuals(path: string): void {
+  console.log("\x1b[32m", "debugging headless path", path, "\x1b[00m");
   try {
     const files = fs.readdirSync(path);
     if (!files.length) {
@@ -11,7 +12,12 @@ export function deleteActuals(path: string): void {
     }
 
     if (files.length > 0) {
-      console.log("files found to delete", files);
+      console.log(
+        "\x1b[33m",
+        "files found to delete BE CAREFUL MAKE SURE YOU KNOW EXACTLY WHAT PATH YOU ARE USING!! COMMENT OUT THE UNLINK IF YOU DONT KNOW YET",
+        files,
+        "\x1b[00m"
+      );
       for (let i = 0; i < files.length; i++) {
         fs.unlink(`${path}/${files[i]}`, (err) => {
           if (err) console.error(err);
@@ -21,7 +27,7 @@ export function deleteActuals(path: string): void {
     //wait for the first read dir to finish
     setTimeout(() => {
       const shouldBeEmpty = fs.readdirSync(path);
-      console.log("should be empty", shouldBeEmpty);
+      console.log("\x1b[33m", "should be empty", shouldBeEmpty, "\x1b[00m");
 
       if (!shouldBeEmpty.length) {
         new logger("green", "successfully deleted the files!").genLog();

@@ -5,6 +5,7 @@ import {
   DIFF_FIXTURE_FOLDER_PATH,
   ACTUALS_LOGINREGRESSIONSPEC_PATH,
   LOGIN_SCREENSHOT_FILE_NAME,
+  ACTUALS_LOGINREGRESSIONSPEC_PATH_HEADLESS,
 } from "tests/constants";
 import { PNG, PNGWithMetadata } from "pngjs";
 import Pixelmatch from "pixelmatch";
@@ -24,14 +25,26 @@ let matchNum;
 
 describe("login-page-regression", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    cy.task("deleteActuals", ACTUALS_LOGINREGRESSIONSPEC_PATH).then(
-      (dirOrNull) => {
-        console.log(
-          "delete actuals response dir or null for login regression test",
-          dirOrNull
-        );
-      }
-    );
+    if (Cypress.browser.isHeadless) {
+      cy.task("deleteActuals", ACTUALS_LOGINREGRESSIONSPEC_PATH_HEADLESS).then(
+        (dirOrNull) => {
+          console.log(
+            "delete actuals response dir or null for login regression test",
+            dirOrNull
+          );
+        }
+      );
+    }
+    if (Cypress.browser.isHeaded) {
+      cy.task("deleteActuals", ACTUALS_LOGINREGRESSIONSPEC_PATH).then(
+        (dirOrNull) => {
+          console.log(
+            "delete actuals response dir or null for login regression test",
+            dirOrNull
+          );
+        }
+      );
+    }
   });
   it("visits the site home page", () => {
     cy.visit(LOCALHOST_URL);

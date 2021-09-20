@@ -4,6 +4,7 @@ import {
   ACTUAL_SIGNUP_FULL_PAGE_FIXTURE,
   DIFF_FIXTURE_FOLDER_PATH,
   ACTUALS_SIGNUPREGRESSIONSPEC_PATH,
+  ACTUALS_SIGNUPREGRESSIONSPEC_PATH_HEADLESS,
   SIGNUP_SCREENSHOT_FILE_NAME,
 } from "tests/constants";
 import { PNG, PNGWithMetadata } from "pngjs";
@@ -24,14 +25,26 @@ let matchNum;
 
 describe("signup-page-regression", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    cy.task("deleteActuals", ACTUALS_SIGNUPREGRESSIONSPEC_PATH).then(
-      (dirOrNull) => {
-        console.log(
-          "delete actuals response dir or null for signup regression test",
-          dirOrNull
-        );
-      }
-    );
+    if (Cypress.browser.isHeadless) {
+      cy.task("deleteActuals", ACTUALS_SIGNUPREGRESSIONSPEC_PATH_HEADLESS).then(
+        (dirOrNull) => {
+          console.log(
+            "delete actuals response dir or null for signup regression test",
+            dirOrNull
+          );
+        }
+      );
+    }
+    if (Cypress.browser.isHeaded) {
+      cy.task("deleteActuals", ACTUALS_SIGNUPREGRESSIONSPEC_PATH).then(
+        (dirOrNull) => {
+          console.log(
+            "delete actuals response dir or null for signup regression test",
+            dirOrNull
+          );
+        }
+      );
+    }
   });
   it("visits the site home page", () => {
     cy.visit(LOCALHOST_URL);

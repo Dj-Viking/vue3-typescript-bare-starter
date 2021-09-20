@@ -5,6 +5,8 @@ import {
   DIFF_FIXTURE_FOLDER_PATH,
   ACTUALS_HOMEREGRESSIONSPEC_PATH,
   HOME_SCREENSHOT_FILE_NAME,
+  ACTUALS_HOMEREGRESSIONSPEC_PATH_HEADLESS,
+  // ACTUALS_LOADHOMESPEC_PATH_HEADLESS,
 } from "tests/constants";
 import { PNG, PNGWithMetadata } from "pngjs";
 import Pixelmatch from "pixelmatch";
@@ -24,11 +26,21 @@ let matchNum = 123;
 
 describe("home-page-regression", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    cy.task("deleteActuals", ACTUALS_HOMEREGRESSIONSPEC_PATH).then(
-      (dirOrNull) => {
-        console.log("delete actuals response dir or null", dirOrNull);
-      }
-    );
+    console.log("checking cypress browser running", Cypress.browser);
+    if (Cypress.browser.isHeadless) {
+      cy.task("deleteActuals", ACTUALS_HOMEREGRESSIONSPEC_PATH_HEADLESS).then(
+        (dirOrNull) => {
+          console.log("delete actuals response dir or null", dirOrNull);
+        }
+      );
+    }
+    if (Cypress.browser.isHeaded) {
+      cy.task("deleteActuals", ACTUALS_HOMEREGRESSIONSPEC_PATH).then(
+        (dirOrNull) => {
+          console.log("delete actuals response dir or null", dirOrNull);
+        }
+      );
+    }
   });
   it("visits the home page", () => {
     cy.visit(LOCALHOST_URL);

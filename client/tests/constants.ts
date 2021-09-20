@@ -4,11 +4,21 @@
 export const LOCALHOST_URL = "http://localhost:8080/";
 
 /**
+ * path to actuals when running headless cypress
+ */
+export const ACTUALS_HOMEREGRESSIONSPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/HomeRegression.spec.ts";
+/**
  * path to the actuals screenshots folder
  * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
  */
 export const ACTUALS_LOADHOMESPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/LoadHome.spec.ts";
+/**
+ * path to actuals when running headless electron cypress
+ */
+export const ACTUALS_LOADHOMESPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/LoadHome.spec.ts";
 /**
  * screenshots base directory
  */
@@ -21,6 +31,11 @@ export const SCREENSHOTS_BASE_PATH =
 export const ACTUALS_HOMEREGRESSIONSPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/HomeRegression.spec.ts";
 /**
+ * path to actuals when running headless electron cypress
+ */
+export const ACTUALS_SIGNUPREGRESSIONSPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/SignupRegression.spec.ts";
+/**
  * path to the actuals screenshots folder
  * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
  */
@@ -32,6 +47,11 @@ export const ACTUALS_SIGNUPREGRESSIONSPEC_PATH =
  */
 export const ACTUALS_LOGINREGRESSIONSPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/LoginRegression.spec.ts";
+/**
+ * path to the spec folder while running headless electron cypress
+ */
+export const ACTUALS_LOGINREGRESSIONSPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/LoginRegression.spec.ts";
 
 /**
  * path the the base home link screenshot fixture
