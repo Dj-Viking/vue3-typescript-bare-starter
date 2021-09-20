@@ -25,6 +25,11 @@ export const ACTUALS_LOADHOMESPEC_PATH_HEADLESS =
 export const SCREENSHOTS_BASE_PATH =
   "../client/tests/e2e/fixtures/screenshots/base";
 /**
+ * screenshots base directory
+ */
+export const SCREENSHOTS_ACTUALS_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals";
+/**
  * path to the actuals screenshots folder
  * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
  */
