@@ -19,7 +19,7 @@
         <pre style="color: black">
           {{ inputText }}
         </pre>
-        <button type="submit">Add todo</button>
+        <button class="button is-info" type="submit">Add todo</button>
       </form>
     </div>
   </div>

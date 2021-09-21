@@ -1,3 +1,76 @@
+import {
+  TextColor,
+  BackgroundColor,
+  LightBackGroundName,
+  LightTextName,
+} from "./types";
+
+let EMAIL: string,
+  PASSWORD: string,
+  USERNAME: string,
+  REGISTER_EMAIL: string,
+  REGISTER_PASSWORD: string,
+  REGISTER_USERNAME: string;
+if (typeof Cypress !== "undefined") {
+  /**
+   * CYPRESS ENV EMAIL
+   */
+  USERNAME =
+    Cypress && Cypress.env("USERNAME")
+      ? Cypress.env("USERNAME")
+      : "please define USERNAME in cypress.env.json";
+  /**
+   * CYPRESS ENV EMAIL
+   */
+  EMAIL =
+    Cypress && Cypress.env("EMAIL")
+      ? Cypress.env("EMAIL")
+      : "please define EMAIL in cypress.env.json";
+  /**
+   * CYPRESS ENV PASSWORD
+   */
+  PASSWORD =
+    Cypress && Cypress.env("PASSWORD")
+      ? Cypress.env("PASSWORD")
+      : "please define PASSWORD in cypress.env.json";
+  /**
+   * CYPRESS ENV REGISTER_PASSWORD
+   */
+  REGISTER_PASSWORD =
+    Cypress && Cypress.env("REGISTER_PASSWORD")
+      ? Cypress.env("REGISTER_PASSWORD")
+      : "please define REGISTER_PASSWORD in cypress.env.json";
+  /**
+   * CYPRESS ENV REGISTER_EMAIL
+   */
+  REGISTER_EMAIL =
+    Cypress && Cypress.env("REGISTER_EMAIL")
+      ? Cypress.env("REGISTER_EMAIL")
+      : "please define REGISTER_EMAIL in cypress.env.json";
+  /**
+   * CYPRESS ENV REGISTER_EMAIL
+   */
+  REGISTER_EMAIL =
+    Cypress && Cypress.env("REGISTER_EMAIL")
+      ? Cypress.env("REGISTER_EMAIL")
+      : "please define REGISTER_EMAIL in cypress.env.json";
+  /**
+   * CYPRESS ENV REGISTER_EMAIL
+   */
+  REGISTER_USERNAME =
+    Cypress && Cypress.env("REGISTER_USERNAME")
+      ? Cypress.env("REGISTER_USERNAME")
+      : "please define REGISTER_USERNAME in cypress.env.json";
+}
+export {
+  USERNAME,
+  EMAIL,
+  PASSWORD,
+  REGISTER_EMAIL,
+  REGISTER_PASSWORD,
+  REGISTER_USERNAME,
+};
+
 /**
  * localhost domain for the vue app
  */
@@ -24,6 +97,11 @@ export const ACTUALS_LOADHOMESPEC_PATH_HEADLESS =
  */
 export const SCREENSHOTS_BASE_PATH =
   "../client/tests/e2e/fixtures/screenshots/base";
+/**
+ * screenshots base directory
+ */
+export const SCREENSHOTS_ACTUALS_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals";
 /**
  * path to the actuals screenshots folder
  * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
@@ -132,3 +210,40 @@ export const HOME_SCREENSHOT_FILE_NAME =
  */
 export const SIGNUP_SCREENSHOT_FILE_NAME =
   "signup-page-regression -- screenshots-the-signup-page.png";
+export const textColors: Array<TextColor> = [
+  "danger",
+  "success",
+  "warning",
+  "info",
+  "link",
+  "primary",
+];
+
+export const backgroundColors: Array<BackgroundColor> = [
+  "danger-back",
+  "success-back",
+  "warning-back",
+  "info-back",
+  "link-back",
+  "primary-back",
+  "white-back",
+];
+
+export const lightBackgroundNames: Array<LightBackGroundName> = [
+  "light-danger-text",
+  "light-success-text",
+  "light-warning-text",
+  "light-info-text",
+  "light-link-text",
+  "light-primary-text",
+  "white-text",
+];
+
+export const lightTextNames: Array<LightTextName> = [
+  "light-danger-back",
+  "light-success-back",
+  "light-warning-back",
+  "light-info-back",
+  "light-link-back",
+  "light-primary-back",
+];

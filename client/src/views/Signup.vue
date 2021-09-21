@@ -21,6 +21,7 @@
       <input
         class="mt-4 input"
         type="text"
+        name="username"
         v-model="username"
         placeholder="Username"
       />
@@ -28,6 +29,7 @@
       <input
         class="mt-4 input"
         type="text"
+        name="email"
         v-model="email"
         placeholder="example@mail.com"
         required
@@ -36,6 +38,7 @@
       <input
         class="mt-4 input"
         type="password"
+        name="password"
         v-model="password"
         placeholder="***************"
         required

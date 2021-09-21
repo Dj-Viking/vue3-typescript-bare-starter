@@ -39,7 +39,7 @@ const currentConstantsFile: string | undefined =
 
     if (missingArgs.length > 0) {
       return console.log(
-        `${ANSI_ESCAPES.red}`,
+        `${ANSI_ESCAPES.danger}`,
         `Missing arguments. This script requires arguments in this order: 
           ${missingArgs} 
           separated by spaces
@@ -51,7 +51,7 @@ const currentConstantsFile: string | undefined =
     //generate and write new file
     if (!currentfilePath)
       return console.log(
-        ANSI_ESCAPES.red,
+        ANSI_ESCAPES.danger,
         "WARNING file path invalid or not found for current constants.ts file",
         ANSI_ESCAPES.reset
       );
@@ -62,7 +62,7 @@ const currentConstantsFile: string | undefined =
     );
     if (!delRes)
       console.log(
-        ANSI_ESCAPES.red,
+        ANSI_ESCAPES.danger,
         `delete returned a falsey value ${delRes}`,
         ANSI_ESCAPES.reset
       );
@@ -75,13 +75,13 @@ const currentConstantsFile: string | undefined =
     console.log("what is write Res", writeRes);
     if (!writeRes) {
       console.log(
-        ANSI_ESCAPES.red,
+        ANSI_ESCAPES.danger,
         `write res returned falsey value ${writeRes}`,
         ANSI_ESCAPES.reset
       );
     }
     console.log(
-      `${ANSI_ESCAPES.green}`, //yellow text ansi escape start
+      `${ANSI_ESCAPES.success}`, //yellow text ansi escape start
       `
               Created a new constant with these parameters!
               constant: (${varName}) 
@@ -93,7 +93,7 @@ const currentConstantsFile: string | undefined =
     );
   } catch (error) {
     console.log(
-      `${ANSI_ESCAPES.red}`,
+      `${ANSI_ESCAPES.danger}`,
       "there was a problem with this script" + error,
       `${ANSI_ESCAPES.reset}`
     );

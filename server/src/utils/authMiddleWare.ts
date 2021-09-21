@@ -28,6 +28,9 @@ export function authMiddleware(
   try {
     // allows token to be sent via req.body, req.query, or headers
     let token = context.req.headers.authorization;
+    console.log("token sent in headers", Date.now(), token);
+    
+    
     
     // console.log("got token from middleware??", token);
     
@@ -39,7 +42,7 @@ export function authMiddleware(
       token = token?.split(' ')?.pop()?.trim() as string;
     }
     
-    // console.log(ANSI_ESCAPES.yellow, `token recieved ${token}`, ANSI_ESCAPES.reset);
+    // console.log(ANSI_ESCAPES.warning, `token recieved ${token}`, ANSI_ESCAPES.reset);
     if (!token) {
       context.req.user = null;
       return context;
@@ -47,11 +50,13 @@ export function authMiddleware(
 
     verifyAsync(token).then((decoded) => {
       context.req.user = <JwtData>decoded;
+      console.log("context user requesting information", context.req.user);
+      
       //this error will throw in the console....instead of the catch block of the authmiddleware
     }).catch((err: Error) => {
       //cant use logger here because i need the whole stack in the error logs
       console.error(
-        `${ANSI_ESCAPES.red}`, 
+        `${ANSI_ESCAPES.danger}`, 
         `ERROR in verifying the token async function ${err.stack}`, 
         `${ANSI_ESCAPES.reset}`
       );

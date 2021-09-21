@@ -57,14 +57,14 @@ export function deleteOldFile(
     console.log("unlink error value", error);
     if (err) {
       console.log(
-        `${ANSI_ESCAPES.red}`,
+        `${ANSI_ESCAPES.danger}`,
         "there was a problem deleting the file" + err,
         `${ANSI_ESCAPES.reset}`
       );
       return false;
     } else {
       console.log(
-        `${ANSI_ESCAPES.blue}`,
+        `${ANSI_ESCAPES.info}`,
         "deleted the old file",
         `${ANSI_ESCAPES.reset}`
       );
@@ -86,7 +86,7 @@ export function writeNewFile(
 
   if (!currentConstantsFile)
     return console.log(
-      `${ANSI_ESCAPES.red}`,
+      `${ANSI_ESCAPES.danger}`,
       "WARNING: the current constants file was not found with fs module or was empty",
       `${ANSI_ESCAPES.reset}`
     );
@@ -99,14 +99,14 @@ export function writeNewFile(
 
       if (err) {
         console.log(
-          `${ANSI_ESCAPES.red}`,
+          `${ANSI_ESCAPES.danger}`,
           "there was a problem writing the file" + err,
           `${ANSI_ESCAPES.reset}`
         );
         return false;
       } else {
         console.log(
-          `${ANSI_ESCAPES.yellow}`,
+          `${ANSI_ESCAPES.warning}`,
           `file written successfully to the path ${constantsFilePath}`,
           `${ANSI_ESCAPES.reset}`
         );
@@ -168,7 +168,7 @@ export function createMissingArgsMessage(
 ): void {
   if (args.fileName) {
     console.log(
-      `${ANSI_ESCAPES.red}`,
+      `${ANSI_ESCAPES.danger}`,
       `
       Missing arguments. 
       This script requires a file name input as the first argument ${args.fileName},
@@ -178,7 +178,7 @@ export function createMissingArgsMessage(
   }
   if (args.jsonMainProp) {
     console.log(
-      `${ANSI_ESCAPES.red}`,
+      `${ANSI_ESCAPES.danger}`,
       `
       Missing arguments. 
       This script requires a json main property input to name the property 
@@ -189,7 +189,7 @@ export function createMissingArgsMessage(
   }
   if (args.restOfArgs) {
     console.log(
-      `${ANSI_ESCAPES.red}`,
+      `${ANSI_ESCAPES.danger}`,
       `
       Missing arguments for either keys or values. ${
         keyValObj.obj === {} ? "key value store was empty {}" : ""
@@ -220,7 +220,7 @@ export function writeFixtureJson(
     if (!jsonRows)
       (() => {
         console.log(
-          `${ANSI_ESCAPES.red}`,
+          `${ANSI_ESCAPES.danger}`,
           `missing json rows!`,
           `${ANSI_ESCAPES.reset}`
         );

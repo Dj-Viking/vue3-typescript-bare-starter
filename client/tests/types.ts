@@ -10,11 +10,16 @@ export interface ConstantCliArgs extends Object {
  * console.log(`${red || "\x1b[31m"}`, "red text in the log", `${reset || "\x1b[00m"}`)
  */
 export enum ANSI_ESCAPES {
-  red = "\x1b[31m",
-  green = "\x1b[32m",
-  blue = "\x1b[36m",
-  yellow = "\x1b[33m",
-  purple = "\x1b[35m",
+  danger = "\x1b[31m",
+  success = "\x1b[32m",
+  info = "\x1b[36m",
+  warning = "\x1b[33m",
+  link = "\x1b[35m",
+  danger_back = "\x1b[41m",
+  success_back = "\x1b[42m",
+  warning_back = "\x1b[43m",
+  info_back = "\x1b[44m",
+  link_back = "\x1b[45m",
   reset = "\x1b[00m",
 }
 
@@ -51,7 +56,7 @@ export class KeyValueMappedObjClass extends Object {
     // if index is even then it is the key
     let currentKey: string | undefined = undefined;
     console.log(
-      `${ANSI_ESCAPES.red}`,
+      `${ANSI_ESCAPES.danger}`,
       `making ts compiler happy....current key is initialized as ${typeof currentKey}`,
       `${ANSI_ESCAPES.reset}`
     );
@@ -135,3 +140,38 @@ export class PreJsonObjClass {
     });
   }
 }
+export type LightTextName =
+  | ""
+  | "light-danger-back"
+  | "light-success-back"
+  | "light-warning-back"
+  | "light-info-back"
+  | "light-link-back"
+  | "light-primary-back";
+export type TextColor =
+  | "danger"
+  | "success"
+  | "warning"
+  | "info"
+  | "link"
+  | "primary"
+  | "";
+
+export type BackgroundColor =
+  | ""
+  | "danger-back"
+  | "success-back"
+  | "warning-back"
+  | "info-back"
+  | "link-back"
+  | "primary-back"
+  | "white-back";
+export type LightBackGroundName =
+  | ""
+  | "light-danger-text"
+  | "light-success-text"
+  | "light-warning-text"
+  | "light-info-text"
+  | "light-link-text"
+  | "light-primary-text"
+  | "white-text";
