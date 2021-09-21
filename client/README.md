@@ -7,6 +7,8 @@ npm install
 
 ## Shell Script info
 
+* added a style names console output for bulma for quick viewing in the console of classNames and showing console ascii character options
+
 * To run any tests, the front end application MUST be running on localhost:8080
 
 * for the accepting of regression changes

@@ -1,3 +1,10 @@
+import {
+  TextColor,
+  BackgroundColor,
+  LightBackGroundName,
+  LightTextName,
+} from "./types";
+
 let EMAIL: string,
   PASSWORD: string,
   USERNAME: string,
@@ -203,3 +210,40 @@ export const HOME_SCREENSHOT_FILE_NAME =
  */
 export const SIGNUP_SCREENSHOT_FILE_NAME =
   "signup-page-regression -- screenshots-the-signup-page.png";
+export const textColors: Array<TextColor> = [
+  "danger",
+  "success",
+  "warning",
+  "info",
+  "link",
+  "primary",
+];
+
+export const backgroundColors: Array<BackgroundColor> = [
+  "danger-back",
+  "success-back",
+  "warning-back",
+  "info-back",
+  "link-back",
+  "primary-back",
+  "white-back",
+];
+
+export const lightBackgroundNames: Array<LightBackGroundName> = [
+  "light-danger-text",
+  "light-success-text",
+  "light-warning-text",
+  "light-info-text",
+  "light-link-text",
+  "light-primary-text",
+  "white-text",
+];
+
+export const lightTextNames: Array<LightTextName> = [
+  "light-danger-back",
+  "light-success-back",
+  "light-warning-back",
+  "light-info-back",
+  "light-link-back",
+  "light-primary-back",
+];

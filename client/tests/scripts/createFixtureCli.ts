@@ -21,7 +21,7 @@ import {
 } from "../utils/helpers";
 
 console.log(
-  `${ANSI_ESCAPES.purple}`,
+  `${ANSI_ESCAPES.link}`,
   `
   Starting create cypress fixture script! 🔮 ✨ 🌙
   `,
@@ -53,7 +53,7 @@ const keyValueMappedObj: KeyValueMappedObj = new KeyValueMappedObjClass(
   restOfArgs as Array<string> | []
 );
 console.log(
-  `${ANSI_ESCAPES.yellow}`,
+  `${ANSI_ESCAPES.warning}`,
   "key value mapped thing with rest of args after field name",
   `${ANSI_ESCAPES.reset}`
 );
@@ -65,7 +65,7 @@ console.log(keyValueMappedObj);
       fs.readdir(fixtureFolderPathPrefix, (err, files) => {
         if (err)
           return console.log(
-            `${ANSI_ESCAPES.red}`,
+            `${ANSI_ESCAPES.danger}`,
             "error when reading files" + err,
             `${ANSI_ESCAPES.reset}`
           );
@@ -125,7 +125,7 @@ console.log(keyValueMappedObj);
       if (!JsObj.hasOwnProperty(`${process.argv[3]}`))
         return (() =>
           console.log(
-            `${ANSI_ESCAPES.red}`,
+            `${ANSI_ESCAPES.danger}`,
             `Missing main boba form prop arg input`,
             `${ANSI_ESCAPES.reset}`
           ))();
@@ -138,7 +138,7 @@ console.log(keyValueMappedObj);
             reject(
               (() =>
                 console.log(
-                  `${ANSI_ESCAPES.red}`,
+                  `${ANSI_ESCAPES.danger}`,
                   `
             there was a problem writing the file ${err}
             `,

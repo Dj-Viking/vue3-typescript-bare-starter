@@ -13,7 +13,7 @@ const testName = process.env.SPECNAME;
       `${SCREENSHOTS_ACTUALS_PATH}/${testName}`
     );
     console.log(
-      ANSI_ESCAPES.red,
+      ANSI_ESCAPES.danger,
       "found actuals files, deleting the ones that dont have screenshot in the name",
       actualFiles,
       "\x1b[00m"
@@ -22,7 +22,7 @@ const testName = process.env.SPECNAME;
       (file: string) => !/screenshot/g.test(file)
     );
     console.log(
-      ANSI_ESCAPES.yellow,
+      ANSI_ESCAPES.warning,
       "found non screenshots to delete",
       notScreenshots,
       ANSI_ESCAPES.reset
@@ -39,7 +39,7 @@ const testName = process.env.SPECNAME;
       );
     }
     console.log(
-      ANSI_ESCAPES.blue,
+      ANSI_ESCAPES.info,
       "deleted the non screenshots!",
       ANSI_ESCAPES.reset
     );

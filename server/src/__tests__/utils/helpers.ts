@@ -2,7 +2,7 @@
 import { ANSI_ESCAPES, EditTodoPayload } from "../../types";
 
 export function logJson(input: any): void {
-  return (() => console.log(`${ANSI_ESCAPES.yellow}`, `${JSON.stringify(input, null, 2)}`, `${ANSI_ESCAPES.reset}`))();
+  return (() => console.log(`${ANSI_ESCAPES.warning}`, `${JSON.stringify(input, null, 2)}`, `${ANSI_ESCAPES.reset}`))();
 };
 
 /**
@@ -16,23 +16,23 @@ export class ColorLog extends Object {
 		this.message = message;
 		switch (color) {
 			case "yellow": {
-				this.color = ANSI_ESCAPES.yellow;
+				this.color = ANSI_ESCAPES.warning;
 			}
 			break;
 			case "red": {
-				this.color = ANSI_ESCAPES.red;
+				this.color = ANSI_ESCAPES.danger;
 			}
 			break;
 			case "green": {
-				this.color = ANSI_ESCAPES.green;
+				this.color = ANSI_ESCAPES.success;
 			}
 			break;
 			case "blue": {
-				this.color = ANSI_ESCAPES.blue;
+				this.color = ANSI_ESCAPES.info;
 			}
 			break;
 			case "purple": {
-				this.color = ANSI_ESCAPES.purple;
+				this.color = ANSI_ESCAPES.link;
 			}
 			break;
 			default: this.color = "";

@@ -42,7 +42,7 @@ export function authMiddleware(
       token = token?.split(' ')?.pop()?.trim() as string;
     }
     
-    // console.log(ANSI_ESCAPES.yellow, `token recieved ${token}`, ANSI_ESCAPES.reset);
+    // console.log(ANSI_ESCAPES.warning, `token recieved ${token}`, ANSI_ESCAPES.reset);
     if (!token) {
       context.req.user = null;
       return context;
@@ -56,7 +56,7 @@ export function authMiddleware(
     }).catch((err: Error) => {
       //cant use logger here because i need the whole stack in the error logs
       console.error(
-        `${ANSI_ESCAPES.red}`, 
+        `${ANSI_ESCAPES.danger}`, 
         `ERROR in verifying the token async function ${err.stack}`, 
         `${ANSI_ESCAPES.reset}`
       );
