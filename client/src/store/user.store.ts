@@ -4,6 +4,7 @@ import {
   UserState,
   Todo,
   RootDispatchType,
+  RootCommitType,
 } from "@/types";
 import { ActionContext } from "vuex";
 
@@ -17,10 +18,12 @@ const state: UserState = {
 };
 const mutations = {
   SET_USER(state: UserState, payload: UserState): void {
+    console.log("some payload", payload);
+
     if (typeof payload !== "object")
       return console.error("payload was was not an object!");
-    state = {
-      ...state,
+    state.user = {
+      ...state.user,
       ...payload,
     };
   },
@@ -29,6 +32,12 @@ const mutations = {
   },
 };
 const actions = {
+  async setUser(
+    { commit }: ActionContext<UserState, MyRootState>,
+    payload: UserState
+  ): Promise<void> {
+    commit("user/SET_USER" as RootCommitType, payload, { root: true });
+  },
   async getUserTodos(
     { dispatch }: ActionContext<UserState, MyRootState>,
     payload: TodosState

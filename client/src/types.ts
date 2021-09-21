@@ -14,18 +14,13 @@ export interface MyDOMInputEvent extends Event {
   };
 }
 export interface MeQueryResponse extends Object {
-  errors:
-    | null
-    | [
-        {
-          field: string;
-          message: string;
-        }
-      ];
   me: {
-    token: string;
-    username: string;
-    email: string;
+    user: {
+      token: string;
+      username: string;
+      email: string;
+    };
+    errors: MyErrorResponse;
   };
 }
 export interface MyRootState {
@@ -42,7 +37,7 @@ export interface UserState {
 }
 
 export interface UserEntityBase {
-  id: number;
+  id?: number;
   username: string;
   email: string;
   token: string | null;

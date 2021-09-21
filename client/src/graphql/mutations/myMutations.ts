@@ -4,7 +4,6 @@ export function createRegisterMutation(): string {
       register(options: $options){
         token
         user {
-          id
           username
           email
           token
@@ -25,6 +24,7 @@ export function createLoginMutation(): string {
       login(options: $options) {
         token
         user {
+          id
           email
           username
           token

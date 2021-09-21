@@ -74,10 +74,11 @@ import BaseLayout from "../components/BaseLayout.vue";
 import { useMutation } from "@vue/apollo-composable";
 import { gql } from "graphql-tag";
 import { createRegisterMutation } from "../graphql/mutations/myMutations";
-import { RegisterResponse } from "../types";
+import { RegisterResponse, RootCommitType } from "../types";
 import auth from "../utils/AuthService";
 import router from "../router";
 import { FetchResult } from "@apollo/client/core";
+import store from "../store";
 
 export default defineComponent({
   name: "Signup",
@@ -183,6 +184,24 @@ export default defineComponent({
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       // do nothing
+    },
+  },
+  watch: {
+    registerResponse: function (newValue: RegisterResponse): void {
+      if (newValue.register.errors?.length) {
+        auth.clearToken();
+        auth.setEmail("");
+        store.commit("user/CLEAR_USER_TOKEN" as RootCommitType, null, {
+          root: true,
+        });
+      } else {
+        store.commit(
+          "user/SET_USER" as RootCommitType,
+          newValue.register.user,
+          { root: true }
+        );
+        auth.setToken(newValue.register.user?.token as string);
+      }
     },
   },
 });

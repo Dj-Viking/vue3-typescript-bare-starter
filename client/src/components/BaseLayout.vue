@@ -15,8 +15,10 @@
 import { defineComponent, inject } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { MeQueryResponse } from "../types";
+import { MeQueryResponse, RootDispatchType } from "../types";
 import { createMeQuery } from "../graphql/queries/myQueries";
+import auth from "../utils/AuthService";
+import store from "../store";
 
 export default defineComponent({
   name: "BaseLayout",
@@ -33,11 +35,28 @@ export default defineComponent({
     return { meResult, refetch, globalEmail };
   },
   watch: {
+    //callback to execute whenever the application router changes
     $route: async function () {
       await this.refetch();
     },
-    meResult: function (newValue: MeQueryResponse) {
-      console.log("value of me query result", newValue);
+    meResult: async function (newValue: MeQueryResponse) {
+      if (newValue.me.errors?.length) {
+        auth.clearToken();
+        auth.setEmail("");
+        await store.dispatch("user/setUser", null, { root: true });
+      } else {
+        console.log("value of me query result", newValue);
+        //set new token in storage
+        auth.setToken(newValue.me.user.token);
+        //set user vuex state
+        await store.dispatch(
+          "user/setUser" as RootDispatchType,
+          { ...newValue.me.user },
+          {
+            root: true,
+          }
+        );
+      }
     },
   },
 });
