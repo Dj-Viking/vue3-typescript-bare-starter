@@ -13,7 +13,21 @@ export interface MyDOMInputEvent extends Event {
     value: number | string;
   };
 }
-
+export interface MeQueryResponse extends Object {
+  errors:
+    | null
+    | [
+        {
+          field: string;
+          message: string;
+        }
+      ];
+  me: {
+    token: string;
+    username: string;
+    email: string;
+  };
+}
 export interface MyRootState {
   user: UserState;
   todos: TodosState;

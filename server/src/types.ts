@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Session, SessionData } from 'express-session';
+import jwt from 'jsonwebtoken';
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
 
@@ -67,7 +68,7 @@ export interface LogoutResponse {
 
 export type JwtData = IJwtData;
 
-export interface IJwtData {
+export interface IJwtData extends jwt.JwtPayload {
     username: string;
     email: string;
     iat?: number;

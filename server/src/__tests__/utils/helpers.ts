@@ -128,12 +128,10 @@ export function createEditTodoMutation(payload: EditTodoPayload): string {
 	`;
 }
 
-export function createMeQuery(email: string): string {
+export function createMeQuery(): string {
 	return `
 		{
-			me(
-				email: "${email}"
-			){
+			me {
 				user {
 					token
 					id

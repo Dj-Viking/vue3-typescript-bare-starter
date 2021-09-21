@@ -17,6 +17,7 @@ import { MyContext } from '../types';
 import { User } from '../entities/User';
 import { Todo } from '../entities/Todo';
 import { verifyRegisterArgs } from '../utils/verifyRegisterArgs';
+import { decodeToken } from '../utils/decodeToken';
 
 @InputType()
 class RegisterInput {
@@ -87,28 +88,47 @@ export class UserResolver {
   // this also lets the UI stay in a "logged in state" if the token isn't expired
   @Query(() => MeQueryResponse)
   async me(
-    @Arg("email", () => String) email: string,
     @Ctx() { req }: MyContext
   ): Promise<MeQueryResponse | ErrorResponse> {
     try {
       //cant query themselves if they are not logged in with a fresh token to make a me query
       if (!req.user) return new ErrorResponse("unauthenticated", "401 user not authenticated");
-      const foundUserByEmail = await User.findOne({ where: { email }});
       // user not found
-      if (!foundUserByEmail) return new ErrorResponse("not found", "404 user not found");
 
-      if (foundUserByEmail.email !== req.user.email)
-        return new ErrorResponse("forbidden", "403 Forbidden");
+      console.log("user requesting their profile infomation and refreshtoken", req.user);
 
-      foundUserByEmail.token = signToken({
-        username: foundUserByEmail.username,
-        email: foundUserByEmail.email,
-        password: foundUserByEmail.password
+      let user = await User.findOne({ where:{ email: req.user.email}});
+      
+      console.log("user found", user);
+
+      //sign a new token
+      const newToken = signToken({
+        username: req.user.username,
+        email: req.user.email,
+        password: user?.password as string,
       });
 
+      //debug
+      const profile = decodeToken(newToken);
+      console.log("heres the profile", profile);
+      
+
+      //remove token from user table?
+      /*const changedUser =*/ await getConnection()
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .update<User>(User, 
+                    { token: newToken })
+      .where("email = :email", { email: req.user.email })
+      .returning(["id", "username", "createdAt", "updatedAt", "token", "email"])
+      .updateEntity(true)
+      .execute();
+
+      // console.log("updated user's info", changedUser);
+
       return {
-        token: foundUserByEmail.token,
-        user: foundUserByEmail
+        token: newToken,
+        user: user
       }
       //if user is found sign a new token for them with a new expiration
     } catch (error) {

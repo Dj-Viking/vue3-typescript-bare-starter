@@ -10,6 +10,8 @@ const {
 export function authMiddleware(
   context: MyContext
 ): MyContext {
+  // console.log("chekcing the user", context.req.user);
+  
   async function verifyAsync(token: string): Promise<jwt.JwtPayload> {
     let returnedDecoded: any;
     jwt.verify(
@@ -19,7 +21,14 @@ export function authMiddleware(
       (error, decoded) => {
         if (error?.message.includes("malformed")) throw new Error(error.message);
         if (error?.message.includes("expired")) throw new Error(error.message)
-        if (decoded) returnedDecoded = decoded;
+        if (decoded) {
+          context.req.user = decoded as JwtData;
+          // const oldDecoded = decodeToken(token);
+          // console.log("comparing old decoded token", oldDecoded);
+          // console.log("context user as decoded token", context.req.user);
+
+          returnedDecoded = decoded;
+        }
         
       } 
     );
@@ -28,7 +37,7 @@ export function authMiddleware(
   try {
     // allows token to be sent via req.body, req.query, or headers
     let token = context.req.headers.authorization;
-    console.log("token sent in headers", Date.now(), token);
+    // console.log("token sent in headers", Date.now(), token);
     
     
     
@@ -50,12 +59,14 @@ export function authMiddleware(
 
     verifyAsync(token).then((decoded) => {
       context.req.user = <JwtData>decoded;
-      console.log("context user requesting information", context.req.user);
+      // console.log("context user requesting information", context.req.user, Date.now());
       
       //this error will throw in the console....instead of the catch block of the authmiddleware
     }).catch((err: Error) => {
+      context.req.user = null;
       //cant use logger here because i need the whole stack in the error logs
       console.error(
+        
         `${ANSI_ESCAPES.danger}`, 
         `ERROR in verifying the token async function ${err.stack}`, 
         `${ANSI_ESCAPES.reset}`

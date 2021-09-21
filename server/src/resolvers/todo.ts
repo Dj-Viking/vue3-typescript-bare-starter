@@ -231,7 +231,7 @@ export class TodoResolver {
       .execute();
       //seeing all the todos that the user has
       const todos = await Todo.find({ where: { creatorId: foundUserByEmail?.id } });
-      console.log(`${ANSI_ESCAPES.green}`, `Someone added a todo!`, `${ANSI_ESCAPES.reset}`)
+      console.log(`${ANSI_ESCAPES.success}`, `Someone added a todo!`, `${ANSI_ESCAPES.reset}`)
       return {
         todos: todos
       };

@@ -11,10 +11,11 @@ import {
 } from "../../src/constants";
 import { MeQueryResponse, RegisterResponse } from "../types";
 import { ColorLog, logJson, createMeQuery } from "../__tests__/utils/helpers";
-
+import { decodeToken } from "../utils/decodeToken";
+import jwt from "jsonwebtoken";
 const {
-  NOT_FOUND_EMAIL,
-  NOT_MY_EMAIL
+  // NOT_FOUND_EMAIL,
+  // NOT_MY_EMAIL
 } = process.env;
 
 let connection;
@@ -39,7 +40,7 @@ describe("Tests the user register", () => {
     userEmail = res.register.user.email;
     newToken = res.register.token;
     expect(res.register.errors).toBeNull();
-    expect(res.register.user.email).toEqual(REGISTER_EMAIL);
+    expect(userEmail).toEqual(REGISTER_EMAIL);
   });
   
   it("and check that the user got added to the db", async () => {
@@ -62,7 +63,7 @@ describe("Tests the user register", () => {
     //expired or unauthenticated token test
     const invalidToken: MeQueryResponse = await request(
       HOST + "/graphql", 
-      `${createMeQuery(userEmail)}`,
+      `${createMeQuery()}`,
       {},
       { "authorization": `Bearer asdfasdf` }
     );
@@ -72,37 +73,18 @@ describe("Tests the user register", () => {
   });
   it("checks the me query is returning the unauthenticated error", async () => {
     //expired or unauthenticated token test
-    const expired: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(userEmail)}`, {}, {
+    const expired: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery()}`, {}, {
       "authorization": `Bearer ${EXPIRED_TOKEN}`
     });
     console.log("request with expired token", expired);
     expect(expired.me.errors).toHaveLength(1);
     expect(expired.me.errors[0].message).toBe("401 user not authenticated");
   });
-  
-  it("checks the user me query is returning the not found error", async () => {
-    const notFound: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(NOT_FOUND_EMAIL as string)}`, {}, {
-      "authorization": `Bearer ${newToken}`
-    });
-    console.log("user not found", notFound);
-    expect(notFound.me.errors).toHaveLength(1);
-    expect(notFound.me.errors[0].message).toBe("404 user not found");
-  });
-  
-  it("checks the user me query is returning the forbidden error", async () => {
-    const forbidden: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(NOT_MY_EMAIL as string)}`, {}, {
-      "authorization": `Bearer ${newToken}`
-    });
-    console.log("forbidden request", forbidden);
-    expect(forbidden.me.errors).toHaveLength(1);
-    expect(forbidden.me.errors[0].message).toBe("403 Forbidden");
-  });
-
 
   it("checks that we can perform a me query with our new token after registering and also get back a new token", async () => {
     new logger("yellow", "testing mequery to get a refresh token").genLog();
     
-    const res: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery(userEmail)}`, {}, {
+    const res: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery()}`, {}, {
       "authorization": `Bearer ${newToken}`
     });
 
@@ -120,6 +102,30 @@ describe("Tests the user register", () => {
     
     expect(newToken).toBeTruthy();
     console.log("me query response test", res);
+  });
+
+  it("does me query again and checks that the token expiration is different than the previous one", async () => {
+    // const decoded = decodeToken(newToken) as jwt.JwtPayload;
+    new logger("yellow", "testing me query again to get a new refresh token should be different than the previous newToken").genLog();
+
+    async function sleep(ms: number): Promise<void> {
+      console.log("sleeping for one second before doing me query again to get an older expiration by one second");
+      return new Promise((resolve, _reject) => {
+        setTimeout(() => {
+          resolve();
+        }, ms);
+      });
+    }
+
+    await sleep(1000);
+
+    const newerMe: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery()}`, {}, {
+      "authorization": `Bearer ${newToken}`
+    });
+    const decodedPrevious = decodeToken(newToken) as jwt.JwtPayload;
+    const decodedNew = decodeToken(newerMe.me.token as string) as jwt.JwtPayload;
+    expect (decodedPrevious.exp as number).toBeLessThan(decodedNew.exp as number);
+
   });
 
   it("checks if we delete the user we just made", async () => {
