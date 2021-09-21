@@ -28,7 +28,8 @@ export function authMiddleware(
   try {
     // allows token to be sent via req.body, req.query, or headers
     let token = context.req.headers.authorization;
-    // console.log("token sent in headers", Date.now(), token);
+    console.log("token sent in headers", Date.now(), token);
+    
     
     
     // console.log("got token from middleware??", token);
@@ -49,6 +50,8 @@ export function authMiddleware(
 
     verifyAsync(token).then((decoded) => {
       context.req.user = <JwtData>decoded;
+      console.log("context user requesting information", context.req.user);
+      
       //this error will throw in the console....instead of the catch block of the authmiddleware
     }).catch((err: Error) => {
       //cant use logger here because i need the whole stack in the error logs

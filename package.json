@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "tscheck": "cd client; npm run tscheck"
+    "tscheck": "cd client; npm run tscheck",
+    "client": "cd client; npm run tscheck; npm run serve"
   },
   "repository": {
     "type": "git",
