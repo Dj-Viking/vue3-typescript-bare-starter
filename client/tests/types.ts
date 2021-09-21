@@ -1,4 +1,21 @@
-import { ANSI_ESCAPES } from "../../server/src/types";
+/**
+ * ansi escape code enum collection for printing any color text into the console as the first/third argument of a console.log()
+ * @example
+ * console.log(`${red || "\x1b[31m"}`, "red text in the log", `${reset || "\x1b[00m"}`)
+ */
+export enum ANSI_ESCAPES {
+  danger = "\x1b[31m",
+  success = "\x1b[32m",
+  info = "\x1b[36m",
+  warning = "\x1b[33m",
+  link = "\x1b[35m",
+  danger_back = "\x1b[41m",
+  success_back = "\x1b[42m",
+  warning_back = "\x1b[43m",
+  info_back = "\x1b[44m",
+  link_back = "\x1b[45m",
+  reset = "\x1b[00m",
+}
 
 export interface MeQueryResponse extends Object {
   errors:

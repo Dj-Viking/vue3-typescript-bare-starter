@@ -14,6 +14,7 @@ const state: UserState = {
     email: "",
     token: "",
     todos: [] as Todo[],
+    loggedIn: false,
   },
 };
 const mutations = {
@@ -25,10 +26,28 @@ const mutations = {
     state.user = {
       ...state.user,
       ...payload,
+    } as UserState["user"];
+    delete state.user.token;
+  },
+  SET_LOGGED_IN(state: UserState, payload: boolean): void {
+    console.log("setting logged in", payload);
+    state.user = {
+      ...state.user,
+      loggedIn: payload,
     };
   },
-  CLEAR_USER_TOKEN(state: UserState, payload: null): void {
-    state.user.token = payload;
+  // eslint-disable-next-line
+  // CLEAR_USER_TOKEN(state: UserState, payload: null): void {
+  //   // eslint-disable-next-line
+  //   //@ts-ignore
+  //   state.user = {
+  //     ...state.user,
+  //     token: payload,
+  //   };
+  // },
+  // eslint-disable-next-line
+  CLEAR_USER(state: UserState, payload: any): void {
+    state.user = payload;
   },
 };
 const actions = {

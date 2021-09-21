@@ -167,7 +167,11 @@ export default defineComponent({
   watch: {
     loginResponse: function (newValue: LoginResponse) {
       console.log("login response new value", newValue);
-      store.commit("user/SET_USER" as RootCommitType, newValue.login.user, {
+      const payload = {
+        user: newValue.login.user,
+        loggedIn: true,
+      };
+      store.commit("user/SET_USER" as RootCommitType, payload, {
         root: true,
       });
     },

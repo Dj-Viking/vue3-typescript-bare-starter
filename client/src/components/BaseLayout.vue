@@ -15,7 +15,7 @@
 import { defineComponent, inject } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { MeQueryResponse, RootDispatchType } from "../types";
+import { MeQueryResponse, RootCommitType, RootDispatchType } from "../types";
 import { createMeQuery } from "../graphql/queries/myQueries";
 import auth from "../utils/AuthService";
 import store from "../store";
@@ -44,10 +44,16 @@ export default defineComponent({
         auth.clearToken();
         auth.setEmail("");
         await store.dispatch("user/setUser", null, { root: true });
+        store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+          root: true,
+        });
       } else {
         console.log("value of me query result", newValue);
         //set new token in storage
         auth.setToken(newValue.me.user.token);
+        store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+          root: true,
+        });
         //set user vuex state
         await store.dispatch(
           "user/setUser" as RootDispatchType,
