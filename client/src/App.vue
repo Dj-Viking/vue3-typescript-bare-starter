@@ -11,9 +11,10 @@ export default defineComponent({
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: "Grechen Fuemen", cursive;
+  font-family: "Imbue", serif;
+  font-family: "Kosugi Maru", sans-serif;
+  font-family: "Roboto", sans-serif;
   text-align: center;
   color: #2c3e50;
 }
