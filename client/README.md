@@ -7,7 +7,10 @@ npm install
 
 ## Shell Script info
 
-* added a style names console output for bulma for quick viewing in the console of classNames and showing console ascii character options
+* added a style names console output for bulma classnames for quick viewing in the console and showing console ascii character options
+```sh
+npm run showColors
+```
 
 * To run any tests, the front end application MUST be running on localhost:8080
 
