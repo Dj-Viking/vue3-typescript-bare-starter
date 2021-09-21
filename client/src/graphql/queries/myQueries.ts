@@ -2,14 +2,16 @@ export function createMeQuery(): string {
   return `
     query me {
       me {
-        id
-        username
-        email
-        token
-      }
-      errors {
-        field
-        message
+        user {
+          id
+          username
+          email
+          token
+        }
+        errors {
+          field
+          message
+        }
       }
     }
   `;
