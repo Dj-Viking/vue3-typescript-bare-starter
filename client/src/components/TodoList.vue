@@ -28,9 +28,10 @@
 </template>
 
 <script lang="ts">
-import { RootCommitType, RootDispatchType } from "../types";
+import { RootCommitType, RootDispatchType, TodosState } from "../types";
 import { defineComponent } from "vue";
 import store from "../store";
+// import { Store } from "vuex";
 
 interface MyDOMInputEvent extends Event {
   target: EventTarget & {
@@ -48,7 +49,7 @@ export default defineComponent({
     };
   },
   computed: {
-    todos: () => store.state.todos.todos,
+    todos: (): TodosState["todos"] => store.state.todos.todos,
   },
   methods: {
     async deleteTodo(_event: Event, index: number): Promise<void> {
@@ -93,9 +94,6 @@ export default defineComponent({
     textInput(event: MyDOMInputEvent): void {
       this.inputText = event.target.value as string;
     },
-  },
-  mounted(): void {
-    console.log("todos", this.todos);
   },
 });
 </script>

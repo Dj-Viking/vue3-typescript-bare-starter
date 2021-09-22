@@ -12,6 +12,31 @@ export function createMeQuery(): string {
           field
           message
         }
+        todos {
+          id
+          text
+          creatorId
+        }
+      }
+    }
+  `;
+}
+
+export function createGetUserTodosQuery(): string {
+  return `
+    query getUserTodos {
+      getUserTodos {
+        todos {
+          text
+          id
+          creatorId
+          createdAt
+          updatedAt
+        }
+        errors{
+          field
+          message
+        }
       }
     }
   `;

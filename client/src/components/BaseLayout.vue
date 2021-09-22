@@ -74,12 +74,15 @@ export default defineComponent({
       //do nothing
       console.log(_event);
     },
-    logout() {
+    async logout() {
       auth.setToken("");
       this.isLoggedIn = false;
       //refetching after setting the token to
       //empty string will not allow for a refresh token on the site
       this.refetch();
+      await store.dispatch("todos/setTodos" as RootDispatchType, [], {
+        root: true,
+      });
     },
   },
   watch: {

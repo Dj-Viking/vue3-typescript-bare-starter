@@ -41,6 +41,12 @@ export interface MeQueryResponse extends Object {
     errors: MyErrorResponse;
   };
 }
+export interface GetUserTodosResponse {
+  getUserTodos: {
+    todos: Todo[];
+    errors: MyErrorResponse;
+  };
+}
 export interface MyRootState {
   user: UserState;
   todos: TodosState;

@@ -64,6 +64,9 @@ class MeQueryResponse {
 
   @Field(() => String, { nullable: true })
   token?: string | null;
+
+  @Field(() => [Todo], { nullable: true })
+  todos?: Todo[] | null;
 }
 
 @ObjectType()
@@ -109,6 +112,9 @@ export class UserResolver {
       
       console.log("user found", user);
 
+      const todos = await Todo.find({ where: { creatorId: user?.id as number }});
+      console.log("checking todos given the creatorId", todos);
+
       //sign a new token
       const newToken = signToken({
         username: req.user.username,
@@ -126,7 +132,7 @@ export class UserResolver {
       .update<User>(User, 
                     { token: newToken })
       .where("email = :email", { email: req.user.email })
-      .returning(["id", "username", "createdAt", "updatedAt", "token", "email"])
+      .returning(["id", "username", "createdAt", "updatedAt", "token", "email", "todos"])
       .updateEntity(true)
       .execute();
 
@@ -134,7 +140,8 @@ export class UserResolver {
 
       return {
         token: newToken,
-        user: changedUser.raw[0]
+        user: changedUser.raw[0],
+        todos: todos
       }
       //if user is found sign a new token for them with a new expiration
     } catch (error) {

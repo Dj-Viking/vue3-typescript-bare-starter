@@ -23,13 +23,13 @@ class TodoError {
   message: String; 
 }
 
-@InputType()
-class AddTodoInput {
-  @Field()
-  text: string;
-  @Field()
-  email: string;
-}
+// @InputType()
+// class AddTodoInput {
+//   @Field()
+//   text: string;
+//   @Field()
+//   email: string;
+// }
 @InputType()
 class EditTodoInput {
   @Field()
@@ -88,7 +88,6 @@ export class TodoResolver {
 
   @Query(() => GetUserTodosResponse)
   async getUserTodos(
-    @Arg("email", () => String) email: string,
     @Ctx() { req }: MyContext
   ): Promise<GetUserTodosResponse> {
     /// if requestor is not authorized to get the todos with their requestor ID not authorized
@@ -98,7 +97,7 @@ export class TodoResolver {
   console.log("req checking req.user", req.user);
   
   //get the requestors email and compare with the creatorId owner's email (emails are unique)
-  const foundUserByEmail = await User.findOne({ where: { email } });
+  const foundUserByEmail = await User.findOne({ where: { email: req.user.email } });
   if (!foundUserByEmail) {
     return new ErrorResponse("not found", "404 Not Found");
   }
@@ -204,7 +203,7 @@ export class TodoResolver {
 
   @Mutation(() => AddTodoResponse)
   async addTodo(
-    @Arg("options", () => AddTodoInput) options: AddTodoInput,
+    @Arg("text", () => String) text: string,
     @Ctx() { req }: MyContext
   ): Promise<AddTodoResponse> {
     // TODO abstract these checks to a middlware ... learn that first
@@ -212,7 +211,7 @@ export class TodoResolver {
     if (!req.user) {
       return new ErrorResponse("unauthenticated", "401 user not authenticated");
     }
-    const foundUserByEmail: User | undefined = await User.findOne({ where: { email: options.email }});
+    const foundUserByEmail: User | undefined = await User.findOne({ where: { email: req.user.email }});
     if (!foundUserByEmail) 
       return new ErrorResponse("not found", "404 Not Found");
 
@@ -224,7 +223,7 @@ export class TodoResolver {
       .createQueryBuilder()
       .insert()
       .into(Todo)
-      .values({ text: options.text,
+      .values({ text,
                 //a creator with this id MUST exist for this query to work!!
                 creatorId: foundUserByEmail?.id })
       .returning('*')
