@@ -135,8 +135,11 @@ export interface UserEntityBase {
 
 export interface MeQueryResponse {
     me: {
-        token: string | null;
-        user: null | UserEntityBase;
-        errors: MyErrorResponse
-    }
+        user: {
+          token: string;
+          username: string;
+          email: string;
+        };
+        errors: MyErrorResponse;
+      };
 }
