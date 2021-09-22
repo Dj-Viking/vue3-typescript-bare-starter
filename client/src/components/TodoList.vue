@@ -4,6 +4,7 @@
       clear todos
     </button>
     <div v-if="todos.length > 0">
+      <h3>Your Todos</h3>
       <div
         style="border: black 2px solid; margin: 10px"
         v-for="(todo, i) in todos"
@@ -25,10 +26,14 @@
         @submit.prevent="
           ($event) => {
             readInputEvent($event);
-            if (input) {
+            if (input && isLoggedIn) {
               submitAddTodo({
                 text: input,
               });
+              input = '';
+            } else {
+              //do a local update in the non logged in state update of todos
+              addALocalTodo();
             }
           }
         "
@@ -49,6 +54,7 @@ import {
   RootCommitType,
   RootDispatchType,
   TodosState,
+  UserState,
 } from "../types";
 import { ref, defineComponent } from "vue";
 import store from "../store";
@@ -137,12 +143,24 @@ export default defineComponent({
   data() {
     return {
       inputText: "",
+      store: store,
     };
   },
   computed: {
     todos: (): TodosState["todos"] => store.state.todos.todos,
+    isLoggedIn: (): UserState["user"]["loggedIn"] =>
+      store.state.user.user.loggedIn,
   },
   methods: {
+    addALocalTodo(): void {
+      if (!this.input) return;
+      store.state.todos.todos.push({
+        id: Date.now(),
+        text: this.input,
+        color: "green",
+      });
+      this.input = "";
+    },
     readInputEvent(event: Event) {
       console.log("add todo event", event);
     },
