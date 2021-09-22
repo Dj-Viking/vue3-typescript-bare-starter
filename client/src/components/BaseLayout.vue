@@ -96,18 +96,26 @@ export default defineComponent({
         auth.setEmail("");
         this.isLoggedIn = false;
         await store.dispatch("user/setUser", null, { root: true });
+        store.commit(
+          "todos/SET_TODOS" as RootCommitType,
+          [{ text: "error on me result", id: Date.now() }],
+          { root: true }
+        );
         store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
           root: true,
         });
       } else {
         console.log("value of me query result", newValue);
         //set new token in storage
-        auth.setToken(newValue.me.user.token);
+        auth.setToken(newValue.me.user.token as string);
         store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
           root: true,
         });
         this.isLoggedIn = true;
-        //set user vuex state
+        store.commit("todos/SET_TODOS" as RootCommitType, newValue.me.todos, {
+          root: true,
+        });
+        //set user vuex state with todos
         await store.dispatch(
           "user/setUser" as RootDispatchType,
           { ...newValue.me.user },
@@ -118,8 +126,10 @@ export default defineComponent({
       }
     },
   },
-  mounted() {
-    console.log("user on mounted", this.user);
+  async mounted() {
+    console.log("user todos on mounted", this.user.todos);
+    console.log("todos vuex state on mounted", store.state.todos);
+    //set the todos if there are any defined
   },
 });
 </script>

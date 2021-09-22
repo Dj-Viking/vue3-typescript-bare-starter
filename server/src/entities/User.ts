@@ -32,7 +32,6 @@ export class User extends BaseEntity {
   @Column()
   token?: string;
 
-  @Field(() => [Todo])
   @OneToMany(() => Todo, (todo: Todo) => todo.creator, { onDelete: "CASCADE" })
   todos?: Todo[];
 

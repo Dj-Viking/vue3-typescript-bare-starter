@@ -29,6 +29,12 @@ export function createLoginMutation(): string {
           username
           token
         }
+        todos {
+          id
+          text
+          createdAt
+          updatedAt
+        }
         errors {
           field
           message
