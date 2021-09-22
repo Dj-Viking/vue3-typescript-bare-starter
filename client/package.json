@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "tscheck": "vue-ts-checker",
+    "dev": "npm run serve",
     "serve": "vue-ts-checker; vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",

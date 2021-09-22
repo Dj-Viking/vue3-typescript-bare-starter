@@ -1,5 +1,5 @@
 <template>
-  <BaseLayout>
+  <BaseLayout :isHome="false">
     <form
       class="field box"
       style="margin: 0 20%"
@@ -21,6 +21,7 @@
         class="input mt-4"
         type="text"
         name="email"
+        autocomplete="off"
         v-model="email"
         placeholder="example@mail.com"
         required
@@ -29,6 +30,7 @@
       <input
         class="input mt-4"
         type="password"
+        autocomplete="off"
         name="password"
         v-model="password"
         placeholder="*****************"
@@ -65,9 +67,10 @@ import gql from "graphql-tag";
 import { defineComponent, inject, ref, onMounted } from "vue";
 import BaseLayout from "../components/BaseLayout.vue";
 import { createLoginMutation } from "../graphql/mutations/myMutations";
-import { LoginResponse } from "../types";
+import { LoginResponse, RootCommitType } from "../types";
 import auth from "../utils/AuthService";
 import router from "../router";
+import store from "../store";
 import { FetchResult } from "@apollo/client/core";
 
 export default defineComponent({
@@ -147,6 +150,7 @@ export default defineComponent({
       showSuccess,
       errMsg,
       successMsg,
+      loginResponse,
       password,
       submitLogin,
       loginIsLoading,
@@ -160,6 +164,18 @@ export default defineComponent({
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       //do nothing
+    },
+  },
+  watch: {
+    loginResponse: function (newValue: LoginResponse) {
+      console.log("login response new value", newValue);
+      const payload = {
+        user: newValue.login.user,
+        loggedIn: true,
+      };
+      store.commit("user/SET_USER" as RootCommitType, payload, {
+        root: true,
+      });
     },
   },
 });

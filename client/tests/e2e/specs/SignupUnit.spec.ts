@@ -142,7 +142,7 @@ describe("tests the register with valid inputs works, has success message, and n
 
 describe("should be able to login with those credentials that we just registered with", () => {
   it("goes to login page", () => {
-    cy.get("a.link").contains("Login").should("have.length", 1).click();
+    cy.visit(LOCALHOST_URL + "login");
   });
   it("types in email", () => {
     cy.get("input[name=email]").should("have.length", 1).type(unique_email);
@@ -172,5 +172,10 @@ describe("should be able to login with those credentials that we just registered
       expect(email).to.equal(unique_email);
       expect(token).to.not.be.null;
     });
+  });
+
+  it("logs out", () => {
+    cy.wait(1000);
+    cy.get("span.link").contains("Logout").click();
   });
 });

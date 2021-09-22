@@ -3,6 +3,24 @@ export interface Todo {
   text: string;
   color: string | "blue";
 }
+/**
+ * ansi escape code enum collection for printing any color text into the console as the first/third argument of a console.log()
+ * @example
+ * console.log(`${red || "\x1b[31m"}`, "red text in the log", `${reset || "\x1b[00m"}`)
+ */
+export enum ANSI_ESCAPES {
+  danger = "\x1b[31m",
+  success = "\x1b[32m",
+  info = "\x1b[36m",
+  warning = "\x1b[33m",
+  link = "\x1b[35m",
+  danger_back = "\x1b[41m",
+  success_back = "\x1b[42m",
+  warning_back = "\x1b[43m",
+  info_back = "\x1b[44m",
+  link_back = "\x1b[45m",
+  reset = "\x1b[00m",
+}
 
 //for some reason this interface for the event didn't export for whatever reason....strange...oh well it
 // only applies to the todolist component anyways
@@ -13,7 +31,16 @@ export interface MyDOMInputEvent extends Event {
     value: number | string;
   };
 }
-
+export interface MeQueryResponse extends Object {
+  me: {
+    user: {
+      token: string;
+      username: string;
+      email: string;
+    };
+    errors: MyErrorResponse;
+  };
+}
 export interface MyRootState {
   user: UserState;
   todos: TodosState;
@@ -22,13 +49,14 @@ export interface UserState {
   user: {
     username: string | null;
     email: string | null;
-    token: string | null;
+    token?: string | null | undefined;
     todos: Todo[];
+    loggedIn: boolean;
   };
 }
 
 export interface UserEntityBase {
-  id: number;
+  id?: number;
   username: string;
   email: string;
   token: string | null;
@@ -51,6 +79,7 @@ export type RootDispatchType =
 export type RootCommitType =
   | "user/SET_USER"
   | "user/CLEAR_USER_TOKEN"
+  | "user/SET_LOGGED_IN"
   | "todos/ADD_TODO"
   | "todos/SET_TODOS"
   | "todos/DELETE_TODO"

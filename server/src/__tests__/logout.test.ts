@@ -1,9 +1,9 @@
 import { request } from "graphql-request";
 import { User } from "../entities/User";
-import { HOST, LOGOUT_MUTATION, REGISTER_EMAIL, REGISTER_MUTATION, REGISTER_USERNAME } from "../constants";
+import { HOST, REGISTER_EMAIL, REGISTER_MUTATION } from "../constants";
 import { LogoutResponse, RegisterResponse } from "../types";
 import { connectDb } from "./utils/connectDb";
-import { logJson, ColorLog } from "./utils/helpers";
+import { logJson, ColorLog, createLogoutMutation } from "./utils/helpers";
 
 const logger = ColorLog;
 
@@ -37,15 +37,24 @@ describe("check user was added", () => {
 });
 
 describe("do the logout mutation", () => {
+
+  it("tries to logout without an email", async () => {
+    const noEmail: LogoutResponse = await request(HOST + "/graphql", `${createLogoutMutation("")}`);
+    logJson(noEmail);
+
+    expect(noEmail.logout.errors).toHaveLength(1);
+    expect(noEmail.logout.errors[0].message).toEqual("no email entered")
+
+  });
+
   it("logs out", async () => {
-    const res: LogoutResponse = await request(HOST + "/graphql", LOGOUT_MUTATION);
+    const res: LogoutResponse = await request(HOST + "/graphql", `${createLogoutMutation(REGISTER_EMAIL as string)}`);
     logJson(res);
 
     new logger("purple", "logging out the user").genLog();
 
-    expect(res.logout.user?.email).toEqual(REGISTER_EMAIL);
-    expect(res.logout.user?.username).toEqual(REGISTER_USERNAME);
-    expect(res.logout.user?.token).toEqual("");
+    expect(res.logout.errors).toBeNull();
+    expect(res.logout.done).toBe(true);
   });
 });
 

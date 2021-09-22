@@ -25,7 +25,7 @@ class AuthService {
   }
 
   public async clearToken(): Promise<void | Error> {
-    const token = await this.getToken();
+    const token = this.getToken();
     if (token) {
       localStorage.removeItem("id_token");
     } else return new Error("could not clear token, was undefined or null");

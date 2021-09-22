@@ -59,4 +59,8 @@ describe("tests the login with correct credentials works, has success message, a
       expect(token).to.not.be.null;
     });
   });
+
+  it("logs out", () => {
+    cy.get("span.link").contains("Logout").click();
+  });
 });

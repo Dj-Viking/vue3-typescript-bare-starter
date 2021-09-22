@@ -55,23 +55,6 @@ mutation register {
 /**
  * string literal of the graphql mutation for the login action
  */
-export const LOGOUT_MUTATION: string = `
-mutation logout {
-  logout(email: "${REGISTER_EMAIL}"){
-    errors{
-      field
-      message
-    }
-    user {
-      username
-      email
-      token
-    }
-  }
-}`;
-/**
- * string literal of the graphql mutation for the login action
- */
 export const LOGIN_MUTATION: string = `
 mutation login {
   login(options: {

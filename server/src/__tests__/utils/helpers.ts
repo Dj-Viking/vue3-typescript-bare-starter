@@ -44,6 +44,20 @@ export class ColorLog extends Object {
 	}
 }
 
+export function createLogoutMutation(email: string): string {
+	return `
+		mutation logout{
+			logout(email: "${email}") {
+				done
+				errors {
+					field
+					message
+				}
+			}
+		}
+	`
+}
+
 export function createAddTodoMutation(email: string): string {
   return `
 		mutation addTodo {
@@ -128,12 +142,10 @@ export function createEditTodoMutation(payload: EditTodoPayload): string {
 	`;
 }
 
-export function createMeQuery(email: string): string {
+export function createMeQuery(): string {
 	return `
 		{
-			me(
-				email: "${email}"
-			){
+			me {
 				user {
 					token
 					id

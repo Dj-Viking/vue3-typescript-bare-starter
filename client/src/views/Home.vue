@@ -1,5 +1,5 @@
 <template>
-  <BaseLayout>
+  <BaseLayout :isHome="true">
     <div>
       <TodoList />
     </div>

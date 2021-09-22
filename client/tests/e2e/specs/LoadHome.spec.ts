@@ -1,27 +1,10 @@
 import {
   ACTUALS_LOADHOMESPEC_PATH,
-  BASE_HOMELINK_VIEW_FIXTURE,
   LOCALHOST_URL,
-  ACTUAL_HOMELINK_VIEW_FIXTURE,
-  DIFF_FIXTURE_FOLDER_PATH,
   ACTUALS_LOADHOMESPEC_PATH_HEADLESS,
+  EMAIL,
+  PASSWORD,
 } from "../../constants";
-
-import { PNG, PNGWithMetadata } from "pngjs";
-import Pixelmatch from "pixelmatch";
-
-let baselinePng: PNGWithMetadata;
-const baseDimensions = {
-  width: 0,
-  height: 0,
-};
-let actualPng: PNGWithMetadata;
-const actualDimensions = {
-  width: 0,
-  height: 0,
-};
-let diff: PNG;
-let matchNum = 123;
 
 describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
   it("runs the delete actual png task plugin", () => {
@@ -42,100 +25,57 @@ describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
   it("visit's home page", () => {
     cy.visit(LOCALHOST_URL);
   });
-  it("checks the home link", () => {
-    cy.get("a.link").contains("Home").should("have.length", 1);
-  });
   it("checks the login link", () => {
     cy.get("a.link").contains("Login").should("have.length", 1);
   });
   it("checks the signup link", () => {
     cy.get("a.link").contains("Signup").should("have.length", 1);
   });
-  it("screenshots-the-home-view-window", () => {
-    cy.get("a.link").contains("Home").screenshot({ capture: "viewport" });
-  });
-  // it("screenshots-the-home-view-window", () => {
-  //   cy.get("html").screenshot({ capture: "viewport" });
-  // });
 });
 
 describe("unit-test-home-link", () => {
-  it("get the baseline png of home link", () => {
-    cy.fixture(
-      /screenshots-the-home-view-window.png/g.test(BASE_HOMELINK_VIEW_FIXTURE)
-        ? BASE_HOMELINK_VIEW_FIXTURE
-        : "not found"
-    )
-      .then(Cypress.Blob.base64StringToBlob)
-      .then(async (fileBlob: Blob) => {
-        const fileArrayBuffer = await fileBlob.arrayBuffer();
-        baselinePng = PNG.sync.read(
-          Buffer.from(new Uint8Array(fileArrayBuffer))
-        );
-        baseDimensions.height = baselinePng.height;
-        baseDimensions.width = baselinePng.width;
-        console.log("baseline png", baselinePng);
-      });
+  it("can click login and then click the home link to come backt to home page", () => {
+    cy.get("a.link").contains("Login").click();
+    cy.get("a.link").contains("Home").should("have.length", 1).click();
+    cy.get("a.link").contains("Signup").should("have.length", 1).click();
+    cy.get("a.link").contains("Home").should("have.length", 1).click();
   });
+});
 
-  it("get the actual png of the home link", () => {
-    cy.fixture(
-      /screenshots-the-home-view-window.png/.test(ACTUAL_HOMELINK_VIEW_FIXTURE)
-        ? ACTUAL_HOMELINK_VIEW_FIXTURE
-        : "actual png not found"
-    )
-      .then(Cypress.Blob.base64StringToBlob)
-      .then(async (fileBlob: Blob) => {
-        const fileArrayBuffer = await fileBlob.arrayBuffer();
-        actualPng = PNG.sync.read(Buffer.from(new Uint8Array(fileArrayBuffer)));
-        actualDimensions.height = actualPng.height;
-        actualDimensions.width = actualPng.width;
-        console.log("actual png", actualPng);
-      });
+describe("logs in to check if the logout link appears when logged in then logs out", () => {
+  it("logs in", () => {
+    cy.get("a.link").contains("Login").click();
   });
-
-  it("write the diff to disk only if the dimensions are the same", () => {
-    expect(baseDimensions.height).to.equal(actualDimensions.height);
-    expect(baseDimensions.width).to.equal(actualDimensions.width);
-    console.log("write diff task args", {
-      testName: "LoadHome.spec.ts",
-      writePath: DIFF_FIXTURE_FOLDER_PATH,
-      fileName:
-        "Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png",
-    });
-
-    cy.task("writeDiff", {
-      testName: "LoadHome.spec.ts",
-      writePath: DIFF_FIXTURE_FOLDER_PATH,
-      fileName:
-        "Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png",
-    }).then((resultOrNull) => {
-      console.log("home link write diff result", resultOrNull);
+  it("types in email", () => {
+    cy.get("input[name=email]").should("have.length", 1).type(EMAIL);
+  });
+  it("types in password", () => {
+    cy.get("input[name=password]").should("have.length", 1).type(PASSWORD);
+  });
+  it("clicks the submit button", () => {
+    cy.get("button").contains("Login").should("have.length", 1).click();
+  });
+  it("checks that success message appears ", () => {
+    cy.wait(100);
+    cy.get("p.has-text-success")
+      .contains("Success! Teleporting to Home Page!")
+      .should("have.length", 1);
+  });
+  it("waits a bit and checks we are back at the home page, i.e. checking if the add todo button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
+    cy.wait(2000);
+    cy.get("button").contains("Add todo");
+    //not sure why the assertion only works here but okay
+    // cypress trashes local storage during the test to prevent buildup of state or something like that
+    cy.window().then((window: Cypress.AUTWindow) => {
+      const token = window.localStorage.getItem("id_token");
+      const email = window.localStorage.getItem("global_email");
+      expect(email).to.equal(EMAIL);
+      expect(token).to.not.be.null;
     });
   });
 
-  it("calculate the diff between base and actual", () => {
-    const { width, height } = baselinePng;
-    diff = new PNG({ width, height });
-    console.log("home link initial diff image", diff);
-    const threshold = 0.1;
-
-    matchNum = Pixelmatch(
-      baselinePng.data,
-      actualPng.data,
-      diff.data,
-      width,
-      height,
-      { threshold }
-    );
-
-    console.log("\x1b[32m", "match num value", matchNum, "\x1b[00m");
-
-    if (matchNum === 0) {
-      //run the delete diff task since the pictures match we dont need to see the diff image.
-      cy.task("deleteDiff", "LoadHome.spec.ts");
-    }
-
-    expect(matchNum).to.equal(0);
+  it("see logout link and clicks it", () => {
+    cy.wait(1000);
+    cy.get("span.link").contains("Logout").click();
   });
 });

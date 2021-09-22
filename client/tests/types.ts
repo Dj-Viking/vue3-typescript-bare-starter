@@ -1,9 +1,3 @@
-export interface ConstantCliArgs extends Object {
-  varName?: string | undefined;
-  type?: string | undefined;
-  value?: string | undefined;
-  description?: string | undefined;
-}
 /**
  * ansi escape code enum collection for printing any color text into the console as the first/third argument of a console.log()
  * @example
@@ -21,6 +15,29 @@ export enum ANSI_ESCAPES {
   info_back = "\x1b[44m",
   link_back = "\x1b[45m",
   reset = "\x1b[00m",
+}
+
+export interface MeQueryResponse extends Object {
+  errors:
+    | null
+    | [
+        {
+          field: string;
+          message: string;
+        }
+      ];
+  me: {
+    token: string;
+    username: string;
+    email: string;
+  };
+}
+
+export interface ConstantCliArgs extends Object {
+  varName?: string | undefined;
+  type?: string | undefined;
+  value?: string | undefined;
+  description?: string | undefined;
 }
 
 export interface IkeyValueMappedObj {

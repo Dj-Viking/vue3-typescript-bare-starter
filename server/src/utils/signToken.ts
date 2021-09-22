@@ -6,7 +6,7 @@ const {
   EXPIRATION
 } = process.env;
 
-export function signToken(user: { username: string, email: string, password: string }): string {
+export function signToken(user: { username: string, email: string, password: string, token?: string }): string {
 
   const payload = {
     username: user.username,
