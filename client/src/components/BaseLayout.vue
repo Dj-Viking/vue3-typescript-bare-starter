@@ -1,11 +1,30 @@
 <template>
   <div>
     <nav>
-      <router-link class="link" :to="'/'">Home</router-link>
-      <span class="divider">|</span>
-      <router-link class="link" :to="'/login'">Login</router-link>
-      <span class="divider">|</span>
-      <router-link class="link" :to="'/signup'">Signup</router-link>
+      <div v-if="!isHome">
+        <router-link class="link" :to="'/'">Home</router-link>
+      </div>
+
+      <div v-if="isHome">
+        <div v-if="isLoggedIn">
+          <span
+            style="cursor: pointer"
+            class="link"
+            @click.prevent="
+              ($event) => {
+                readEvent($event);
+                logout();
+              }
+            "
+            >Logout</span
+          >
+        </div>
+        <div v-if="!isLoggedIn">
+          <router-link class="link" :to="'/login'">Login</router-link>
+          <span class="divider">|</span>
+          <router-link class="link" :to="'/signup'">Signup</router-link>
+        </div>
+      </div>
     </nav>
     <slot />
   </div>
@@ -15,13 +34,20 @@
 import { defineComponent, inject } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { MeQueryResponse, RootCommitType, RootDispatchType } from "../types";
+import { mapState } from "vuex";
+import {
+  MeQueryResponse,
+  // MyRootState,
+  RootCommitType,
+  RootDispatchType,
+} from "../types";
 import { createMeQuery } from "../graphql/queries/myQueries";
 import auth from "../utils/AuthService";
 import store from "../store";
 
 export default defineComponent({
   name: "BaseLayout",
+  props: ["isHome"],
   setup() {
     //graphql me query for checking if the token is expired.
     //basically if the backend returns a token whenever the route changes. the user gets a new token. otherwise if user is idle on the page, the token would expire after about an hour...for now
@@ -34,6 +60,28 @@ export default defineComponent({
 
     return { meResult, refetch, globalEmail };
   },
+  computed: {
+    ...mapState(["user"]),
+  },
+  data() {
+    return {
+      isLoggedIn: false,
+    };
+  },
+  methods: {
+    // eslint-disable-next-line
+    readEvent(_event: Event): void {
+      //do nothing
+      console.log(_event);
+    },
+    logout() {
+      auth.setToken("");
+      this.isLoggedIn = false;
+      //refetching after setting the token to
+      //empty string will not allow for a refresh token on the site
+      this.refetch();
+    },
+  },
   watch: {
     //callback to execute whenever the application router changes
     $route: async function () {
@@ -43,6 +91,7 @@ export default defineComponent({
       if (newValue.me.errors?.length) {
         auth.clearToken();
         auth.setEmail("");
+        this.isLoggedIn = false;
         await store.dispatch("user/setUser", null, { root: true });
         store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
           root: true,
@@ -54,6 +103,7 @@ export default defineComponent({
         store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
           root: true,
         });
+        this.isLoggedIn = true;
         //set user vuex state
         await store.dispatch(
           "user/setUser" as RootDispatchType,
@@ -64,6 +114,9 @@ export default defineComponent({
         );
       }
     },
+  },
+  mounted() {
+    console.log("user on mounted", this.user);
   },
 });
 </script>

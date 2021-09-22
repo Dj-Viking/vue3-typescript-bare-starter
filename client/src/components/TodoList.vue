@@ -1,6 +1,8 @@
 <template>
   <div>
-    <button @click.prevent="clearTodos($event)">clear todos</button>
+    <button class="button is-info" @click.prevent="clearTodos($event)">
+      clear todos
+    </button>
     <div
       style="border: black 2px solid; margin: 10px"
       v-for="(todo, i) in todos"

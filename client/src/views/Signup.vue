@@ -1,5 +1,5 @@
 <template>
-  <BaseLayout>
+  <BaseLayout :isHome="false">
     <form
       class="field box"
       style="margin: 0 20%"
@@ -22,6 +22,7 @@
         class="mt-4 input"
         type="text"
         name="username"
+        autocomplete="off"
         v-model="username"
         placeholder="Username"
       />
@@ -30,6 +31,7 @@
         class="mt-4 input"
         type="text"
         name="email"
+        autocomplete="off"
         v-model="email"
         placeholder="example@mail.com"
         required

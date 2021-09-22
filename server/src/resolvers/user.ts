@@ -66,6 +66,14 @@ class MeQueryResponse {
   token?: string | null;
 }
 
+@ObjectType()
+class LogoutResponse {
+  @Field(() => Boolean, { nullable: true })
+  done: boolean | null;
+  @Field(() => [UserFieldError], { nullable: true })
+  errors?: UserFieldError[] | null;
+}
+
 @InputType()
 class LoginInput {
   @Field()
@@ -225,12 +233,15 @@ export class UserResolver {
       user
     };
   }
-  @Mutation(() => UserResponse)
+  @Mutation(() => LogoutResponse)
   async logout(
     @Arg("email", () => String) email: string,
     @Ctx() context: MyContext
-  ): Promise<UserResponse | ErrorResponse> {
+  ): Promise<LogoutResponse | ErrorResponse> {
     console.log('context user', context.req.user);
+    console.log("email entered", email);
+    
+    if (!email) throw new Error ("no email entered")
     try {
       //remove token from user table?
       const changedUser = await getConnection()
@@ -239,7 +250,7 @@ export class UserResolver {
       .update<User>(User, 
                     { token: "" })
       .where("email = :email", { email: email })
-      .returning(["id", "username", "createdAt", "updatedAt", "token", "email"])
+      .returning(["id", "username", "createdAt", "updatedAt", "email"])
       .updateEntity(true)
       .execute();
       if (!changedUser) return new ErrorResponse("user", "user not found");
@@ -249,8 +260,8 @@ export class UserResolver {
       context.req.user = null;
       
       return {
-        user: changedUser.raw[0]
-      }
+        done: true
+      };
 
     } catch (error) {
       console.log(error);

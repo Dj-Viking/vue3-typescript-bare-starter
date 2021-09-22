@@ -37,15 +37,6 @@ const mutations = {
     };
   },
   // eslint-disable-next-line
-  // CLEAR_USER_TOKEN(state: UserState, payload: null): void {
-  //   // eslint-disable-next-line
-  //   //@ts-ignore
-  //   state.user = {
-  //     ...state.user,
-  //     token: payload,
-  //   };
-  // },
-  // eslint-disable-next-line
   CLEAR_USER(state: UserState, payload: any): void {
     state.user = payload;
   },
@@ -78,7 +69,11 @@ const actions = {
   },
   // async saveUserTodos(){}
 };
-const getters = {};
+const getters = {
+  user(state: UserState): UserState["user"] {
+    return state.user;
+  },
+};
 
 export default {
   namespaced: true,

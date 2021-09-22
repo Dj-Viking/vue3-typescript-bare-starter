@@ -37,3 +37,17 @@ export function createLoginMutation(): string {
     }
   `;
 }
+
+export function createLogoutMutation(email: string): string {
+  return `
+    mutation logout($email: String!) {
+      logout(email: "${email}") {
+        done
+        errors {
+          field
+          message
+        }
+      }
+    }
+  `;
+}
