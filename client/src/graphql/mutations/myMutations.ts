@@ -18,6 +18,26 @@ export function createRegisterMutation(): string {
   `;
 }
 
+export function createAddTodoMutation(): string {
+  return `
+    mutation addTodo($text: String!) {
+      addTodo(text: $text) {
+        todos {
+          id
+          creatorId
+          createdAt
+          text
+          updatedAt
+        }
+        errors {
+          field
+          message
+        }
+      }
+    }
+  `;
+}
+
 export function createLoginMutation(): string {
   return `
     mutation login($options: LoginInput!) {

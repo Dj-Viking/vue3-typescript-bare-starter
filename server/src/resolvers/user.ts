@@ -137,7 +137,7 @@ export class UserResolver {
       .execute();
 
       // console.log("updated user's info adding in todos", changedUser);
-      user?.token = newToken as string
+      
 
       return {
         token: newToken,

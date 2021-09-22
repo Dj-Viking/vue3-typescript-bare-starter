@@ -98,7 +98,12 @@ export default defineComponent({
         await store.dispatch("user/setUser", null, { root: true });
         store.commit(
           "todos/SET_TODOS" as RootCommitType,
-          [{ text: "error on me result", id: Date.now() }],
+          [
+            {
+              text: "sign in to see and add your own todos!!!",
+              id: Date.now(),
+            },
+          ],
           { root: true }
         );
         store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
@@ -127,7 +132,6 @@ export default defineComponent({
     },
   },
   async mounted() {
-    console.log("user todos on mounted", this.user.todos);
     console.log("todos vuex state on mounted", store.state.todos);
     //set the todos if there are any defined
   },

@@ -79,6 +79,13 @@ export type RootDispatchType =
   | "todos/editTodo"
   | "todos/addTodo";
 
+export interface AddTodoResponse {
+  addTodo: {
+    todos: Todo[];
+    errors: MyErrorResponse;
+  };
+}
+
 export type RootCommitType =
   | "user/SET_USER"
   | "user/CLEAR_USER_TOKEN"
