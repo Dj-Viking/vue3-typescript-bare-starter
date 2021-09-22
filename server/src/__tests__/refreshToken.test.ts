@@ -92,11 +92,11 @@ describe("Tests the user register", () => {
 
     //if the length of the actual array is 0 for some reason the length property is set to typeof "undefined"
     expect(res.me.errors?.length).toBe(undefined);
-    expect(res.me.token).toBeTruthy();
+    expect(res.me.user.token).toBeTruthy();
 
     //check if old token is expired
     //get new token
-    newToken = res.me.token as string;
+    newToken = res.me.user.token as string;
 
     console.log("new token", newToken);
     
@@ -108,6 +108,9 @@ describe("Tests the user register", () => {
     // const decoded = decodeToken(newToken) as jwt.JwtPayload;
     new logger("yellow", "testing me query again to get a new refresh token should be different than the previous newToken").genLog();
 
+    console.log("decoded token previous", decodeToken(newToken));
+    
+
     async function sleep(ms: number): Promise<void> {
       console.log("sleeping for one second before doing me query again to get an older expiration by one second");
       return new Promise((resolve, _reject) => {
@@ -117,13 +120,14 @@ describe("Tests the user register", () => {
       });
     }
 
-    await sleep(1000);
+    await sleep(3000);
 
     const newerMe: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery()}`, {}, {
       "authorization": `Bearer ${newToken}`
     });
     const decodedPrevious = decodeToken(newToken) as jwt.JwtPayload;
-    const decodedNew = decodeToken(newerMe.me.token as string) as jwt.JwtPayload;
+    const decodedNew = decodeToken(newerMe.me.user.token as string) as jwt.JwtPayload;
+    console.log("\x1b[33m", "decoded new token", decodedNew, "\x1b[00m");
     expect (decodedPrevious.exp as number).toBeLessThan(decodedNew.exp as number);
 
   });

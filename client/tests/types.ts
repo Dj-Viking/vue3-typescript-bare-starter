@@ -26,6 +26,7 @@ export interface MeQueryResponse extends Object {
           message: string;
         }
       ];
+  token: string;
   me: {
     token: string;
     username: string;

@@ -120,9 +120,7 @@ export class UserResolver {
       const profile = decodeToken(newToken);
       console.log("heres the profile", profile);
       
-
-      //remove token from user table?
-      /*const changedUser =*/ await getConnection()
+      const changedUser = await getConnection()
       .getRepository(User)
       .createQueryBuilder("user")
       .update<User>(User, 
@@ -136,7 +134,7 @@ export class UserResolver {
 
       return {
         token: newToken,
-        user: user
+        user: changedUser.raw[0]
       }
       //if user is found sign a new token for them with a new expiration
     } catch (error) {
