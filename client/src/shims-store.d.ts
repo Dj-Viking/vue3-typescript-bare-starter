@@ -1,4 +1,4 @@
 declare module "*.store.ts" {
-  import { createStore } from "vuex";
-  export default typeof createStore;
+  import { Module } from "vuex";
+  export default typeof Module;
 }

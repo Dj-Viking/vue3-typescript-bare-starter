@@ -241,7 +241,7 @@ export class UserResolver {
     console.log('context user', context.req.user);
     console.log("email entered", email);
     
-    if (!email) throw new Error ("no email entered")
+    if (!email) return new ErrorResponse("noemail", "no email entered")
     try {
       //remove token from user table?
       const changedUser = await getConnection()

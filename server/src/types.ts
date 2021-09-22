@@ -62,7 +62,7 @@ export interface LoginResponse {
 export interface LogoutResponse {
     logout: {
         errors: MyErrorResponse
-        user: UserEntityBase
+        done: boolean | null
     };
 }
 
