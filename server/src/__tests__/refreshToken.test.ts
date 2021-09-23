@@ -12,7 +12,7 @@ import {
 import { MeQueryResponse, RegisterResponse } from "../types";
 import { ColorLog, logJson, createMeQuery } from "../__tests__/utils/helpers";
 import { decodeToken } from "../utils/decodeToken";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 const {
   // NOT_FOUND_EMAIL,
   // NOT_MY_EMAIL
@@ -104,32 +104,30 @@ describe("Tests the user register", () => {
     console.log("me query response test", res);
   });
 
-  it("does me query again and checks that the token expiration is different than the previous one", async () => {
+  it("does me query again and checks that the old token is not the same as the one sent back from the me query", async () => {
     // const decoded = decodeToken(newToken) as jwt.JwtPayload;
     new logger("yellow", "testing me query again to get a new refresh token should be different than the previous newToken").genLog();
 
     console.log("decoded token previous", decodeToken(newToken));
-    
 
-    async function sleep(ms: number): Promise<void> {
-      console.log("sleeping for one second before doing me query again to get an older expiration by one second");
+    async function sleep(ms:number): Promise<void> {
       return new Promise((resolve, _reject) => {
         setTimeout(() => {
           resolve();
         }, ms);
       });
     }
-
-    await sleep(3000);
+    await sleep(1000)
 
     const newerMe: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery()}`, {}, {
       "authorization": `Bearer ${newToken}`
     });
-    const decodedPrevious = decodeToken(newToken) as jwt.JwtPayload;
-    const decodedNew = decodeToken(newerMe.me.user.token as string) as jwt.JwtPayload;
-    console.log("\x1b[33m", "decoded new token", decodedNew, "\x1b[00m");
-    expect (decodedPrevious.exp as number).toBeLessThan(decodedNew.exp as number);
+    //check that the token is different than the previous one
+    new logger("blue",  `me query OLD TOKEN ${newToken}`, ).genLog();
+    new logger("blue", `me query user NEW TOKEN ${newerMe.me.user.token}`).genLog();
+    new logger("blue", `me query outside user NEW TOKEN ${newerMe.me.token}`).genLog();
 
+    expect(newerMe.me.token !== newToken).toBe(true);
   });
 
   it("checks if we delete the user we just made", async () => {

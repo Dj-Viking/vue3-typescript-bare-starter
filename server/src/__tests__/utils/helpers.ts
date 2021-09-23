@@ -58,16 +58,13 @@ export function createLogoutMutation(email: string): string {
 	`
 }
 
-export function createAddTodoMutation(email: string): string {
+export function createAddTodoMutation(text: string): string {
   return `
 		mutation addTodo {
-			addTodo(options: {
-				text: "some text",
-				email: "${email}"
-			}){
+			addTodo(text: "${text}") {
 				todos {
-					text
 					id
+					text
 					createdAt
 					updatedAt
 					creatorId
@@ -78,15 +75,13 @@ export function createAddTodoMutation(email: string): string {
 				}
 			}
 		}
-	`
+	`;
 }
 
-export function createGetUserTodosQuery(email: string): string {
+export function createGetUserTodosQuery(): string {
   return `
-		{
-			getUserTodos(
-				email: "${email}"
-			){
+		query getUserTodos {
+			getUserTodos{
 				todos {
 					id
 					creatorId
@@ -103,12 +98,10 @@ export function createGetUserTodosQuery(email: string): string {
 	`
 }
 
-export function createClearUserTodosMutation(email: string): string {
+export function createClearUserTodosMutation(): string {
   return `
 		mutation clearUserTodos {
-			clearUserTodos( 
-				email: "${email}"
-			){
+			clearUserTodos {
 				errors {
 					field
 					message
@@ -120,14 +113,10 @@ export function createClearUserTodosMutation(email: string): string {
 }
 
 export function createEditTodoMutation(payload: EditTodoPayload): string {
-  const { text, todoId, email } = payload
+  const { text, todoId } = payload
   return `
-		mutation editTodoById{
-			editTodoById(options: {
-				text: "${text}",
-				email: "${email}",
-				todoId: ${todoId}
-			}){
+		mutation editTodoById {
+			editTodoById(id: ${todoId}, text: "${text}"){
 				errors {
 					field
 					message
@@ -153,6 +142,12 @@ export function createMeQuery(): string {
 					email
 					createdAt
 					updatedAt
+				}
+				todos {
+					id
+					text
+					updatedAt
+					createdAt
 				}
 				token
 				errors {

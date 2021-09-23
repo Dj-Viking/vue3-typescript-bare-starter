@@ -50,7 +50,7 @@ class UserResponse {
   @Field(() => String, { nullable: true })
   token?: string | null
 
-  @Field(() => Todo, { nullable: true })
+  @Field(() => [Todo], { nullable: true })
   todos?: Todo[] | null
 }
 
@@ -64,6 +64,9 @@ class MeQueryResponse {
 
   @Field(() => String, { nullable: true })
   token?: string | null;
+
+  @Field(() => [Todo], { nullable: true })
+  todos?: Todo[] | null;
 }
 
 @ObjectType()
@@ -105,9 +108,12 @@ export class UserResolver {
 
       console.log("user requesting their profile infomation and refreshtoken", req.user);
 
-      let user = await User.findOne({ where:{ email: req.user.email}});
+      const user = await User.findOne({ where:{ email: req.user.email }});
       
       console.log("user found", user);
+
+      const todos = await Todo.find({ where: { creatorId: user?.id as number }});
+      console.log("checking todos given the creatorId", todos);
 
       //sign a new token
       const newToken = signToken({
@@ -118,7 +124,7 @@ export class UserResolver {
 
       //debug
       const profile = decodeToken(newToken);
-      console.log("heres the profile", profile);
+      console.log("heres the profile of the person doing me query", profile);
       
       const changedUser = await getConnection()
       .getRepository(User)
@@ -130,11 +136,13 @@ export class UserResolver {
       .updateEntity(true)
       .execute();
 
-      // console.log("updated user's info", changedUser);
+      console.log("updated user's info adding in todos", changedUser);
+      
 
       return {
         token: newToken,
-        user: changedUser.raw[0]
+        user: changedUser.raw[0],
+        todos: todos
       }
       //if user is found sign a new token for them with a new expiration
     } catch (error) {
@@ -220,15 +228,33 @@ export class UserResolver {
       );
     }
 
-    //sign a new token for the user who just logged in
-    user.token = signToken({
+    //create a new token and then update the user's token in the database
+    const token = signToken({
       username: user.username,
       email: user.email,
       password: user.password
     });
+
+
+    const changedUser = await getConnection()
+    .getRepository(User)
+    .createQueryBuilder("user")
+    .update<User>(User, 
+                  { token })
+    .where("email = :email", { email: options.email })
+    .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
+    .updateEntity(true)
+    .execute();
+
+    console.log("updated user's token after logging in ", changedUser);
+      
+
+    const todos = await Todo.find({ where: { creatorId: user.id }});
+
     return {
-      token: user.token,
-      user
+      token: token,
+      user: changedUser.raw[0],
+      todos: todos
     };
   }
   @Mutation(() => LogoutResponse)

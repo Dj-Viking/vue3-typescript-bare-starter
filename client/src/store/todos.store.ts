@@ -13,6 +13,8 @@ const state: TodosState = {
       id: Date.now(),
       text: "something is here " + index,
       color: "blue",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
   }),
 };
@@ -33,24 +35,25 @@ const mutations = {
       );
     state.todos.unshift(payload);
   },
-  DELETE_TODO(state: TodosState, index: number): void {
-    if (typeof index !== "number" || index === null)
-      return console.error(
-        "index argument must be a number but it was: ",
-        index
-      );
-    state.todos.splice(index, 1);
+  DELETE_TODO(state: TodosState, id: number): void {
+    if (typeof id !== "number" || id === null)
+      return console.error("index argument must be a number but it was: ", id);
+
+    //return a filtered array that doesn't have the id passed as an argument
+    state.todos = state.todos.filter((todo) => todo.id !== id);
   },
-  EDIT_TODO(state: TodosState, payload: { index: number; text: string }): void {
-    const { index, text } = payload;
+  EDIT_TODO(state: TodosState, payload: { id: number; text: string }): void {
+    const { id, text } = payload;
     //cant check if the index is !zero and return because 0 is a falsey value in javascript. even though
     // arrays are zero indexed haha
-    // so adding 1 to prevent the zero indexing to throw this console error.
-    if (!(index + 1) || !text)
+
+    if (!id || !text)
       return console.error(
         "error in edit todo commit payload types are incorrect"
       );
+    const index = state.todos.findIndex((todo) => todo.id === id);
     state.todos[index].text = text;
+    state.todos[index].updatedAt = Date.now();
   },
 };
 const actions = {

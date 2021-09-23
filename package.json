@@ -4,8 +4,10 @@
   "description": "",
   "scripts": {
     "tscheck": "cd client; npm run tscheck",
-    "client": "cd client; npm run tscheck; npm run serve",
-    "test": "cd client; SPECNAME='*' npm run cy:run; cd ../server; npm run test"
+    "client": "cd client; npm run serve",
+    "test": "cd client; SPECNAME='*' npm run cy:run; cd ../server; npm run test",
+    "server-compile": "cd server; npm run tsw",
+    "server-dev": "cd server; npm run dev"
   },
   "repository": {
     "type": "git",

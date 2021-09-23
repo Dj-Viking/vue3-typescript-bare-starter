@@ -1,6 +1,8 @@
 export interface Todo {
   id: number;
   text: string;
+  updatedAt: number;
+  createdAt: number;
   color: string | "blue";
 }
 /**
@@ -33,11 +35,14 @@ export interface MyDOMInputEvent extends Event {
 }
 export interface MeQueryResponse extends Object {
   me: {
-    user: {
-      token: string;
-      username: string;
-      email: string;
-    };
+    user: UserEntityBase;
+    errors: MyErrorResponse;
+    todos: Todo[];
+  };
+}
+export interface GetUserTodosResponse {
+  getUserTodos: {
+    todos: Todo[];
     errors: MyErrorResponse;
   };
 }
@@ -76,10 +81,18 @@ export type RootDispatchType =
   | "todos/editTodo"
   | "todos/addTodo";
 
+export interface AddTodoResponse {
+  addTodo: {
+    todos: Todo[];
+    errors: MyErrorResponse;
+  };
+}
+
 export type RootCommitType =
   | "user/SET_USER"
   | "user/CLEAR_USER_TOKEN"
   | "user/SET_LOGGED_IN"
+  | "user/SET_USER_TODOS"
   | "todos/ADD_TODO"
   | "todos/SET_TODOS"
   | "todos/DELETE_TODO"

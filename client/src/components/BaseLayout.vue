@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container is-widescreen">
     <nav>
       <div v-if="!isHome">
         <router-link class="link" :to="'/'">Home</router-link>
@@ -40,6 +40,7 @@ import {
   // MyRootState,
   RootCommitType,
   RootDispatchType,
+  // UserState,
 } from "../types";
 import { createMeQuery } from "../graphql/queries/myQueries";
 import auth from "../utils/AuthService";
@@ -62,6 +63,9 @@ export default defineComponent({
   },
   computed: {
     ...mapState(["user"]),
+    //if i need to change this read only state i need to dispatch an action or commit some mutation
+    // isLoggedIn: (): UserState["user"]["loggedIn"] =>
+    //   store.state.user.user.loggedIn,
   },
   data() {
     return {
@@ -74,16 +78,19 @@ export default defineComponent({
       //do nothing
       console.log(_event);
     },
-    logout() {
+    async logout() {
       auth.setToken("");
       this.isLoggedIn = false;
       //refetching after setting the token to
       //empty string will not allow for a refresh token on the site
-      this.refetch();
+      // this.refetch();
+      await store.dispatch("todos/setTodos" as RootDispatchType, [], {
+        root: true,
+      });
     },
   },
   watch: {
-    //callback to execute whenever the application router changes
+    //callback to refresh user token to execute whenever the application router changes
     $route: async function () {
       await this.refetch();
     },
@@ -93,18 +100,31 @@ export default defineComponent({
         auth.setEmail("");
         this.isLoggedIn = false;
         await store.dispatch("user/setUser", null, { root: true });
+        store.commit(
+          "todos/SET_TODOS" as RootCommitType,
+          [
+            {
+              text: "sign in to see and add your own todos!!!",
+              id: Date.now(),
+            },
+          ],
+          { root: true }
+        );
         store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
           root: true,
         });
       } else {
         console.log("value of me query result", newValue);
         //set new token in storage
-        auth.setToken(newValue.me.user.token);
+        auth.setToken(newValue.me.user.token as string);
         store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
           root: true,
         });
         this.isLoggedIn = true;
-        //set user vuex state
+        store.commit("todos/SET_TODOS" as RootCommitType, newValue.me.todos, {
+          root: true,
+        });
+        //set user vuex state with todos
         await store.dispatch(
           "user/setUser" as RootDispatchType,
           { ...newValue.me.user },
@@ -115,8 +135,9 @@ export default defineComponent({
       }
     },
   },
-  mounted() {
-    console.log("user on mounted", this.user);
+  async mounted() {
+    console.log("todos vuex state on mounted", store.state.todos);
+    //set the todos if there are any defined
   },
 });
 </script>

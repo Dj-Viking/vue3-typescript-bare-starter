@@ -19,7 +19,7 @@ const state: UserState = {
 };
 const mutations = {
   SET_USER(state: UserState, payload: UserState): void {
-    console.log("some payload", payload);
+    console.log("set user commit some payload", payload);
 
     if (typeof payload !== "object")
       return console.error("payload was was not an object!");
@@ -28,6 +28,10 @@ const mutations = {
       ...payload,
     } as UserState["user"];
     delete state.user.token;
+  },
+  SET_USER_TODOS(state: UserState, payload: Todo[]): void {
+    console.log("setting user todos payload!!!", payload);
+    state.user.todos = payload;
   },
   SET_LOGGED_IN(state: UserState, payload: boolean): void {
     console.log("setting logged in", payload);
@@ -42,6 +46,17 @@ const mutations = {
   },
 };
 const actions = {
+  async setUserTodos(
+    { commit }: ActionContext<UserState, MyRootState>,
+    payload: Todo[]
+  ): Promise<void> {
+    try {
+      commit("user/SET_USER_TODOS" as RootCommitType, payload, { root: true });
+      Promise.resolve();
+    } catch (error) {
+      Promise.resolve(error);
+    }
+  },
   async setUser(
     { commit }: ActionContext<UserState, MyRootState>,
     payload: UserState
