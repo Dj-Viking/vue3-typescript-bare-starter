@@ -12,7 +12,7 @@ import {
 import { MeQueryResponse, RegisterResponse } from "../types";
 import { ColorLog, logJson, createMeQuery } from "../__tests__/utils/helpers";
 import { decodeToken } from "../utils/decodeToken";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 const {
   // NOT_FOUND_EMAIL,
   // NOT_MY_EMAIL
@@ -109,27 +109,13 @@ describe("Tests the user register", () => {
     new logger("yellow", "testing me query again to get a new refresh token should be different than the previous newToken").genLog();
 
     console.log("decoded token previous", decodeToken(newToken));
-    
-
-    async function sleep(ms: number): Promise<void> {
-      console.log("sleeping for one second before doing me query again to get an older expiration by one second");
-      return new Promise((resolve, _reject) => {
-        setTimeout(() => {
-          resolve();
-        }, ms);
-      });
-    }
-
-    await sleep(3000);
 
     const newerMe: MeQueryResponse = await request(HOST + "/graphql", `${createMeQuery()}`, {}, {
       "authorization": `Bearer ${newToken}`
     });
-    const decodedPrevious = decodeToken(newToken) as jwt.JwtPayload;
-    const decodedNew = decodeToken(newerMe.me.user.token as string) as jwt.JwtPayload;
-    console.log("\x1b[33m", "decoded new token", decodedNew, "\x1b[00m");
-    expect (decodedPrevious.exp as number).toBeLessThan(decodedNew.exp as number);
+    //check that the token is different than the previous one
 
+    expect(newToken !== newerMe.me.user.token).toBe(true);
   });
 
   it("checks if we delete the user we just made", async () => {

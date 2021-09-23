@@ -228,17 +228,32 @@ export class UserResolver {
       );
     }
 
-    //sign a new token for the user who just logged in
-    user.token = signToken({
+    //create a new token and then update the user's token in the database
+    const token = signToken({
       username: user.username,
       email: user.email,
       password: user.password
     });
+
+
+    const changedUser = await getConnection()
+    .getRepository(User)
+    .createQueryBuilder("user")
+    .update<User>(User, 
+                  { token })
+    .where("email = :email", { email: options.email })
+    .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
+    .updateEntity(true)
+    .execute();
+
+    console.log("updated user's token after logging in ", changedUser);
+      
+
     const todos = await Todo.find({ where: { creatorId: user.id }});
 
     return {
-      token: user.token,
-      user,
+      token: token,
+      user: changedUser.raw[0],
       todos: todos
     };
   }
