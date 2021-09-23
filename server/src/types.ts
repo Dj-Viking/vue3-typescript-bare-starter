@@ -138,6 +138,8 @@ export interface MeQueryResponse {
           username: string;
           email: string;
         };
+        token: string;
+        todos: Array<Todo>;
         errors: MyErrorResponse;
       };
 }

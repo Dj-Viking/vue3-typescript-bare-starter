@@ -126,7 +126,7 @@ export class UserResolver {
       const profile = decodeToken(newToken);
       console.log("heres the profile of the person doing me query", profile);
       
-      await getConnection()
+      const changedUser = await getConnection()
       .getRepository(User)
       .createQueryBuilder("user")
       .update<User>(User, 
@@ -136,12 +136,12 @@ export class UserResolver {
       .updateEntity(true)
       .execute();
 
-      // console.log("updated user's info adding in todos", changedUser);
+      console.log("updated user's info adding in todos", changedUser);
       
 
       return {
         token: newToken,
-        user: user,
+        user: changedUser.raw[0],
         todos: todos
       }
       //if user is found sign a new token for them with a new expiration

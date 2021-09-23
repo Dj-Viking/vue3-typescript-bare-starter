@@ -143,6 +143,12 @@ export function createMeQuery(): string {
 					createdAt
 					updatedAt
 				}
+				todos {
+					id
+					text
+					updatedAt
+					createdAt
+				}
 				token
 				errors {
 					field
