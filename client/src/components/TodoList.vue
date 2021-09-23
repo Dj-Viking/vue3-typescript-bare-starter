@@ -79,7 +79,12 @@
           }
         "
       >
-        <input type="text" @input="textInput($event)" v-model="input" />
+        <input
+          type="text"
+          name="textInput"
+          @input="textInput($event)"
+          v-model="input"
+        />
         <pre style="color: black">
           {{ input }}
         </pre>
