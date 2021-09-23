@@ -1,27 +1,6 @@
-import {
-  ACTUALS_LOADHOMESPEC_PATH,
-  LOCALHOST_URL,
-  ACTUALS_LOADHOMESPEC_PATH_HEADLESS,
-  EMAIL,
-  PASSWORD,
-} from "../../constants";
+import { LOCALHOST_URL, EMAIL, PASSWORD } from "../../constants";
 
 describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
-  it("runs the delete actual png task plugin", () => {
-    if (Cypress.browser.isHeadless) {
-      cy.task("deleteActuals", ACTUALS_LOADHOMESPEC_PATH_HEADLESS).then(
-        (dirOrNull) => {
-          console.log("delete load home spec actuals dir or null: ", dirOrNull);
-        }
-      );
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task("deleteActuals", ACTUALS_LOADHOMESPEC_PATH).then((dirOrNull) => {
-        console.log(dirOrNull);
-      });
-    }
-  });
-
   it("visit's home page", () => {
     cy.visit(LOCALHOST_URL);
   });
