@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container is-widescreen">
     <nav>
       <div v-if="!isHome">
         <router-link class="link" :to="'/'">Home</router-link>

@@ -14,13 +14,9 @@
     >
       clear todos
     </button>
-    <div v-if="todos.length > 0">
+    <div class="container is-widescreen" v-if="todos.length > 0">
       <h3>Your Todos</h3>
-      <div
-        style="border: black 2px solid; margin: 10px"
-        v-for="(todo, i) in todos"
-        :key="i"
-      >
+      <div class="notification is-light" v-for="(todo, i) in todos" :key="i">
         <p :style="`color: ${todo.color}`">
           {{ todo.text }}
           <span style="color: blue">updated at: {{ todo.updatedAt }}</span>
@@ -79,16 +75,39 @@
           }
         "
       >
-        <input
-          type="text"
-          name="textInput"
-          @input="textInput($event)"
-          v-model="input"
-        />
-        <pre style="color: black">
-          {{ input }}
-        </pre>
-        <button class="button is-info" type="submit">Add todo</button>
+        <div class="field">
+          <div class="control">
+            <input
+              class="input"
+              style="width: 30%"
+              type="text"
+              name="textInput"
+              @input="textInput($event)"
+              v-model="input"
+            />
+          </div>
+        </div>
+
+        <div>
+          <div
+            v-if="showError"
+            style="border-radius: 10px; width: 30%"
+            class="has-background-danger-light mt-4"
+          >
+            <div class="has-text-danger">Error: {{ errMsg }}</div>
+          </div>
+          <div
+            v-if="showSuccess"
+            style="border-radius: 10px; width: 30%; margin: 0 auto"
+            class="has-background-success-light mt-4"
+          >
+            <div class="has-text-success">Success: {{ successMsg }}</div>
+          </div>
+        </div>
+        <div v-if="!showSuccess" class="mt-4">&nbsp;</div>
+        <div class="control">
+          <button class="button is-info mt-3" type="submit">Add todo</button>
+        </div>
       </form>
     </div>
   </div>
