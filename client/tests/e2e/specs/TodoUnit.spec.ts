@@ -7,6 +7,7 @@ import {
 
 let unique_username = "";
 let unique_email = "";
+let token: string | null = "";
 
 const inputText = "input from the test";
 // const editText = "some edited text";
@@ -121,13 +122,24 @@ describe("registers a new user that will crud the todos", () => {
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that
     cy.window().then((window: Cypress.AUTWindow) => {
-      const token = window.localStorage.getItem("id_token");
+      token = window.localStorage.getItem("id_token");
       const email = window.localStorage.getItem("global_email");
       expect(email).to.equal(unique_email);
       expect(token).to.not.be.null;
     });
   });
   it("creates DO ALL CRUD operations here since this is the only time the token will be available to make requests", () => {
+    // cy.window().then((window: Cypress.AUTWindow) => {
+    //   let tokenNow: string | null = "";
+    //   tokenNow = window.localStorage.getItem("id_token");
+    //   expect(tokenNow).to.be.equal(token);
+    //   let encrypted = "";
+    //   //encrypt token before setting to storage
+    //   encrypted = Buffer.from(token as string).toString("base64");
+    //   window.localStorage.setItem("id_token", encrypted);
+    //   tokenNow = window.localStorage.getItem("id_token");
+    //   expect(tokenNow).to.be.equal(token);
+    // });
     cy.get("input[name=textInput]").type(inputText);
     cy.get("button").contains("Add todo").click();
     cy.wait(400);
