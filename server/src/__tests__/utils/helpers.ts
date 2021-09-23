@@ -98,12 +98,10 @@ export function createGetUserTodosQuery(): string {
 	`
 }
 
-export function createClearUserTodosMutation(email: string): string {
+export function createClearUserTodosMutation(): string {
   return `
 		mutation clearUserTodos {
-			clearUserTodos( 
-				email: "${email}"
-			){
+			clearUserTodos {
 				errors {
 					field
 					message
@@ -117,7 +115,7 @@ export function createClearUserTodosMutation(email: string): string {
 export function createEditTodoMutation(payload: EditTodoPayload): string {
   const { text, todoId } = payload
   return `
-		mutation editTodoById{
+		mutation editTodoById {
 			editTodoById(id: ${todoId}, text: "${text}"){
 				errors {
 					field

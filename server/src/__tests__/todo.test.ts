@@ -13,8 +13,8 @@ import { createAddTodoMutation, createClearUserTodosMutation, createEditTodoMuta
 
 const { 
   EXPIRED_TOKEN, 
-  NOT_MY_EMAIL,
-  NOT_FOUND_EMAIL 
+  // NOT_MY_EMAIL,
+  // NOT_FOUND_EMAIL 
 } = process.env; 
 
 const logger = ColorLog;
@@ -221,44 +221,12 @@ describe("checks editing a todo", () => {
       expect(notFound.editTodoById.errors[0].message).toBe("404 Todo Not Found");
       
     });
-    it("tries to edit the todo with a not found user", async () => {
-      const editTodoPayload = {
-        text: UPDATED_TODO_TEXT,
-        email: NOT_FOUND_EMAIL,
-        todoId: newTodoId
-      }
-      const notFound: EditTodoByIdResponse = await request(
-        HOST + "/graphql", 
-        `${createEditTodoMutation(editTodoPayload)}`,
-        {},
-        { "authorization": `Bearer ${newToken}`}
-      );
-      expect(notFound.editTodoById.errors).toHaveLength(1);
-      expect(notFound.editTodoById.errors[0].message).toBe("404 Not Found");
-      
-    });
-    it("tries to edit the todo with a forbidden request", async () => {
-      const editTodoPayload = {
-        text: UPDATED_TODO_TEXT,
-        email: NOT_MY_EMAIL,
-        todoId: newTodoId
-      }
-      const forbidden: EditTodoByIdResponse = await request(
-        HOST + "/graphql", 
-        `${createEditTodoMutation(editTodoPayload)}`,
-        {},
-        { "authorization": `Bearer ${newToken}`}
-      );
-      expect(forbidden.editTodoById.errors).toHaveLength(1);
-      expect(forbidden.editTodoById.errors[0].message).toBe("403 Forbidden");
-    });
   });
   
   it("edits the todo that was just added", async () => {
     new logger("blue", "editing the todo we just added").genLog();
     const editTodoPayload = {
       text: UPDATED_TODO_TEXT,
-      email: creatorEmail,
       todoId: newTodoId
     }
     const res: EditTodoByIdResponse = await request(
@@ -279,7 +247,7 @@ describe("deletes the todos", () => {
     //malformed token test error
     const invalidToken: ClearUserTodosResponse = await request(
       HOST + "/graphql", 
-      `${createClearUserTodosMutation(creatorEmail)}`, 
+      `${createClearUserTodosMutation()}`, 
       {},
       { "authorization": `Bearer al;kdjf;asfj` }
     );
@@ -293,7 +261,7 @@ describe("deletes the todos", () => {
     //expired token test error
     const expiredToken: ClearUserTodosResponse = await request(
       HOST + "/graphql", 
-      `${createClearUserTodosMutation(creatorEmail)}`, 
+      `${createClearUserTodosMutation()}`, 
       {},
       { "authorization": `Bearer ${EXPIRED_TOKEN}` }
     );
@@ -302,40 +270,12 @@ describe("deletes the todos", () => {
     expect(expiredToken.clearUserTodos.errors).toHaveLength(1);
     expect(expiredToken.clearUserTodos.errors[0].message).toBe("401 unauthorized or expired token");
   });
-
-  it("tries to clear todos with a not found user from the email input", async () => {
-    //notFound error
-    const notFound: ClearUserTodosResponse = await request(
-      HOST + "/graphql", 
-      `${createClearUserTodosMutation(NOT_FOUND_EMAIL as string)}`, 
-      {},
-      { "authorization": `Bearer ${newToken}` }
-    );
-  
-    new logger("red", "should get not found error").genLog();
-    expect(notFound.clearUserTodos.errors).toHaveLength(1);
-    expect(notFound.clearUserTodos.errors[0].message).toBe("404 Not Found");
-  });
-
-  it("tries to clear todos as a forbidden action", async () => {
-    //forbidden error
-    const forbidden: ClearUserTodosResponse = await request(
-      HOST + "/graphql", 
-      `${createClearUserTodosMutation(NOT_MY_EMAIL as string)}`,
-      {},
-      { "authorization": `Bearer ${newToken}` }
-    );
-  
-    new logger("red", "should get forbidden error").genLog();
-    expect(forbidden.clearUserTodos.errors).toHaveLength(1);
-    expect(forbidden.clearUserTodos.errors[0].message).toBe("403 Forbidden");
-  });
   
   it("should successfully clear todos", async () => {
     //delete the currently registered user's todos
     const successClear: ClearUserTodosResponse = await request(
       HOST + "/graphql", 
-      `${createClearUserTodosMutation(creatorEmail)}`,
+      `${createClearUserTodosMutation()}`,
       {},
       { "authorization": `Bearer ${newToken}` }
     );
