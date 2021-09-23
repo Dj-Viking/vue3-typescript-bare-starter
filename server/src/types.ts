@@ -39,7 +39,6 @@ export type MyContext = {
     link_back = "\x1b[45m",
     reset = "\x1b[00m",
   }
-
 export interface RegisterResponse {
     register: {
         errors: MyErrorResponse
@@ -121,7 +120,6 @@ export interface EditTodoByIdResponse {
 export interface EditTodoPayload {
     text: string | undefined;
     todoId: number | undefined;
-    email: string | undefined;
 }
 
 export interface UserEntityBase {

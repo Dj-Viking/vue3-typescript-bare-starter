@@ -16,6 +16,8 @@ export function createMeQuery(): string {
           id
           text
           creatorId
+          updatedAt
+          createdAt
         }
       }
     }

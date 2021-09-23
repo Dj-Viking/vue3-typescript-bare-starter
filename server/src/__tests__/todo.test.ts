@@ -179,7 +179,6 @@ describe("checks editing a todo", () => {
     it("tries to edit the todo with an invalid token", async () => {
       const editTodoPayload = {
         text: UPDATED_TODO_TEXT,
-        email: creatorEmail,
         todoId: newTodoId
       }
       const invalidToken: EditTodoByIdResponse = await request(

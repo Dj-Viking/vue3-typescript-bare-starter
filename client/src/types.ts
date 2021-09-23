@@ -1,6 +1,8 @@
 export interface Todo {
   id: number;
   text: string;
+  updatedAt: number;
+  createdAt: number;
   color: string | "blue";
 }
 /**

@@ -1,6 +1,17 @@
 <template>
   <div>
-    <button class="button is-info" @click.prevent="clearTodos($event)">
+    <button
+      class="button is-info"
+      @click.prevent="
+        ($event) => {
+          //clear local todos
+          clearTodos($event);
+          if (isLoggedIn) {
+            submitClearUserTodos();
+          }
+        }
+      "
+    >
       clear todos
     </button>
     <div v-if="todos.length > 0">
@@ -12,9 +23,39 @@
       >
         <p :style="`color: ${todo.color}`">
           {{ todo.text }}
+          <span style="color: blue">updated at: {{ todo.updatedAt }}</span>
         </p>
-        <button @click.prevent="deleteTodo($event, i)">delete todo</button>
-        <button @click.prevent="editTodo($event, i)">edit todo</button>
+        <button
+          @click.prevent="
+            ($event) => {
+              //update vuex todos that are displayed
+              deleteTodo($event, todo.id);
+              //only delete user's todos if they are logged in
+              if (isLoggedIn) {
+                submitDeleteTodo({
+                  id: todo.id,
+                });
+              }
+            }
+          "
+        >
+          delete todo
+        </button>
+        <button
+          @click.prevent="
+            ($event) => {
+              editTodo($event, todo.id);
+              if (isLoggedIn) {
+                submitEditUserTodo({
+                  text: promptText,
+                  id: todo.id,
+                });
+              }
+            }
+          "
+        >
+          edit todo
+        </button>
       </div>
     </div>
     <div v-else>
@@ -60,7 +101,12 @@ import { ref, defineComponent } from "vue";
 import store from "../store";
 import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { createAddTodoMutation } from "../graphql/mutations/myMutations";
+import {
+  createAddTodoMutation,
+  createDeleteTodoMutation,
+  createClearUserTodosMutation,
+  createEditTodoMutation,
+} from "../graphql/mutations/myMutations";
 import { FetchResult } from "@apollo/client/core";
 // import { Store } from "vuex";
 
@@ -75,6 +121,8 @@ import { FetchResult } from "@apollo/client/core";
 export default defineComponent({
   name: "TodoList",
   setup(this: void) {
+    const promptText = ref("");
+    const inputId = ref(0);
     const input = ref("");
     const errMsg = ref("");
     const successMsg = ref("");
@@ -129,8 +177,42 @@ export default defineComponent({
       }
     );
 
+    const { mutate: submitDeleteTodo } = useMutation(
+      gql`
+        ${createDeleteTodoMutation()}
+      `,
+      {
+        variables: {
+          //using a ref as a type definition of the input that will happen later
+          id: inputId.value,
+        },
+      }
+    );
+    const { mutate: submitClearUserTodos } = useMutation(
+      gql`
+        ${createClearUserTodosMutation()}
+      `
+    );
+
+    const { mutate: submitEditUserTodo } = useMutation(
+      gql`
+        ${createEditTodoMutation()}
+      `,
+      {
+        variables: {
+          text: promptText.value,
+          id: inputId.value,
+        },
+      }
+    );
+
     return {
       input,
+      promptText,
+      submitClearUserTodos,
+      submitEditUserTodo,
+      inputId,
+      submitDeleteTodo,
       showError,
       showSuccess,
       errMsg,
@@ -158,6 +240,8 @@ export default defineComponent({
         id: Date.now(),
         text: this.input,
         color: "green",
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       });
       this.input = "";
     },
@@ -192,12 +276,12 @@ export default defineComponent({
       return addResponse;
     },
     // eslint-disable-next-line
-    async editTodo(_event: any, index: number): Promise<void> {
-      const text: string | null = prompt("enter some text to edit this todo");
-      if (!text) return;
+    async editTodo(_event: any, id: number): Promise<void> {
+      this.promptText = prompt("enter some text to edit this todo") as string;
+      if (!this.promptText) return;
       const payload = {
-        text,
-        index,
+        text: this.promptText,
+        id,
       };
       await store.dispatch("todos/editTodo" as RootDispatchType, payload, {
         root: true,

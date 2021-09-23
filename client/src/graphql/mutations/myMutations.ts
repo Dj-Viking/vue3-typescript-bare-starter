@@ -77,3 +77,53 @@ export function createLogoutMutation(email: string): string {
     }
   `;
 }
+
+export function createEditTodoMutation(): string {
+  return `
+    mutation editTodoById($id: Int!, $text: String!){
+      editTodoById(id: $id, text: $text) {
+        errors{
+          field
+          message
+        }
+        todo {
+          id
+          text
+          updatedAt
+          createdAt
+        }
+      }
+    }
+  `;
+}
+
+export function createClearUserTodosMutation(): string {
+  return `
+    mutation clearUserTodos {
+      clearUserTodos {
+        done
+        errors {
+          field
+          message
+        }
+      }
+    }
+  `;
+}
+
+export function createDeleteTodoMutation(): string {
+  return `
+    mutation deleteTodo($id: Int!) {
+      deleteTodo(id: $id){
+        todos {
+          id
+          text
+        }
+        errors {
+          field
+          message
+        }
+      }
+    }
+  `;
+}
