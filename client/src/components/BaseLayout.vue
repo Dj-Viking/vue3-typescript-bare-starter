@@ -40,6 +40,7 @@ import {
   // MyRootState,
   RootCommitType,
   RootDispatchType,
+  // UserState,
 } from "../types";
 import { createMeQuery } from "../graphql/queries/myQueries";
 import auth from "../utils/AuthService";
@@ -62,6 +63,9 @@ export default defineComponent({
   },
   computed: {
     ...mapState(["user"]),
+    //if i need to change this read only state i need to dispatch an action or commit some mutation
+    // isLoggedIn: (): UserState["user"]["loggedIn"] =>
+    //   store.state.user.user.loggedIn,
   },
   data() {
     return {
@@ -79,14 +83,14 @@ export default defineComponent({
       this.isLoggedIn = false;
       //refetching after setting the token to
       //empty string will not allow for a refresh token on the site
-      this.refetch();
+      // this.refetch();
       await store.dispatch("todos/setTodos" as RootDispatchType, [], {
         root: true,
       });
     },
   },
   watch: {
-    //callback to execute whenever the application router changes
+    //callback to refresh user token to execute whenever the application router changes
     $route: async function () {
       await this.refetch();
     },

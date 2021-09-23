@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container some-unique-class">
     <button
       class="button is-info"
       @click.prevent="
@@ -133,14 +133,6 @@ import {
 } from "../graphql/mutations/myMutations";
 import { FetchResult } from "@apollo/client/core";
 // import { Store } from "vuex";
-
-// interface MyDOMInputEvent extends Event {
-//   target: EventTarget & {
-//     //for some reason value isn't a property on the vanilla EventTarget type given by typescript....
-//     // so we are forcing it to be a property
-//     value: number | string;
-//   };
-// }
 
 export default defineComponent({
   name: "TodoList",
@@ -320,4 +312,8 @@ export default defineComponent({
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.some-unique-class {
+  margin-top: 1px;
+}
+</style>
