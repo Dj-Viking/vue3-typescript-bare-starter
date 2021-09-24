@@ -10,7 +10,7 @@
     "tsc": "tsc",
     "ts:run": "ts-node src/index.ts",
     "ts:watch": "nodemon src/index.ts",
-    "dev": "nodemon dist/index.js",
+    "dev": "npm run tsc; nodemon dist/index.js",
     "gen": "graphql-codegen --config codegen.yml"
   },
   "keywords": [],
