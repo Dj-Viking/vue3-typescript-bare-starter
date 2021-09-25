@@ -22,6 +22,7 @@
           <span style="color: blue">updated at: {{ todo.updatedAt }}</span>
         </p>
         <button
+          class="button is-danger"
           @click.prevent="
             ($event) => {
               //update vuex todos that are displayed
@@ -38,9 +39,11 @@
           delete todo
         </button>
         <button
+          class="button is-primary"
+          style="color: black"
           @click.prevent="
             ($event) => {
-              editTodo($event, todo.id);
+              openEditModal($event, todo.id);
               if (isLoggedIn) {
                 submitEditUserTodo({
                   text: promptText,
@@ -50,7 +53,7 @@
             }
           "
         >
-          edit todo
+          Edit Todo
         </button>
       </div>
     </div>
@@ -116,6 +119,7 @@
 <script lang="ts">
 import {
   AddTodoResponse,
+  EditTodoModalContext,
   RootCommitType,
   RootDispatchType,
   TodosState,
@@ -132,6 +136,7 @@ import {
   createEditTodoMutation,
 } from "../graphql/mutations/myMutations";
 import { FetchResult } from "@apollo/client/core";
+import { Todo } from "../../../server/src/types";
 // import { Store } from "vuex";
 
 export default defineComponent({
@@ -248,6 +253,7 @@ export default defineComponent({
     todos: (): TodosState["todos"] => store.state.todos.todos,
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
+    activeClass: () => store.state.modal.modal.activeClass,
   },
   methods: {
     addALocalTodo(): void {
@@ -291,15 +297,23 @@ export default defineComponent({
       this.inputText = "";
       return addResponse;
     },
-    // eslint-disable-next-line
-    async editTodo(_event: any, id: number): Promise<void> {
-      this.promptText = prompt("enter some text to edit this todo") as string;
-      if (!this.promptText) return;
-      const payload = {
-        text: this.promptText,
-        id,
+    openEditModal(event: Event, id: Todo["id"]) {
+      console.log(
+        "able to get id in this loop to also open the modal?????",
+        id
+      );
+      console.log("open modal from todo list", event);
+      //adding to element classlist under the hood
+      store.commit("modal/SET_MODAL_TITLE", "Edit a todo", {
+        root: true,
+      });
+      const payload: EditTodoModalContext = {
+        todoId: id,
       };
-      await store.dispatch("todos/editTodo" as RootDispatchType, payload, {
+      store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, payload, {
+        root: true,
+      });
+      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
         root: true,
       });
     },
