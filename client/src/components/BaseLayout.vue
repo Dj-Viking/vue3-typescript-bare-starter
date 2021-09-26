@@ -40,7 +40,7 @@ import {
   // MyRootState,
   RootCommitType,
   RootDispatchType,
-  // UserState,
+  UserState,
 } from "../types";
 import { createMeQuery } from "../graphql/queries/myQueries";
 import auth from "../utils/AuthService";
@@ -64,13 +64,8 @@ export default defineComponent({
   computed: {
     ...mapState(["user"]),
     //if i need to change this read only state i need to dispatch an action or commit some mutation
-    // isLoggedIn: (): UserState["user"]["loggedIn"] =>
-    //   store.state.user.user.loggedIn,
-  },
-  data() {
-    return {
-      isLoggedIn: false,
-    };
+    isLoggedIn: (): UserState["user"]["loggedIn"] =>
+      store.state.user.user.loggedIn,
   },
   methods: {
     // eslint-disable-next-line
@@ -80,7 +75,10 @@ export default defineComponent({
     },
     async logout() {
       auth.setToken("");
-      this.isLoggedIn = false;
+      auth.setEmail("");
+      store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+        root: true,
+      });
       //refetching after setting the token to
       //empty string will not allow for a refresh token on the site
       // this.refetch();

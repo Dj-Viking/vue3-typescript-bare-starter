@@ -1,11 +1,32 @@
 <template>
+  <Modal />
+  <!-- <Modalv2 /> -->
   <router-view />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+// import Modalv2 from "./components/Modalv2.vue";
+import Modal from "./components/Modal.vue";
+import store from "./store";
+import { RootCommitType } from "./types";
 export default defineComponent({
   name: "App",
+  components: {
+    Modal,
+    // Modalv2,
+  },
+  methods: {
+    openModal(event: Event) {
+      console.log("open modal event", event);
+      store.commit("modal/SET_MODAL_TITLE", "setting title from home page", {
+        root: true,
+      });
+      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+        root: true,
+      });
+    },
+  },
 });
 </script>
 

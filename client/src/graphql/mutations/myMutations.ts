@@ -86,7 +86,7 @@ export function createEditTodoMutation(): string {
           field
           message
         }
-        todo {
+        todos {
           id
           text
           updatedAt

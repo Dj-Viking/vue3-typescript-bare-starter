@@ -63,8 +63,8 @@ class EditTodoResponse {
   @Field(() => [TodoError], { nullable: true })
   errors?: TodoError[] | null
 
-  @Field(() => Todo, { nullable: true })
-  todo?: Todo | null
+  @Field(() => [Todo], { nullable: true })
+  todos?: Todo[] | null
 }
 @ObjectType()
 class GetUserTodosResponse {
@@ -155,10 +155,10 @@ export class TodoResolver {
         .execute();
       if (!changedTodo.raw[0]) return new ErrorResponse("todo", "404 Todo Not Found");
 
-      console.log('changed todo', changedTodo.raw[0]);
+      const todos = await Todo.find({ where: { creatorId: foundUserByEmail.id } });
 
       return {
-        todo: changedTodo.raw[0]
+        todos: todos
       }
       
     } catch (error) {

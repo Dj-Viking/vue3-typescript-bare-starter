@@ -121,7 +121,7 @@ export function createEditTodoMutation(payload: EditTodoPayload): string {
 					field
 					message
 				}
-				todo {
+				todos {
 					text
 					creatorId
 					id

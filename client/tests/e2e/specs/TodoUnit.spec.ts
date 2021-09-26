@@ -10,7 +10,7 @@ let unique_email = "";
 let token: string | null = "";
 
 const inputText = "input from the test";
-// const editText = "some edited text";
+const editText = "some edited text";
 
 describe("visits home page", () => {
   it("visits home page", () => {
@@ -126,20 +126,14 @@ describe("registers a new user that will crud the todos", () => {
       const email = window.localStorage.getItem("global_email");
       expect(email).to.equal(unique_email);
       expect(token).to.not.be.null;
+      cy.saveLocalStorage();
     });
   });
   it("creates DO ALL CRUD operations here since this is the only time the token will be available to make requests", () => {
-    // cy.window().then((window: Cypress.AUTWindow) => {
-    //   let tokenNow: string | null = "";
-    //   tokenNow = window.localStorage.getItem("id_token");
-    //   expect(tokenNow).to.be.equal(token);
-    //   let encrypted = "";
-    //   //encrypt token before setting to storage
-    //   encrypted = Buffer.from(token as string).toString("base64");
-    //   window.localStorage.setItem("id_token", encrypted);
-    //   tokenNow = window.localStorage.getItem("id_token");
-    //   expect(tokenNow).to.be.equal(token);
-    // });
+    cy.restoreLocalStorage();
+    cy.window().then((window: Cypress.AUTWindow) => {
+      expect(window.localStorage.getItem("id_token")).to.equal(token);
+    });
     cy.get("input[name=textInput]").type(inputText);
     cy.get("button").contains("Add todo").click();
     cy.wait(400);
@@ -152,6 +146,32 @@ describe("registers a new user that will crud the todos", () => {
       .children()
       .first()
       .contains(inputText);
+
+    //edit standalone operations
+
+    //click the edit todo button on a todo
+    cy.get("div.some-unique-class")
+      .children()
+      .eq(1)
+      .children()
+      .eq(1)
+      .children()
+      .eq(2)
+      .contains("Edit Todo")
+      .click();
+
+    cy.get("input[name=modalEdit]").type(editText);
+    cy.get("button").contains("SUBMIT EDIT").click();
+    //check it contains the text we just edited
+    cy.get("div.some-unique-class")
+      .children()
+      .eq(1)
+      .children()
+      .eq(1)
+      .children()
+      .first()
+      .contains(editText);
+
     //   //delete button click
     cy.get("div.some-unique-class")
       .children()
@@ -160,6 +180,7 @@ describe("registers a new user that will crud the todos", () => {
       .eq(1)
       .children()
       .eq(1)
+      .contains("delete todo")
       .click();
     //checks it was deleted
     cy.get("div.some-unique-class")
@@ -167,8 +188,6 @@ describe("registers a new user that will crud the todos", () => {
       .eq(1)
       .children()
       .should("have.length", 1);
-
-    //edit standalone operations
 
     //clear standalone operations
     cy.get("button.is-info").contains("clear todos").click();
@@ -182,6 +201,15 @@ describe("registers a new user that will crud the todos", () => {
 
 //   // check error if creates with expired token
 // this error will happen if i try to add in a new it block cypress will trash local storage
+
+// describe("checks local storage", () => {
+//   it("checks window local storage here ", () => {
+//     cy.restoreLocalStorage();
+//     cy.window().then((window: Cypress.AUTWindow) => {
+//       expect(window.localStorage.getItem("id_token")).to.equal(token);
+//     });
+//   });
+// });
 
 describe("logs out", () => {
   it("clicks logout", () => {
