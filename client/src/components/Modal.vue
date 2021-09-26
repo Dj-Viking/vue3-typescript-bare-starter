@@ -35,6 +35,12 @@
                       });
                       closeModal();
                       inputText = '';
+                    } else {
+                      editLocalTodo($event, {
+                        text: inputText,
+                        id: modalContext?.todoId,
+                      });
+                      inputText = '';
                     }
                   }
                 "
@@ -55,7 +61,6 @@
       </div>
     </div>
     <button
-      @keydown.esc.prevent="closeModalViaEsc($event)"
       @click.prevent="closeModal($event)"
       class="modal-close is-large"
       aria-label="close"
@@ -71,6 +76,7 @@ import {
   UserState,
   EditTodoResponse,
   Todo,
+  EditTodoCommitPayload,
 } from "@/types";
 import { FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
@@ -136,25 +142,33 @@ export default defineComponent({
       store.state.modal.modal.context,
   },
   methods: {
-    closeModal(event?: MouseEvent) {
+    closeModal(event?: MouseEvent): void {
       console.log("close modal event", event);
       store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
         root: true,
       });
     },
-    closeModalViaEsc(event?: KeyboardEvent) {
-      console.log("close modal event", event);
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
+    editLocalTodo(_event: MouseEvent, payload: EditTodoCommitPayload): void {
+      console.log("editing a local todo if not logged in", _event);
+      store.commit("todos/EDIT_TODO" as RootCommitType, payload, {
         root: true,
       });
+    },
+    closeModalViaEsc(event: KeyboardEvent): void {
+      if (event.key === "Escape") {
+        console.log("close modal event with escape key", event);
+        store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
+          root: true,
+        });
+      } else return;
     },
   },
-  // created: function () {
-  //   document.addEventListener("keyup", this.closeModalViaEsc);
-  // },
-  // unmounted: function () {
-  //   document.removeEventListener("keyup", this.closeModalViaEsc);
-  // },
+  created: function (): void {
+    document.addEventListener("keyup", this.closeModalViaEsc);
+  },
+  unmounted: function (): void {
+    document.removeEventListener("keyup", this.closeModalViaEsc);
+  },
 });
 </script>
 

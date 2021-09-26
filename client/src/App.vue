@@ -19,9 +19,6 @@ export default defineComponent({
   methods: {
     openModal(event: Event) {
       console.log("open modal event", event);
-      // const modalEl = document.querySelector("div[name=modal]");
-      // console.log("found the modal element with vanilla js", modalEl);
-      // modalEl?.classList.add("is-active");
       store.commit("modal/SET_MODAL_TITLE", "setting title from home page", {
         root: true,
       });

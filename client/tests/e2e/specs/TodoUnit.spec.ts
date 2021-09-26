@@ -160,9 +160,7 @@ describe("registers a new user that will crud the todos", () => {
       .contains("Edit Todo")
       .click();
 
-    cy.wait(1000);
     cy.get("input[name=modalEdit]").type(editText);
-    cy.wait(1000);
     cy.get("button").contains("SUBMIT EDIT").click();
     //check it contains the text we just edited
     cy.get("div.some-unique-class")
