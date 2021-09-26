@@ -10,7 +10,7 @@ import { ActionContext } from "vuex";
 const state: TodosState = {
   todos: new Array(2).fill(undefined).map((_, index: number) => {
     return {
-      id: Date.now(),
+      id: Date.now() + index, //ids must be unique
       text: "something is here " + index,
       color: "blue",
       createdAt: Date.now(),
@@ -42,6 +42,7 @@ const mutations = {
     //return a filtered array that doesn't have the id passed as an argument
     state.todos = state.todos.filter((todo) => todo.id !== id);
   },
+  //only for local state
   EDIT_TODO(state: TodosState, payload: { id: number; text: string }): void {
     const { id, text } = payload;
     //cant check if the index is !zero and return because 0 is a falsey value in javascript. even though
@@ -51,6 +52,7 @@ const mutations = {
       return console.error(
         "error in edit todo commit payload types are incorrect"
       );
+    //this only works for local state not during a graphql mutation i think
     const index = state.todos.findIndex((todo) => todo.id === id);
     state.todos[index].text = text;
     state.todos[index].updatedAt = Date.now();

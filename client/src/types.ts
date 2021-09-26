@@ -5,6 +5,30 @@ export interface Todo {
   createdAt: number;
   color: string | "blue";
 }
+
+export interface EditTodoResponse {
+  editTodoById: {
+    errors: MyErrorResponse;
+    todos?: null | Todo[];
+  };
+}
+export interface Modal {
+  context: {
+    todoId: number;
+  };
+  activeClass: boolean;
+  title: string;
+}
+export interface EditTodoCommitPayload {
+  text: string;
+  id: number;
+}
+export interface EditTodoModalContext {
+  todoId: number;
+}
+export interface ModalState {
+  modal: Modal;
+}
 /**
  * ansi escape code enum collection for printing any color text into the console as the first/third argument of a console.log()
  * @example
@@ -49,6 +73,7 @@ export interface GetUserTodosResponse {
 export interface MyRootState {
   user: UserState;
   todos: TodosState;
+  modal: ModalState;
 }
 export interface UserState {
   user: {
@@ -96,7 +121,9 @@ export type RootCommitType =
   | "todos/ADD_TODO"
   | "todos/SET_TODOS"
   | "todos/DELETE_TODO"
-  | "todos/EDIT_TODO";
+  | "todos/EDIT_TODO"
+  | "modal/SET_MODAL_ACTIVE"
+  | "modal/SET_MODAL_CONTEXT";
 
 export interface CustomError {
   field: string;

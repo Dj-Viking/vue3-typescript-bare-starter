@@ -17,9 +17,8 @@
     "baseUrl": ".",
     "types": [
       "webpack-env",
-      "jest",
       "node",
-      "cypress"
+      "cypress", "cypress-localstorage-commands"
     ],
     "paths": {
       "@/*": [
