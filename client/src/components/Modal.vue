@@ -149,12 +149,12 @@ export default defineComponent({
       });
     },
   },
-  created: function () {
-    document.addEventListener("keyup", this.closeModalViaEsc);
-  },
-  unmounted: function () {
-    document.removeEventListener("keyup", this.closeModalViaEsc);
-  },
+  // created: function () {
+  //   document.addEventListener("keyup", this.closeModalViaEsc);
+  // },
+  // unmounted: function () {
+  //   document.removeEventListener("keyup", this.closeModalViaEsc);
+  // },
 });
 </script>
 

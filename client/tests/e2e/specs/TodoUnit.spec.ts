@@ -131,6 +131,9 @@ describe("registers a new user that will crud the todos", () => {
   });
   it("creates DO ALL CRUD operations here since this is the only time the token will be available to make requests", () => {
     cy.restoreLocalStorage();
+    cy.window().then((window: Cypress.AUTWindow) => {
+      expect(window.localStorage.getItem("id_token")).to.equal(token);
+    });
     cy.get("input[name=textInput]").type(inputText);
     cy.get("button").contains("Add todo").click();
     cy.wait(400);
@@ -154,9 +157,12 @@ describe("registers a new user that will crud the todos", () => {
       .eq(1)
       .children()
       .eq(2)
+      .contains("Edit Todo")
       .click();
 
+    cy.wait(1000);
     cy.get("input[name=modalEdit]").type(editText);
+    cy.wait(1000);
     cy.get("button").contains("SUBMIT EDIT").click();
     //check it contains the text we just edited
     cy.get("div.some-unique-class")

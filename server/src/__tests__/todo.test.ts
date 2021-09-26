@@ -235,8 +235,9 @@ describe("checks editing a todo", () => {
       {},
       { "authorization": `Bearer ${newToken}`}
     );
-    logJson(res.editTodoById.todo);
-    expect(res.editTodoById.todo?.text).toEqual(UPDATED_TODO_TEXT);
+    logJson(res.editTodoById.todos);
+    const foundEditedTodoIndex = res.editTodoById.todos?.findIndex(todo => todo.id === newTodoId);
+    expect(res.editTodoById.todos![foundEditedTodoIndex as number].text).toEqual(UPDATED_TODO_TEXT);
   });
 });
 

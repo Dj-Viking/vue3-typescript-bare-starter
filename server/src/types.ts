@@ -113,7 +113,7 @@ export interface ClearUserTodosResponse {
 export interface EditTodoByIdResponse {
     editTodoById: {
         errors: MyErrorResponse
-        todo?: null | Todo
+        todos?: null | Todo[]
     }
 }
 
