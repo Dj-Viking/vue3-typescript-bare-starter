@@ -44,12 +44,6 @@
           @click.prevent="
             ($event) => {
               openEditModal($event, todo.id);
-              // if (isLoggedIn) {
-              //   // submitEditUserTodo({
-              //   //   text: promptText,
-              //   //   id: todo.id,
-              //   // });
-              // }
             }
           "
         >
@@ -214,18 +208,6 @@ export default defineComponent({
         ${createClearUserTodosMutation()}
       `
     );
-
-    // const { mutate: submitEditUserTodo } = useMutation(
-    //   gql`
-    //     ${createEditTodoMutation()}
-    //   `,
-    //   {
-    //     variables: {
-    //       text: promptText.value,
-    //       id: inputId.value,
-    //     },
-    //   }
-    // );
 
     return {
       input,
