@@ -55,7 +55,7 @@
       </div>
     </div>
     <button
-      v-on:key.esc.prevent="closeModal($event)"
+      @keydown.esc.prevent="closeModalViaEsc($event)"
       @click.prevent="closeModal($event)"
       class="modal-close is-large"
       aria-label="close"
@@ -136,12 +136,24 @@ export default defineComponent({
       store.state.modal.modal.context,
   },
   methods: {
-    closeModal(event?: Event) {
+    closeModal(event?: MouseEvent) {
       console.log("close modal event", event);
       store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
         root: true,
       });
     },
+    closeModalViaEsc(event?: KeyboardEvent) {
+      console.log("close modal event", event);
+      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
+        root: true,
+      });
+    },
+  },
+  created: function () {
+    document.addEventListener("keyup", this.closeModalViaEsc);
+  },
+  unmounted: function () {
+    document.removeEventListener("keyup", this.closeModalViaEsc);
   },
 });
 </script>
