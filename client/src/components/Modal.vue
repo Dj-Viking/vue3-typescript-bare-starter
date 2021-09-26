@@ -24,6 +24,7 @@
           <div class="field">
             <div class="control">
               <button
+                class="button is-info"
                 @click.prevent="
                   ($event) => {
                     closeModal($event);
@@ -44,7 +45,6 @@
                     }
                   }
                 "
-                class="button is-info"
               >
                 SUBMIT EDIT
               </button>
