@@ -74,6 +74,7 @@ export interface MyRootState {
   user: UserState;
   todos: TodosState;
   modal: ModalState;
+  notification: NotificationState;
 }
 export interface UserState {
   user: {
@@ -123,7 +124,9 @@ export type RootCommitType =
   | "todos/DELETE_TODO"
   | "todos/EDIT_TODO"
   | "modal/SET_MODAL_ACTIVE"
-  | "modal/SET_MODAL_CONTEXT";
+  | "modal/SET_MODAL_CONTEXT"
+  | "notification/OPEN_NOTIFICATION"
+  | "notification/CLOSE_NOTIFICATION";
 
 export interface CustomError {
   field: string;
@@ -143,5 +146,23 @@ export interface LoginResponse {
     errors: MyErrorResponse;
     token: string | null;
     user: UserEntityBase | null;
+  };
+}
+
+export interface NotificationState {
+  notification: {
+    type: "error" | "success" | "";
+    message: string;
+    toastDown: boolean;
+    toastUp: boolean;
+  };
+}
+
+export interface OpenNotificationPayload {
+  notification: {
+    type: "error" | "success";
+    message: string;
+    toastDown: true;
+    toastUp: false;
   };
 }

@@ -44,11 +44,11 @@
     "register-service-worker": "^1.7.1",
     "vue": "^3.2.11",
     "vue-router": "^4.0.0-0",
+    "vue-toastification": "^1.7.11",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.7",
-    "cypress-localstorage-commands": "1.5.0",
     "@juit/vue-ts-checker": "^1.0.3",
     "@types/cypress-image-snapshot": "^3.1.5",
     "@types/jsonwebtoken": "^8.5.5",
@@ -72,6 +72,7 @@
     "cypress": "8.3.1",
     "cypress-file-upload": "^5.0.8",
     "cypress-image-snapshot": "4.0.1",
+    "cypress-localstorage-commands": "1.5.0",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.0.0",
