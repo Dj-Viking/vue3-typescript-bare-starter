@@ -34,12 +34,14 @@ const mutations = {
       toastUp: true,
     };
 
-    //wait until almost the end of the animation to remove the type and the message
+    //wait until almost the end of the animation to remove the type and the message and set both classes false
     setTimeout(() => {
       console.log("deleting type and message in close");
       state.notification.type = "";
       state.notification.message = "";
-    }, 700);
+      state.notification.toastUp = false;
+      state.notification.toastDown = false;
+    }, 300);
   },
 };
 const actions = {};
