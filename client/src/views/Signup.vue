@@ -53,20 +53,6 @@
       >
         Login
       </button>
-      <div
-        v-if="showError"
-        style="border-radius: 10px"
-        class="has-background-danger-light mt-4"
-      >
-        <p class="has-text-danger">Error: {{ errMsg }}</p>
-      </div>
-      <div
-        v-if="showSuccess"
-        style="border-radius: 10px"
-        class="has-background-success-light mt-4"
-      >
-        <p class="has-text-success">{{ successMsg }}</p>
-      </div>
     </form>
   </BaseLayout>
 </template>
@@ -81,6 +67,7 @@ import auth from "../utils/AuthService";
 import router from "../router";
 import { FetchResult } from "@apollo/client/core";
 import store from "../store";
+import { useToast } from "vue-toastification";
 
 export default defineComponent({
   name: "Signup",
@@ -89,6 +76,7 @@ export default defineComponent({
   },
   setup(this: void) {
     let globalEmail = inject("$email");
+    const toast = useToast();
     const email = ref("");
     const username = ref("");
     const password = ref("");
@@ -128,21 +116,16 @@ export default defineComponent({
           Record<string, unknown>
         >
       ) => {
+        submitted.value = true;
         if (result?.data?.register.errors) {
-          showError.value = true;
-          errMsg.value = result?.data?.register.errors[0].message as string;
-          setTimeout(() => {
-            showError.value = false;
-            errMsg.value = "";
-          }, 2000);
+          toast.error(`Error: ${result.data.register.errors[0].message}`, {
+            timeout: 3000,
+          });
         } else {
+          toast.success("Good luck, have fun!", { timeout: 2000 });
           isLoading.value = true;
-          successMsg.value = "Success! Teleporting to Home Page!";
-          showSuccess.value = true;
           setTimeout(() => {
             isLoading.value = false;
-            showSuccess.value = false;
-            successMsg.value = "";
             registerResponse.value = result?.data as RegisterResponse;
             submitted.value = false;
             globalEmail = result?.data?.register.user?.email;
@@ -208,3 +191,14 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+/* .Vue-Toastification__toast {
+  background-color: #f14668;
+}
+.Vue-Toastification__toast--error {
+  background-color: #f14668;
+}
+.Vue-Toastification__toast-body {
+  background-color: #f14668;
+} */
+</style>

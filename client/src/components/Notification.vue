@@ -34,7 +34,7 @@ import { defineComponent } from "@vue/runtime-core";
 import store from "../store";
 
 export default defineComponent({
-  name: "Notifcation",
+  name: "Notification",
   computed: {
     message: (): NotificationState["notification"]["message"] =>
       store.state.notification.notification.message,

@@ -1,15 +1,11 @@
 <template>
-  <button @click.prevent="openError($event)">error</button>
-  <button @click.prevent="openSuccess($event)">success</button>
   <Notification />
   <Modal />
-  <!-- <Modalv2 /> -->
   <router-view />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-// import Modalv2 from "./components/Modalv2.vue";
 import Modal from "./components/Modal.vue";
 import Notification from "./components/Notification.vue";
 import store from "./store";

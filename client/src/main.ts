@@ -14,6 +14,9 @@ import {
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import auth from "./utils/AuthService";
 import "bulma";
+import Toast from "vue-toastification";
+// Import the CSS or use your own!
+import "vue-toastification/dist/index.css";
 
 //init apollo cache
 const cache = new InMemoryCache();
@@ -57,7 +60,8 @@ const app = createApp({
   render: () => h(App),
 })
   .use(store)
-  .use(router);
+  .use(router)
+  .use(Toast);
 
 app.component("base-layout", BaseLayout);
 
