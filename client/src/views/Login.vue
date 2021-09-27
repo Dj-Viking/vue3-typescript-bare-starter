@@ -44,20 +44,6 @@
       >
         Login
       </button>
-      <div
-        v-if="showError"
-        style="border-radius: 10px"
-        class="has-background-danger-light mt-4"
-      >
-        <p class="has-text-danger">Error: {{ errMsg }}</p>
-      </div>
-      <div
-        v-if="showSuccess"
-        style="border-radius: 10px"
-        class="has-background-success-light mt-4"
-      >
-        <p class="has-text-success">{{ successMsg }}</p>
-      </div>
     </form>
   </BaseLayout>
 </template>
@@ -72,6 +58,7 @@ import auth from "../utils/AuthService";
 import router from "../router";
 import store from "../store";
 import { FetchResult } from "@apollo/client/core";
+import { useToast } from "vue-toastification";
 
 export default defineComponent({
   name: "Login",
@@ -80,11 +67,9 @@ export default defineComponent({
   },
   setup(this: void) {
     let globalEmail = inject("$email");
+    const toast = useToast();
     const email = ref("");
     const password = ref("");
-    const loginResponse = ref();
-    const errMsg = ref("");
-    const showError = ref(false);
     const successMsg = ref("");
     const showSuccess = ref(false);
     const isLoading = ref(false);
@@ -116,21 +101,26 @@ export default defineComponent({
         >
       ) => {
         if (result?.data?.login.errors) {
-          showError.value = true;
-          errMsg.value = result?.data?.login.errors[0].message as string;
-          setTimeout(() => {
-            showError.value = false;
-            errMsg.value = "";
-          }, 2000);
+          toast.error(`Error: ${result.data.login.errors[0].message}`, {
+            timeout: 3000,
+          });
         } else {
           isLoading.value = true;
-          successMsg.value = "Success! Teleporting to Home Page!";
-          showSuccess.value = true;
+          toast.success("Logged in", {
+            timeout: 2000,
+          });
           setTimeout(() => {
             isLoading.value = false;
             showSuccess.value = false;
             successMsg.value = "";
-            loginResponse.value = result.data as LoginResponse;
+            console.log("login response new value", result.data?.login);
+            const payload = {
+              user: result.data?.login.user,
+              loggedIn: true,
+            };
+            store.commit("user/SET_USER" as RootCommitType, payload, {
+              root: true,
+            });
             globalEmail = result?.data?.login.user?.email;
             auth.setToken(result?.data?.login.token as string);
             auth.setEmail(globalEmail as string);
@@ -146,11 +136,6 @@ export default defineComponent({
 
     return {
       email,
-      showError,
-      showSuccess,
-      errMsg,
-      successMsg,
-      loginResponse,
       password,
       submitLogin,
       loginIsLoading,
@@ -164,18 +149,6 @@ export default defineComponent({
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       //do nothing
-    },
-  },
-  watch: {
-    loginResponse: function (newValue: LoginResponse) {
-      console.log("login response new value", newValue);
-      const payload = {
-        user: newValue.login.user,
-        loggedIn: true,
-      };
-      store.commit("user/SET_USER" as RootCommitType, payload, {
-        root: true,
-      });
     },
   },
 });

@@ -84,24 +84,6 @@
             />
           </div>
         </div>
-
-        <div>
-          <div
-            v-if="showError"
-            style="border-radius: 10px; width: 30%"
-            class="has-background-danger-light mt-4"
-          >
-            <div class="has-text-danger">Error: {{ errMsg }}</div>
-          </div>
-          <div
-            v-if="showSuccess"
-            style="border-radius: 10px; width: 30%; margin: 0 auto"
-            class="has-background-success-light mt-4"
-          >
-            <div class="has-text-success">Success: {{ successMsg }}</div>
-          </div>
-        </div>
-        <div v-if="!showSuccess" class="mt-4">&nbsp;</div>
         <div class="control">
           <button class="button is-info mt-3" type="submit">Add todo</button>
         </div>
@@ -131,11 +113,13 @@ import {
 } from "../graphql/mutations/myMutations";
 import { FetchResult } from "@apollo/client/core";
 import { Todo } from "../../../server/src/types";
+import { useToast } from "vue-toastification";
 // import { Store } from "vuex";
 
 export default defineComponent({
   name: "TodoList",
   setup(this: void) {
+    const toast = useToast();
     const promptText = ref("");
     const inputId = ref(0);
     const input = ref("");
@@ -168,15 +152,18 @@ export default defineComponent({
         >
       ) => {
         if (result.data?.addTodo.errors) {
-          showError.value = true;
-          errMsg.value = result?.data?.addTodo.errors[0].message as string;
-          setTimeout(() => {
-            showError.value = false;
-            errMsg.value = "";
-          }, 2000);
+          toast.error(
+            `Error: there was an error adding a todo - ${result.data?.addTodo.errors[0].message}`,
+            {
+              timeout: 3000,
+            }
+          );
         } else {
-          successMsg.value = "Added a TODO!!";
-          showSuccess.value = true;
+          toast.success("Success: added a todo to your list!", {
+            timeout: 3000,
+          });
+          // successMsg.value = "Added a TODO!!";
+          // showSuccess.value = true;
           store.commit(
             "todos/SET_TODOS" as RootCommitType,
             result.data?.addTodo.todos,
@@ -184,10 +171,6 @@ export default defineComponent({
               root: true,
             }
           );
-          setTimeout(() => {
-            showSuccess.value = false;
-            successMsg.value = "";
-          }, 2000);
         }
       }
     );
@@ -223,6 +206,7 @@ export default defineComponent({
       addTodoIsLoading,
       addTodoError,
       submitAddTodo,
+      toast,
     };
   },
   data() {

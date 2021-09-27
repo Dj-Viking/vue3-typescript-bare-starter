@@ -1,6 +1,6 @@
 <template>
   <div class="container is-widescreen">
-    <nav>
+    <nav style="margin: 0 auto">
       <div v-if="!isHome">
         <router-link class="link" :to="'/'">Home</router-link>
       </div>
