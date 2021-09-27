@@ -1,5 +1,6 @@
 
-import { ANSI_ESCAPES, EditTodoPayload } from "../../types";
+
+import { ANSI_ESCAPES, EditCardPayload } from "../../types";
 
 export function logJson(input: any): void {
   return (() => console.log(`${ANSI_ESCAPES.warning}`, `${JSON.stringify(input, null, 2)}`, `${ANSI_ESCAPES.reset}`))();
@@ -58,11 +59,11 @@ export function createLogoutMutation(email: string): string {
 	`
 }
 
-export function createAddTodoMutation(text: string): string {
+export function createAddCardMutation(text: string): string {
   return `
-		mutation addTodo {
-			addTodo(text: "${text}") {
-				todos {
+		mutation addCard {
+			addCard(text: "${text}") {
+				cards {
 					id
 					text
 					createdAt
@@ -78,11 +79,11 @@ export function createAddTodoMutation(text: string): string {
 	`;
 }
 
-export function createGetUserTodosQuery(): string {
+export function createGetUserCardsQuery(): string {
   return `
-		query getUserTodos {
-			getUserTodos{
-				todos {
+		query getUserCards {
+			getUserCards{
+				cards {
 					id
 					creatorId
 					text
@@ -98,10 +99,10 @@ export function createGetUserTodosQuery(): string {
 	`
 }
 
-export function createClearUserTodosMutation(): string {
+export function createClearUserCardsMutation(): string {
   return `
-		mutation clearUserTodos {
-			clearUserTodos {
+		mutation clearUserCards {
+			clearUserCards {
 				errors {
 					field
 					message
@@ -112,16 +113,16 @@ export function createClearUserTodosMutation(): string {
 	`
 }
 
-export function createEditTodoMutation(payload: EditTodoPayload): string {
-  const { text, todoId } = payload
+export function createEditCardMutation(payload: EditCardPayload): string {
+  const { text, cardId } = payload
   return `
-		mutation editTodoById {
-			editTodoById(id: ${todoId}, text: "${text}"){
+		mutation editCardById {
+			editCardById(id: ${cardId}, text: "${text}"){
 				errors {
 					field
 					message
 				}
-				todos {
+				cards {
 					text
 					creatorId
 					id
@@ -143,7 +144,7 @@ export function createMeQuery(): string {
 					createdAt
 					updatedAt
 				}
-				todos {
+				cards {
 					id
 					text
 					updatedAt

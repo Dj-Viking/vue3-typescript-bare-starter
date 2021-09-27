@@ -1,4 +1,4 @@
-import { Todo } from '../entities/Todo';
+import { Card } from '../entities/Card';
 import { User } from '../entities/User';
 import { 
   Resolver, 
@@ -17,7 +17,7 @@ import { ANSI_ESCAPES, MyContext } from '../types';
 import { ErrorResponse } from '../utils/ErrorResponse';
 
 @ObjectType()
-class TodoError {
+class CardError {
   @Field()
   field: String;
   @Field()
@@ -35,44 +35,44 @@ class TodoError {
 
 @ObjectType()
 
-class DeleteTodoResponse {
-  @Field(() => [TodoError], { nullable: true })
-  errors?: TodoError[] | null
+class DeleteCardResponse {
+  @Field(() => [CardError], { nullable: true })
+  errors?: CardError[] | null
 
-  @Field(() => [Todo], { nullable: true })
-  todos?: Todo[] | null
+  @Field(() => [Card], { nullable: true })
+  cards?: Card[] | null
 }
 @ObjectType()
-class ClearTodoResponse {
-  @Field(() => [TodoError], { nullable: true })
-  errors?: TodoError[] | null
+class ClearCardResponse {
+  @Field(() => [CardError], { nullable: true })
+  errors?: CardError[] | null
 
   @Field(() => Boolean, { nullable: true })
   done: boolean | null;
 }
 @ObjectType()
-class AddTodoResponse {
-  @Field(() => [TodoError], { nullable: true })
-  errors?: TodoError[] | null
+class AddCardResponse {
+  @Field(() => [CardError], { nullable: true })
+  errors?: CardError[] | null
 
-  @Field(() => [Todo], { nullable: true })
-  todos?: Todo[] | null
+  @Field(() => [Card], { nullable: true })
+  cards?: Card[] | null
 }
 @ObjectType()
-class EditTodoResponse {
-  @Field(() => [TodoError], { nullable: true })
-  errors?: TodoError[] | null
+class EditCardResponse {
+  @Field(() => [CardError], { nullable: true })
+  errors?: CardError[] | null
 
-  @Field(() => [Todo], { nullable: true })
-  todos?: Todo[] | null
+  @Field(() => [Card], { nullable: true })
+  cards?: Card[] | null
 }
 @ObjectType()
-class GetUserTodosResponse {
-  @Field(() => [TodoError], { nullable: true })
-  errors?: TodoError[] | null
+class GetUserCardsResponse {
+  @Field(() => [CardError], { nullable: true })
+  errors?: CardError[] | null
 
-  @Field(() => [Todo], { nullable: true })
-  todos?: Todo[] | null
+  @Field(() => [Card], { nullable: true })
+  cards?: Card[] | null
 }
 
 // @ObjectType()
@@ -81,17 +81,17 @@ class GetUserTodosResponse {
 //   todos: Todo[]
 // }
 @Resolver()
-export class TodoResolver {
+export class CardResolver {
 
   @Query(() => String)
-  async helloTodo(): Promise<string>{
-    return "hello TODO"
+  async helloCard(): Promise<string>{
+    return "hello CARD"
   }
 
-  @Query(() => GetUserTodosResponse)
-  async getUserTodos(
+  @Query(() => GetUserCardsResponse)
+  async getUserCards(
     @Ctx() { req }: MyContext
-  ): Promise<GetUserTodosResponse> {
+  ): Promise<GetUserCardsResponse> {
     /// if requestor is not authorized to get the todos with their requestor ID not authorized
   if (!req.user) {
     return new ErrorResponse("unauthenticated", "401 Unauthenticated");
@@ -110,22 +110,22 @@ export class TodoResolver {
   }
 
     try {
-      const todos = await Todo.find({ where: { creatorId: foundUserByEmail.id }});
-      console.log("checking todos given the creatorId", todos);
+      const cards = await Card.find({ where: { creatorId: foundUserByEmail.id }});
+      console.log("checking cards given the creatorId", cards);
       return {
-        todos: todos
+        cards: cards
       };
     } catch (error) {
       return new ErrorResponse("error", error.message)
     }
   }
 
-  @Mutation(() => EditTodoResponse)
-  async editTodoById(
+  @Mutation(() => EditCardResponse)
+  async editCardById(
     @Arg("id", () => Int) id: number,
     @Arg("text", () => String) text: string,
     @Ctx() { req }: MyContext
-  ): Promise<EditTodoResponse> {
+  ): Promise<EditCardResponse> {
 
     if (!req.user) {
       return new ErrorResponse("unauthenticated", "401 Unauthenticated");
@@ -144,21 +144,21 @@ export class TodoResolver {
     }
 
     try {
-      const changedTodo = await getConnection()
-        .getRepository(Todo)
+      const changedCard = await getConnection()
+        .getRepository(Card)
         .createQueryBuilder("todo")
-        .update<Todo>(Todo, 
+        .update<Card>(Card, 
                       { text })
         .where("id = :id", { id })
         .returning(["text", "id", "creatorId", "createdAt", "updatedAt"])
         .updateEntity(true)
         .execute();
-      if (!changedTodo.raw[0]) return new ErrorResponse("todo", "404 Todo Not Found");
+      if (!changedCard.raw[0]) return new ErrorResponse("todo", "404 Todo Not Found");
 
-      const todos = await Todo.find({ where: { creatorId: foundUserByEmail.id } });
+      const cards = await Card.find({ where: { creatorId: foundUserByEmail.id } });
 
       return {
-        todos: todos
+        cards: cards
       }
       
     } catch (error) {
@@ -166,26 +166,26 @@ export class TodoResolver {
     }
   }
 
-  @Mutation(() => DeleteTodoResponse)
+  @Mutation(() => DeleteCardResponse)
   async deleteTodo(
     @Arg("id", () => Int) id: number,
     @Ctx() { req }: MyContext
-  ): Promise<DeleteTodoResponse | ErrorResponse> {
+  ): Promise<DeleteCardResponse | ErrorResponse> {
     if (!req.user) {
       return new ErrorResponse("unauthorized", "401 unauthorized");
     }
 
     try {
-      const result = await Todo.delete(id);
+      const result = await Card.delete(id);
 
       console.log("delete result", result);
       //returns { raw: [], affected: 1 } affected 1 if the operation affected an entity
       
       const user = await User.findOne({ where: { email: req.user.email } });
-      const todos = await Todo.find({ where: { creatorId: user?.id } });
+      const cards = await Card.find({ where: { creatorId: user?.id } });
 
       return {
-        todos: todos
+        cards: cards
       }
 
     } catch (error) {
@@ -193,10 +193,10 @@ export class TodoResolver {
     }
   }
 
-  @Mutation(() => ClearTodoResponse)
-  async clearUserTodos(
+  @Mutation(() => ClearCardResponse)
+  async clearUserCards(
     @Ctx() { req }: MyContext
-  ): Promise<ClearTodoResponse | ErrorResponse> {
+  ): Promise<ClearCardResponse | ErrorResponse> {
 
     //cant delete if not authorized or even the user who is logged in trying to complete this operation
     if (!req.user) return new ErrorResponse("unauthorized", "401 unauthorized or expired token");
@@ -217,9 +217,9 @@ export class TodoResolver {
 
     try {
       //get all todos by the requestor's id that we found by the email input
-      const todosToDelete = await Todo.find({ where: { creatorId: foundUserByEmail.id }});
-      const deletePromises = todosToDelete.map(async (todo: Todo) => {
-        return Todo.delete(todo.id);
+      const cardsToDelete = await Card.find({ where: { creatorId: foundUserByEmail.id }});
+      const deletePromises = cardsToDelete.map(async (card: Card) => {
+        return Card.delete(card.id);
       });
       await Promise.all(deletePromises);
       return {
@@ -230,11 +230,11 @@ export class TodoResolver {
     }
   }
 
-  @Mutation(() => AddTodoResponse)
+  @Mutation(() => AddCardResponse)
   async addTodo(
     @Arg("text", () => String) text: string,
     @Ctx() { req }: MyContext
-  ): Promise<AddTodoResponse> {
+  ): Promise<AddCardResponse> {
     // TODO abstract these checks to a middlware ... learn that first
     console.log("checking context user", req.user);
     if (!req.user) {
@@ -251,17 +251,17 @@ export class TodoResolver {
       await getConnection()
       .createQueryBuilder()
       .insert()
-      .into(Todo)
+      .into(Card)
       .values({ text,
                 //a creator with this id MUST exist for this query to work!!
                 creatorId: foundUserByEmail?.id })
       .returning('*')
       .execute();
-      //seeing all the todos that the user has
-      const todos = await Todo.find({ where: { creatorId: foundUserByEmail?.id } });
-      console.log(`${ANSI_ESCAPES.success}`, `Someone added a todo!`, `${ANSI_ESCAPES.reset}`)
+      //seeing all the cards that the user has
+      const cards = await Card.find({ where: { creatorId: foundUserByEmail?.id } });
+      console.log(`${ANSI_ESCAPES.success}`, `Someone added a card!`, `${ANSI_ESCAPES.reset}`)
       return {
-        todos: todos
+        cards: cards
       };
     } catch (error) {
       return new ErrorResponse("error", error.message)

@@ -1,30 +1,30 @@
-export interface Todo {
+export interface Card {
   id: number;
   text: string;
   updatedAt: number;
   createdAt: number;
-  color: string | "blue";
+  color: string | "blue"; //TODO remove
 }
 
-export interface EditTodoResponse {
-  editTodoById: {
+export interface EditCardResponse {
+  editCardById: {
     errors: MyErrorResponse;
-    todos?: null | Todo[];
+    cards?: null | Card[];
   };
 }
 export interface Modal {
   context: {
-    todoId: number;
+    cardId: number;
   };
   activeClass: boolean;
   title: string;
 }
-export interface EditTodoCommitPayload {
+export interface EditCardCommitPayload {
   text: string;
   id: number;
 }
-export interface EditTodoModalContext {
-  todoId: number;
+export interface EditCardModalContext {
+  cardId: number;
 }
 export interface ModalState {
   modal: Modal;
@@ -49,7 +49,7 @@ export enum ANSI_ESCAPES {
 }
 
 //for some reason this interface for the event didn't export for whatever reason....strange...oh well it
-// only applies to the todolist component anyways
+// only applies to the cardlist component anyways
 export interface MyDOMInputEvent extends Event {
   target: EventTarget & {
     //for some reason value isn't a property on the vanilla EventTarget type given by typescript....
@@ -61,18 +61,18 @@ export interface MeQueryResponse extends Object {
   me: {
     user: UserEntityBase;
     errors: MyErrorResponse;
-    todos: Todo[];
+    cards: Card[];
   };
 }
-export interface GetUserTodosResponse {
-  getUserTodos: {
-    todos: Todo[];
+export interface GetUserCardsResponse {
+  getUserCards: {
+    cards: Card[];
     errors: MyErrorResponse;
   };
 }
 export interface MyRootState {
   user: UserState;
-  todos: TodosState;
+  cards: CardsState;
   modal: ModalState;
   notification: NotificationState;
 }
@@ -81,7 +81,7 @@ export interface UserState {
     username: string | null;
     email: string | null;
     token?: string | null | undefined;
-    todos: Todo[];
+    Cards: Card[];
     loggedIn: boolean;
   };
 }
@@ -94,22 +94,22 @@ export interface UserEntityBase {
   createdAt: number;
   updatedAt: number;
 }
-export interface TodosState {
-  todos: Array<Todo>;
+export interface CardsState {
+  cards: Array<Card>;
 }
 
 export type RootDispatchType =
   | "user/setUserToken"
-  | "user/setUserTodos"
+  | "user/setUserCards"
   | "user/setUser"
-  | "todos/setTodos"
-  | "todos/deleteTodo"
-  | "todos/editTodo"
-  | "todos/addTodo";
+  | "cards/setCards"
+  | "cards/deleteCard"
+  | "cards/editCard"
+  | "cards/addCard";
 
-export interface AddTodoResponse {
-  addTodo: {
-    todos: Todo[];
+export interface AddCardResponse {
+  addCards: {
+    cards: Card[];
     errors: MyErrorResponse;
   };
 }
@@ -118,11 +118,11 @@ export type RootCommitType =
   | "user/SET_USER"
   | "user/CLEAR_USER_TOKEN"
   | "user/SET_LOGGED_IN"
-  | "user/SET_USER_TODOS"
-  | "todos/ADD_TODO"
-  | "todos/SET_TODOS"
-  | "todos/DELETE_TODO"
-  | "todos/EDIT_TODO"
+  | "user/SET_USER_CARDS"
+  | "cards/ADD_CARD"
+  | "cards/SET_CARDS"
+  | "cards/DELETE_CARD"
+  | "cards/EDIT_CARD"
   | "modal/SET_MODAL_ACTIVE"
   | "modal/SET_MODAL_CONTEXT"
   | "notification/OPEN_NOTIFICATION"

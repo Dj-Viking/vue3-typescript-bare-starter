@@ -14,7 +14,7 @@ import { User } from './User';
 //this is now both an object type and an entity
 @ObjectType()
 @Entity()
-export class Todo extends BaseEntity {
+export class Card extends BaseEntity {
 
   @Field(() => Int)
   @PrimaryGeneratedColumn()
@@ -29,7 +29,7 @@ export class Todo extends BaseEntity {
   text?: string;
 
   //not exposing the creator here
-  @ManyToOne(() => User, user => user.todos, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, user => user.cards, { onDelete: "CASCADE" })
   creator: User;
 
   @Field(() => String)

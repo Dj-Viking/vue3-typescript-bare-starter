@@ -97,10 +97,10 @@ export function createEditTodoMutation(): string {
   `;
 }
 
-export function createClearUserTodosMutation(): string {
+export function createClearUserCardsMutation(): string {
   return `
-    mutation clearUserTodos {
-      clearUserTodos {
+    mutation clearUserCards {
+      clearUserCards {
         done
         errors {
           field

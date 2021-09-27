@@ -1,7 +1,7 @@
 require("dotenv").config();
 import { User } from "../../entities/User";
 import { Connection, createConnection } from "typeorm";
-import { Todo } from "../../entities/Todo";
+import { Card } from "../../entities/Card";
 const {
   DB_NAME,
   DB_USER,
@@ -16,6 +16,6 @@ export async function connectDb(): Promise<Connection> {
     password: DB_PASSWORD as string,
     logging: false,
     synchronize: true, //usually true during dev
-    entities: [User, Todo]
+    entities: [User, Card]
   });
 }

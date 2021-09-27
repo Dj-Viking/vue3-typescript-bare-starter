@@ -15,7 +15,7 @@ import argon2 from 'argon2';
 import { MyContext } from '../types';
 
 import { User } from '../entities/User';
-import { Todo } from '../entities/Todo';
+import { Card } from '../entities/Card';
 import { verifyRegisterArgs } from '../utils/verifyRegisterArgs';
 import { decodeToken } from '../utils/decodeToken';
 
@@ -50,8 +50,8 @@ class UserResponse {
   @Field(() => String, { nullable: true })
   token?: string | null
 
-  @Field(() => [Todo], { nullable: true })
-  todos?: Todo[] | null
+  @Field(() => [Card], { nullable: true })
+  cards?: Card[] | null
 }
 
 @ObjectType()
@@ -65,8 +65,8 @@ class MeQueryResponse {
   @Field(() => String, { nullable: true })
   token?: string | null;
 
-  @Field(() => [Todo], { nullable: true })
-  todos?: Todo[] | null;
+  @Field(() => [Card], { nullable: true })
+  cards?: Card[] | null;
 }
 
 @ObjectType()
@@ -112,8 +112,8 @@ export class UserResolver {
       
       console.log("user found", user);
 
-      const todos = await Todo.find({ where: { creatorId: user?.id as number }});
-      console.log("checking todos given the creatorId", todos);
+      const cards = await Card.find({ where: { creatorId: user?.id as number }});
+      console.log("checking cards given the creatorId", cards);
 
       //sign a new token
       const newToken = signToken({
@@ -142,7 +142,7 @@ export class UserResolver {
       return {
         token: newToken,
         user: changedUser.raw[0],
-        todos: todos
+        cards: cards
       }
       //if user is found sign a new token for them with a new expiration
     } catch (error) {
@@ -249,12 +249,12 @@ export class UserResolver {
     console.log("updated user's token after logging in ", changedUser);
       
 
-    const todos = await Todo.find({ where: { creatorId: user.id }});
+    const cards = await Card.find({ where: { creatorId: user.id }});
 
     return {
       token: token,
       user: changedUser.raw[0],
-      todos: todos
+      cards: cards
     };
   }
   @Mutation(() => LogoutResponse)
