@@ -24,15 +24,6 @@ class CardError {
   message: String; 
 }
 
-
-// @InputType()
-// class EditTodoInput {
-//   @Field()
-//   text: string;
-//   @Field()
-//   todoId: number;
-// }
-
 @ObjectType()
 
 class DeleteCardResponse {
@@ -75,11 +66,6 @@ class GetUserCardsResponse {
   cards?: Card[] | null
 }
 
-// @ObjectType()
-// class TodoAddResponse {
-//   @Field(() => Todo, {nullable: true})
-//   todos: Todo[]
-// }
 @Resolver()
 export class CardResolver {
 
@@ -92,7 +78,7 @@ export class CardResolver {
   async getUserCards(
     @Ctx() { req }: MyContext
   ): Promise<GetUserCardsResponse> {
-    /// if requestor is not authorized to get the todos with their requestor ID not authorized
+    /// if requestor is not authorized to get the cards with their requestor ID not authorized
   if (!req.user) {
     return new ErrorResponse("unauthenticated", "401 Unauthenticated");
   }
@@ -146,14 +132,14 @@ export class CardResolver {
     try {
       const changedCard = await getConnection()
         .getRepository(Card)
-        .createQueryBuilder("todo")
+        .createQueryBuilder("card")
         .update<Card>(Card, 
                       { text })
         .where("id = :id", { id })
         .returning(["text", "id", "creatorId", "createdAt", "updatedAt"])
         .updateEntity(true)
         .execute();
-      if (!changedCard.raw[0]) return new ErrorResponse("todo", "404 Todo Not Found");
+      if (!changedCard.raw[0]) return new ErrorResponse("card", "404 Card Not Found");
 
       const cards = await Card.find({ where: { creatorId: foundUserByEmail.id } });
 
@@ -162,12 +148,12 @@ export class CardResolver {
       }
       
     } catch (error) {
-      return new ErrorResponse("error when editing a todo", error);
+      return new ErrorResponse("error when editing a card", error);
     }
   }
 
   @Mutation(() => DeleteCardResponse)
-  async deleteTodo(
+  async deleteCard(
     @Arg("id", () => Int) id: number,
     @Ctx() { req }: MyContext
   ): Promise<DeleteCardResponse | ErrorResponse> {
@@ -189,7 +175,7 @@ export class CardResolver {
       }
 
     } catch (error) {
-      return new ErrorResponse("error when deleting a todo", error);
+      return new ErrorResponse("error when deleting a card", error);
     }
   }
 
@@ -203,7 +189,7 @@ export class CardResolver {
     
     console.log("req.user", req.user);
 
-    //the requestor is not the owner of the todos using email since emails are unique per user
+    //the requestor is not the owner of the cards using email since emails are unique per user
     // and the requestor is embedded into the jwt information
     const foundUserByEmail = await User.findOne({ where: { email: req.user.email }});
 
@@ -216,7 +202,7 @@ export class CardResolver {
     if (req.user?.email !== foundUserByEmail.email) return new ErrorResponse("forbidden", "403 Forbidden");
 
     try {
-      //get all todos by the requestor's id that we found by the email input
+      //get all cards by the requestor's id that we found by the email input
       const cardsToDelete = await Card.find({ where: { creatorId: foundUserByEmail.id }});
       const deletePromises = cardsToDelete.map(async (card: Card) => {
         return Card.delete(card.id);
@@ -231,7 +217,7 @@ export class CardResolver {
   }
 
   @Mutation(() => AddCardResponse)
-  async addTodo(
+  async addCard(
     @Arg("text", () => String) text: string,
     @Ctx() { req }: MyContext
   ): Promise<AddCardResponse> {
