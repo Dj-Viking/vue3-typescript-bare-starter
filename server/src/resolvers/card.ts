@@ -156,7 +156,7 @@ export class CardResolver {
     }
   }
 
-  @Mutation(() => [Card])
+  @Mutation(() => EditCardResponse)
   async editCardById(
     @Arg("options", () => EditCardInput) options: EditCardInput,
     @Ctx() { req }: MyContext

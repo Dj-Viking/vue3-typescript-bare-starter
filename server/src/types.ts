@@ -129,7 +129,7 @@ export interface EditCardPayload {
         backSideText: string | undefined;
         backSideLanguage: string | undefined;
         backSidePicture: string | undefined;
-        cardId: number | undefined;
+        id: number | undefined;
     }
 }
 export interface AddCardPayload {

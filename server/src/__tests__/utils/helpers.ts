@@ -66,6 +66,7 @@ export function createAddCardMutation(): string {
 			addCard(options: $options) {
 				cards {
 					id
+					creatorId
 					frontSideText
 					frontSideLanguage
 					frontSidePicture 
@@ -88,6 +89,7 @@ export function createGetUserCardsQuery(): string {
 			getUserCards{
 				cards {
 					id
+					creatorId
 					frontSideText
 					frontSideLanguage
 					frontSidePicture 

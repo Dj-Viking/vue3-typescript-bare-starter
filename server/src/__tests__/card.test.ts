@@ -78,7 +78,7 @@ describe("Tests the card resolvers adding, reading, editing, and deleting", () =
     const invalidToken: AddCardResponse = await request(
       HOST + "/graphql",
       `${createAddCardMutation()}`,
-      { ...addCardPayload },
+      { options: addCardPayload.options },
       { "authorization": `Bearer adsfadfs` }
     );
     expect(invalidToken.addCard.errors).toHaveLength(1);
@@ -100,7 +100,7 @@ describe("Tests the card resolvers adding, reading, editing, and deleting", () =
     const invalidToken: AddCardResponse = await request(
       HOST + "/graphql",
       `${createAddCardMutation()}`,
-      { ...addCardPayload },
+      { options: addCardPayload.options },
       { "authorization": `Bearer ${EXPIRED_TOKEN}` }
     );
     expect(invalidToken.addCard.errors).toHaveLength(1);
@@ -210,7 +210,7 @@ describe("checks editing a card", () => {
     it("tries to edit the card with an invalid token", async () => {
       const editCardPayload: EditCardPayload = {
         options: {
-          cardId: newCardId,
+          id: newCardId,
           frontSideText: UPDATED_CARD_TEXT,
           frontSideLanguage: "TEST LANGUAGE",
           frontSidePicture: "PICTURE BASE 64 CRAP",
@@ -222,7 +222,7 @@ describe("checks editing a card", () => {
       const invalidToken: EditCardByIdResponse = await request(
         HOST + "/graphql", 
         `${createEditCardMutation()}`,
-        { ...editCardPayload },
+        { options: editCardPayload.options },
         { "authorization": `Bearer asdfasdfasdf`}
       );
       expect(invalidToken.editCardById.errors).toHaveLength(1);
@@ -231,7 +231,7 @@ describe("checks editing a card", () => {
     it("tries to edit the card with an expired token", async () => {
       const editCardPayload: EditCardPayload = {
         options: {
-          cardId: newCardId,
+          id: newCardId,
           frontSideText: UPDATED_CARD_TEXT,
           frontSideLanguage: "TEST LANGUAGE",
           frontSidePicture: "PICTURE BASE 64 CRAP",
@@ -243,7 +243,7 @@ describe("checks editing a card", () => {
       const expiredToken: EditCardByIdResponse = await request(
         HOST + "/graphql", 
         `${createEditCardMutation()}`,
-        { ...editCardPayload },
+        { options: editCardPayload.options },
         { "authorization": `Bearer ${EXPIRED_TOKEN}`}
       );
       expect(expiredToken.editCardById.errors).toHaveLength(1);
@@ -252,7 +252,7 @@ describe("checks editing a card", () => {
     it("tries to edit the card with a not found cardId", async () => {
       const editCardPayload: EditCardPayload = {
         options: {
-          cardId: newCardId,
+          id: 0, //shouldn't ever be zero unless we dropped the database and recreated it
           frontSideText: UPDATED_CARD_TEXT,
           frontSideLanguage: "TEST LANGUAGE",
           frontSidePicture: "PICTURE BASE 64 CRAP",
@@ -264,7 +264,7 @@ describe("checks editing a card", () => {
       const notFound: EditCardByIdResponse = await request(
         HOST + "/graphql", 
         `${createEditCardMutation()}`,
-        { ...editCardPayload },
+        { options: editCardPayload.options },
         { "authorization": `Bearer ${newToken}`}
       );
       expect(notFound.editCardById.errors).toHaveLength(1);
@@ -277,7 +277,7 @@ describe("checks editing a card", () => {
     new logger("blue", "editing the card we just added").genLog();
     const editCardPayload: EditCardPayload = {
       options: {
-        cardId: newCardId,
+        id: newCardId,
         frontSideText: UPDATED_CARD_TEXT,
         frontSideLanguage: "TEST LANGUAGE",
         frontSidePicture: "PICTURE BASE 64 CRAP",
@@ -289,7 +289,7 @@ describe("checks editing a card", () => {
     const res: EditCardByIdResponse = await request(
       HOST + "/graphql", 
       `${createEditCardMutation()}`,
-      { ...editCardPayload },
+      { options: editCardPayload.options },
       { "authorization": `Bearer ${newToken}`}
     );
     logJson(res.editCardById.cards);
