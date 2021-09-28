@@ -81,7 +81,7 @@ export interface UserState {
     username: string | null;
     email: string | null;
     token?: string | null | undefined;
-    Cards: Card[];
+    cards: Card[];
     loggedIn: boolean;
   };
 }
@@ -108,7 +108,7 @@ export type RootDispatchType =
   | "cards/addCard";
 
 export interface AddCardResponse {
-  addCards: {
+  addCard: {
     cards: Card[];
     errors: MyErrorResponse;
   };

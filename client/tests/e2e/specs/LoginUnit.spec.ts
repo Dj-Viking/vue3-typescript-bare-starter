@@ -21,9 +21,7 @@ describe("tests login with incorrect credentials, has error message", () => {
     cy.get("button").contains("Login").should("have.length", 1).click();
   });
   it("checks that error message appears", () => {
-    cy.get("p.has-text-danger")
-      .contains("Error: Incorrect Credentials")
-      .should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
   it("clears the inputs", () => {
     cy.get("input[name=email]").clear();
@@ -42,14 +40,12 @@ describe("tests the login with correct credentials works, has success message, a
     cy.get("button").contains("Login").should("have.length", 1).click();
   });
   it("checks that success message appears ", () => {
-    cy.wait(100);
-    cy.get("p.has-text-success")
-      .contains("Success! Teleporting to Home Page!")
-      .should("have.length", 1);
+    cy.wait(1000);
+    cy.get("div.Vue-Toastification__toast-body").should("have.length", 2);
   });
-  it("waits a bit and checks we are back at the home page, i.e. checking if the add todo button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
+  it("waits a bit and checks we are back at the home page, i.e. checking if the add card button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
     cy.wait(2000);
-    cy.get("button").contains("Add todo");
+    cy.get("button").contains("Add Card");
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that
     cy.window().then((window: Cypress.AUTWindow) => {

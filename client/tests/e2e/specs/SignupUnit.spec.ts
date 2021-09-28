@@ -34,11 +34,7 @@ describe("tests signup with invalid email, has error message", () => {
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
   });
   it("checks that error message appears", () => {
-    cy.get("p.has-text-danger")
-      .contains(
-        "Error: Email is not in correct format. Must be like example@mail.com"
-      )
-      .should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
   it("clears the inputs", () => {
     cy.get("input[name=username]").clear();
@@ -62,11 +58,7 @@ describe("tries to make account with too short password", () => {
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
   });
   it("checks that error message appears", () => {
-    cy.get("p.has-text-danger")
-      .contains(
-        "Error: password length too short must be greater than 3 characters"
-      )
-      .should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
   it("clears the inputs", () => {
     cy.get("input[name=username]").clear();
@@ -90,9 +82,7 @@ describe("checks the user or email error appears", () => {
     cy.get("button").contains("Sign Up!").click();
   });
   it("checks that error message appears", () => {
-    cy.get("p.has-text-danger")
-      .contains("Error: name and/or email is already taken!")
-      .should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
   it("clears the inputs", () => {
     cy.get("input[name=username]").clear();
@@ -122,13 +112,11 @@ describe("tests the register with valid inputs works, has success message, and n
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
   });
   it("checks that success message appears ", () => {
-    cy.get("p.has-text-success")
-      .contains("Success! Teleporting to Home Page!")
-      .should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
-  it("waits a bit and checks we are back at the home page, i.e. checking if the add todo button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
+  it("waits a bit and checks we are back at the home page, i.e. checking if the add card button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
     cy.wait(2000);
-    cy.get("button").contains("Add todo");
+    cy.get("button").contains("Add Card");
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that
     cy.window().then((window: Cypress.AUTWindow) => {
@@ -157,13 +145,11 @@ describe("should be able to login with those credentials that we just registered
   });
   it("checks that success message appears ", () => {
     cy.wait(100);
-    cy.get("p.has-text-success")
-      .contains("Success! Teleporting to Home Page!")
-      .should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
-  it("waits a bit and checks we are back at the home page, i.e. checking if the add todo button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
+  it("waits a bit and checks we are back at the home page, i.e. checking if the add card button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
     cy.wait(2000);
-    cy.get("button").contains("Add todo");
+    cy.get("button").contains("Add Card");
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that
     cy.window().then((window: Cypress.AUTWindow) => {

@@ -12,7 +12,7 @@ export function createMeQuery(): string {
           field
           message
         }
-        todos {
+        cards {
           id
           text
           creatorId
