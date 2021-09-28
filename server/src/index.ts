@@ -7,9 +7,9 @@ import cors from "cors";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { User } from "./entities/User";
-import { Todo } from "./entities/Todo";
+import { Card } from "./entities/Card";
 import { UserResolver } from './resolvers/user';
-import { TodoResolver } from "./resolvers/todo"
+import { CardResolver } from "./resolvers/card"
 import { GraphQLSchema } from "graphql";
 import { authMiddleware } from "./utils/authMiddleWare";
 import { ColorLog } from "./__tests__/utils/helpers";
@@ -40,7 +40,7 @@ const {
         rejectUnauthorized: false,
       },
     },
-    entities: [User, Todo]
+    entities: [User, Card]
   });
 
   new logger("green", "postgres connection success").genLog();
@@ -55,11 +55,11 @@ const {
 
   console.log("resolvers");
   console.log(UserResolver);
-  console.log(TodoResolver);
+  console.log(CardResolver);
   
   
   MyGraphQLSchema = await buildSchema({
-    resolvers: [UserResolver, TodoResolver],
+    resolvers: [UserResolver, CardResolver],
     validate: false
   });
   new logger("purple", "graphql schema build success").genLog();

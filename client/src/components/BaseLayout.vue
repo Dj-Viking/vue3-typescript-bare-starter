@@ -82,7 +82,7 @@ export default defineComponent({
       //refetching after setting the token to
       //empty string will not allow for a refresh token on the site
       // this.refetch();
-      await store.dispatch("todos/setTodos" as RootDispatchType, [], {
+      await store.dispatch("cards/setCards" as RootDispatchType, [], {
         root: true,
       });
     },
@@ -99,10 +99,10 @@ export default defineComponent({
         this.isLoggedIn = false;
         await store.dispatch("user/setUser", null, { root: true });
         store.commit(
-          "todos/SET_TODOS" as RootCommitType,
+          "cards/SET_CARDS" as RootCommitType,
           [
             {
-              text: "sign in to see and add your own todos!!!",
+              text: "sign in to see and add your own cards!!!",
               id: Date.now(),
             },
           ],
@@ -119,10 +119,10 @@ export default defineComponent({
           root: true,
         });
         this.isLoggedIn = true;
-        store.commit("todos/SET_TODOS" as RootCommitType, newValue.me.todos, {
+        store.commit("cards/SET_CARDS" as RootCommitType, newValue.me.cards, {
           root: true,
         });
-        //set user vuex state with todos
+        //set user vuex state with cards
         await store.dispatch(
           "user/setUser" as RootDispatchType,
           { ...newValue.me.user },
@@ -134,8 +134,8 @@ export default defineComponent({
     },
   },
   async mounted() {
-    console.log("todos vuex state on mounted", store.state.todos);
-    //set the todos if there are any defined
+    console.log("cards vuex state on mounted", store.state.cards);
+    //set the cards if there are any defined
   },
 });
 </script>

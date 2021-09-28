@@ -9,7 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
-import { Todo } from './Todo';
+import { Card } from './Card';
 
 //this is now both an object type and an entity
 @ObjectType()
@@ -32,8 +32,8 @@ export class User extends BaseEntity {
   @Column()
   token?: string;
 
-  @OneToMany(() => Todo, (todo: Todo) => todo.creator, { onDelete: "CASCADE" })
-  todos?: Todo[];
+  @OneToMany(() => Card, (card: Card) => card.creator, { onDelete: "CASCADE" })
+  cards?: Card[];
 
   //not a field so can't select it
   @Column()

@@ -1,8 +1,8 @@
 import {
   MyRootState,
-  TodosState,
+  CardsState,
   UserState,
-  Todo,
+  Card,
   RootDispatchType,
   RootCommitType,
 } from "@/types";
@@ -13,7 +13,7 @@ const state: UserState = {
     username: "",
     email: "",
     token: "",
-    todos: [] as Todo[],
+    cards: [] as Card[],
     loggedIn: false,
   },
 };
@@ -29,9 +29,9 @@ const mutations = {
     } as UserState["user"];
     delete state.user.token;
   },
-  SET_USER_TODOS(state: UserState, payload: Todo[]): void {
+  SET_USER_TODOS(state: UserState, payload: Card[]): void {
     console.log("setting user todos payload!!!", payload);
-    state.user.todos = payload;
+    state.user.cards = payload;
   },
   SET_LOGGED_IN(state: UserState, payload: boolean): void {
     console.log("setting logged in", payload);
@@ -46,12 +46,12 @@ const mutations = {
   },
 };
 const actions = {
-  async setUserTodos(
+  async setUserCards(
     { commit }: ActionContext<UserState, MyRootState>,
-    payload: Todo[]
+    payload: Card[]
   ): Promise<void> {
     try {
-      commit("user/SET_USER_TODOS" as RootCommitType, payload, { root: true });
+      commit("user/SET_USER_CARDS" as RootCommitType, payload, { root: true });
       Promise.resolve();
     } catch (error) {
       Promise.resolve(error);
@@ -63,26 +63,25 @@ const actions = {
   ): Promise<void> {
     commit("user/SET_USER" as RootCommitType, payload, { root: true });
   },
-  async getUserTodos(
+  async getUserCards(
     { dispatch }: ActionContext<UserState, MyRootState>,
-    payload: TodosState
+    payload: CardsState
   ): Promise<void> {
-    //some db call to get logged in user's account todos
+    //some db call to get logged in user's account cards
 
-    //get the todos then set them on the todos state of the users login page
+    //get the cards then set them on the cards state of the users login page
 
     //type casting here provides the autocomplete for string union type of
     // all possible rootstate actions accessed with the root: true option as 3rd argument
-    await dispatch("user/setUserTodos" as RootDispatchType, payload, {
+    await dispatch("user/setUserCards" as RootDispatchType, payload, {
       root: true,
     });
 
-    //set the todos on the page
-    await dispatch("todos/setTodos" as RootDispatchType, payload, {
+    //set the cards on the page
+    await dispatch("cards/setCards" as RootDispatchType, payload, {
       root: true,
     });
   },
-  // async saveUserTodos(){}
 };
 const getters = {
   user(state: UserState): UserState["user"] {

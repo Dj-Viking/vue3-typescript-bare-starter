@@ -80,21 +80,21 @@ export interface CustomError {
 }
 export type MyErrorResponse = CustomError[];
 
-export interface AddTodoResponse {
-    addTodo: {
-        todos: null | Todo[]
+export interface AddCardResponse {
+    addCard: {
+        cards: null | Card[]
         errors: MyErrorResponse
     }
 }
 
-export interface GetUserTodosResponse {
-    getUserTodos: {
-        todos?: Todo[];
+export interface GetUserCardsResponse {
+    getUserCards: {
+        cards?: Card[];
         errors: MyErrorResponse
     }
 }
 
-export interface Todo {
+export interface Card {
     text: string;
     id: number;
     createdAt: string;
@@ -103,23 +103,23 @@ export interface Todo {
 
 }
 
-export interface ClearUserTodosResponse {
-    clearUserTodos: {
+export interface ClearUserCardsResponse {
+    clearUserCards: {
         done: boolean | null;
         errors: MyErrorResponse
     }
 }
 
-export interface EditTodoByIdResponse {
-    editTodoById: {
+export interface EditCardByIdResponse {
+    editCardById: {
         errors: MyErrorResponse
-        todos?: null | Todo[]
+        cards?: null | Card[]
     }
 }
 
-export interface EditTodoPayload {
+export interface EditCardPayload {
     text: string | undefined;
-    todoId: number | undefined;
+    cardId: number | undefined;
 }
 
 export interface UserEntityBase {
@@ -139,7 +139,7 @@ export interface MeQueryResponse {
           email: string;
         };
         token: string;
-        todos: Array<Todo>;
+        cards: Array<Card>;
         errors: MyErrorResponse;
       };
 }

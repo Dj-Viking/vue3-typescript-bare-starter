@@ -30,16 +30,16 @@
                     closeModal($event);
                     if (isLoggedIn) {
                       //graphql mutation pass data to the modal for it to use.
-                      submitEditUserTodo({
+                      submitEditUserCard({
                         text: inputText,
-                        id: modalContext?.todoId,
+                        id: modalContext?.cardId,
                       });
                       closeModal();
                       inputText = '';
                     } else {
-                      editLocalTodo($event, {
+                      editLocalCard($event, {
                         text: inputText,
-                        id: modalContext?.todoId,
+                        id: modalContext?.cardId,
                       });
                       inputText = '';
                     }
@@ -69,14 +69,14 @@
 </template>
 
 <script lang="ts">
-import { createEditTodoMutation } from "@/graphql/mutations/myMutations";
+import { createEditCardMutation } from "@/graphql/mutations/myMutations";
 import {
   ModalState,
   RootCommitType,
   UserState,
-  EditTodoResponse,
-  Todo,
-  EditTodoCommitPayload,
+  EditCardResponse,
+  Card,
+  EditCardCommitPayload,
 } from "@/types";
 import { FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
@@ -91,9 +91,9 @@ export default defineComponent({
     const errMsg = ref("");
     const showErrMsg = ref(false);
     const editResponse = ref();
-    const { mutate: submitEditUserTodo, onDone: onEditTodoDone } = useMutation(
+    const { mutate: submitEditUserCard, onDone: onEditCardDone } = useMutation(
       gql`
-        ${createEditTodoMutation()}
+        ${createEditCardMutation()}
       `,
       {
         variables: {
@@ -103,23 +103,23 @@ export default defineComponent({
       }
     );
 
-    onEditTodoDone(
+    onEditCardDone(
       (
         result: FetchResult<
-          EditTodoResponse,
+          EditCardResponse,
           Record<string, unknown>,
           Record<string, unknown>
         >
       ) => {
-        if (result.data?.editTodoById.errors) {
+        if (result.data?.editCardById.errors) {
           showErrMsg.value = true;
-          errMsg.value = result.data?.editTodoById.errors[0].message;
+          errMsg.value = result.data?.editCardById.errors[0].message;
           inputText.value = "";
         } else {
           editResponse.value = result.data;
           store.commit(
-            "todos/SET_TODOS" as RootCommitType,
-            result.data?.editTodoById.todos as Todo[],
+            "cards/SET_CARDS" as RootCommitType,
+            result.data?.editCardById.cards as Card[],
             { root: true }
           );
         }
@@ -127,7 +127,7 @@ export default defineComponent({
     );
     return {
       inputText,
-      submitEditUserTodo,
+      submitEditUserCard,
       errMsg,
       showErrMsg,
     };
@@ -148,9 +148,9 @@ export default defineComponent({
         root: true,
       });
     },
-    editLocalTodo(_event: MouseEvent, payload: EditTodoCommitPayload): void {
-      console.log("editing a local todo if not logged in", _event);
-      store.commit("todos/EDIT_TODO" as RootCommitType, payload, {
+    editLocalCard(_event: MouseEvent, payload: EditCardCommitPayload): void {
+      console.log("editing a local card if not logged in", _event);
+      store.commit("cards/EDIT_CARD" as RootCommitType, payload, {
         root: true,
       });
     },

@@ -15,7 +15,7 @@ export const REGISTER_EMAIL: string | undefined = TEST_EMAIL;
 export const REGISTER_USERNAME: string | undefined = TEST_USERNAME;
 export const REGISTER_PASSWORD: string | undefined = TEST_PASS;
 export const UPDATED_USERNAME: string = `newUsername${Date.now()}`;
-export const UPDATED_TODO_TEXT: string = "some update text for editing a todo";
+export const UPDATED_CARD_TEXT: string = "some update text for editing a card";
 
 /**
  * query to check that when i log in that i can get my information from the db while logged in

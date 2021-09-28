@@ -4,55 +4,55 @@
       class="button is-info"
       @click.prevent="
         ($event) => {
-          //clear local todos
-          clearTodos($event);
+          //clear local cards
+          clearCards($event);
           if (isLoggedIn) {
-            submitClearUserTodos();
+            submitClearUserCards();
           }
         }
       "
     >
-      clear todos
+      clear cards
     </button>
-    <div class="container is-widescreen" v-if="todos.length > 0">
-      <h3>Your Todos</h3>
-      <div class="notification is-light" v-for="(todo, i) in todos" :key="i">
-        <p :style="`color: ${todo.color}`">
-          {{ todo.text }}
-          <span style="color: blue">updated at: {{ todo.updatedAt }}</span>
+    <div class="container is-widescreen" v-if="cards.length > 0">
+      <h3>Your Cards</h3>
+      <div class="notification is-light" v-for="(card, i) in cards" :key="i">
+        <p :style="`color: ${card.color}`">
+          {{ card.text }}
+          <span style="color: blue">updated at: {{ card.updatedAt }}</span>
         </p>
         <button
           class="button is-danger"
           @click.prevent="
             ($event) => {
-              //update vuex todos that are displayed
-              deleteTodo($event, todo.id);
-              //only delete user's todos if they are logged in
+              //update vuex cards that are displayed
+              deleteCard($event, card.id);
+              //only delete user's cards if they are logged in
               if (isLoggedIn) {
-                submitDeleteTodo({
-                  id: todo.id,
+                submitDeleteCard({
+                  id: card.id,
                 });
               }
             }
           "
         >
-          delete todo
+          delete card
         </button>
         <button
           class="button is-primary"
           style="color: black"
           @click.prevent="
             ($event) => {
-              openEditModal($event, todo.id);
+              openEditModal($event, card.id);
             }
           "
         >
-          Edit Todo
+          Edit Card
         </button>
       </div>
     </div>
     <div v-else>
-      <span>no todos to display...</span>
+      <span>no cards to display...</span>
     </div>
 
     <div style="margin-top: 100px">
@@ -61,13 +61,13 @@
           ($event) => {
             readInputEvent($event);
             if (input && isLoggedIn) {
-              submitAddTodo({
+              submitAddCard({
                 text: input,
               });
               input = '';
             } else {
-              //do a local update in the non logged in state update of todos
-              addALocalTodo();
+              //do a local update in the non logged in state update of cards
+              addALocalCard();
             }
           }
         "
@@ -85,7 +85,7 @@
           </div>
         </div>
         <div class="control">
-          <button class="button is-info mt-3" type="submit">Add todo</button>
+          <button class="button is-info mt-3" type="submit">Add Card</button>
         </div>
       </form>
     </div>
@@ -94,11 +94,11 @@
 
 <script lang="ts">
 import {
-  AddTodoResponse,
-  EditTodoModalContext,
+  AddCardResponse,
+  EditCardModalContext,
   RootCommitType,
   RootDispatchType,
-  TodosState,
+  CardsState,
   UserState,
 } from "../types";
 import { ref, defineComponent } from "vue";
@@ -106,18 +106,18 @@ import store from "../store";
 import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import {
-  createAddTodoMutation,
-  createDeleteTodoMutation,
-  createClearUserTodosMutation,
-  // createEditTodoMutation,
+  createAddCardMutation,
+  createDeleteCardMutation,
+  createClearUserCardsMutation,
+  // createEditCardMutation,
 } from "../graphql/mutations/myMutations";
 import { FetchResult } from "@apollo/client/core";
-import { Todo } from "../../../server/src/types";
+import { Card } from "../../../server/src/types";
 import { useToast } from "vue-toastification";
 // import { Store } from "vuex";
 
 export default defineComponent({
-  name: "TodoList",
+  name: "CardList",
   setup(this: void) {
     const toast = useToast();
     const promptText = ref("");
@@ -128,13 +128,13 @@ export default defineComponent({
     const showSuccess = ref(false);
     const showError = ref(false);
     const {
-      mutate: submitAddTodo,
-      loading: addTodoIsLoading,
-      error: addTodoError,
-      onDone: onAddTodoDone,
+      mutate: submitAddCard,
+      loading: addCardIsLoading,
+      error: addCardError,
+      onDone: onAddCardDone,
     } = useMutation(
       gql`
-        ${createAddTodoMutation()}
+        ${createAddCardMutation()}
       `,
       {
         variables: {
@@ -143,17 +143,17 @@ export default defineComponent({
       }
     );
 
-    onAddTodoDone(
+    onAddCardDone(
       (
         result: FetchResult<
-          AddTodoResponse,
+          AddCardResponse,
           Record<string, unknown>,
           Record<string, unknown>
         >
       ) => {
-        if (result.data?.addTodo.errors) {
+        if (result.data?.addCard.errors) {
           toast.error(
-            `Error: there was an error adding a todo - ${result.data?.addTodo.errors[0].message}`,
+            `Error: there was an error adding a todo - ${result.data?.addCard.errors[0].message}`,
             {
               timeout: 3000,
             }
@@ -165,8 +165,8 @@ export default defineComponent({
           // successMsg.value = "Added a TODO!!";
           // showSuccess.value = true;
           store.commit(
-            "todos/SET_TODOS" as RootCommitType,
-            result.data?.addTodo.todos,
+            "cards/SET_CARDS" as RootCommitType,
+            result.data?.addCard.cards,
             {
               root: true,
             }
@@ -175,9 +175,9 @@ export default defineComponent({
       }
     );
 
-    const { mutate: submitDeleteTodo } = useMutation(
+    const { mutate: submitDeleteCard } = useMutation(
       gql`
-        ${createDeleteTodoMutation()}
+        ${createDeleteCardMutation()}
       `,
       {
         variables: {
@@ -186,26 +186,25 @@ export default defineComponent({
         },
       }
     );
-    const { mutate: submitClearUserTodos } = useMutation(
+    const { mutate: submitClearUserCards } = useMutation(
       gql`
-        ${createClearUserTodosMutation()}
+        ${createClearUserCardsMutation()}
       `
     );
 
     return {
       input,
       promptText,
-      submitClearUserTodos,
-      // submitEditUserTodo,
+      submitClearUserCards,
       inputId,
-      submitDeleteTodo,
+      submitDeleteCard,
       showError,
       showSuccess,
       errMsg,
       successMsg,
-      addTodoIsLoading,
-      addTodoError,
-      submitAddTodo,
+      addCardIsLoading,
+      addCardError,
+      submitAddCard,
       toast,
     };
   },
@@ -216,15 +215,15 @@ export default defineComponent({
     };
   },
   computed: {
-    todos: (): TodosState["todos"] => store.state.todos.todos,
+    cards: (): CardsState["cards"] => store.state.cards.cards,
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
     activeClass: () => store.state.modal.modal.activeClass,
   },
   methods: {
-    addALocalTodo(): void {
+    addALocalCard(): void {
       if (!this.input) return;
-      store.state.todos.todos.push({
+      store.state.cards.cards.push({
         id: Date.now(),
         text: this.input,
         color: "green",
@@ -234,19 +233,19 @@ export default defineComponent({
       this.input = "";
     },
     readInputEvent(event: Event) {
-      console.log("add todo event", event);
+      console.log("add card event", event);
     },
-    async deleteTodo(_event: Event, index: number): Promise<void> {
-      await store.dispatch("todos/deleteTodo" as RootDispatchType, index, {
+    async deleteCard(_event: Event, index: number): Promise<void> {
+      await store.dispatch("cards/deleteCard" as RootDispatchType, index, {
         root: true,
       });
     },
     // eslint-disable-next-line
-    clearTodos(_event: Event): void {
-      store.commit("todos/SET_TODOS" as RootCommitType, [], { root: true });
+    clearCards(_event: Event): void {
+      store.commit("cards/SET_CARDS" as RootCommitType, [], { root: true });
     },
     // eslint-disable-next-line
-    async addTodo(_event: Event): Promise<void | boolean> {
+    async addCard(_event: Event): Promise<void | boolean> {
       if (!this.inputText) return;
       const payload = {
         id: Date.now(),
@@ -254,7 +253,7 @@ export default defineComponent({
         color: "blue",
       };
       const addResponse: boolean = await store.dispatch(
-        "todos/addTodo" as RootDispatchType,
+        "cards/addCard" as RootDispatchType,
         payload,
         {
           root: true,
@@ -263,18 +262,18 @@ export default defineComponent({
       this.inputText = "";
       return addResponse;
     },
-    openEditModal(event: Event, id: Todo["id"]) {
+    openEditModal(event: Event, id: Card["id"]) {
       console.log(
         "able to get id in this loop to also open the modal?????",
         id
       );
-      console.log("open modal from todo list", event);
+      console.log("open modal from card list", event);
       //adding to element classlist under the hood
-      store.commit("modal/SET_MODAL_TITLE", "Edit a todo", {
+      store.commit("modal/SET_MODAL_TITLE", "Edit a card", {
         root: true,
       });
-      const payload: EditTodoModalContext = {
-        todoId: id,
+      const payload: EditCardModalContext = {
+        cardId: id,
       };
       store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, payload, {
         root: true,

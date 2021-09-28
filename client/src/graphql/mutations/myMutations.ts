@@ -18,11 +18,11 @@ export function createRegisterMutation(): string {
   `;
 }
 
-export function createAddTodoMutation(): string {
+export function createAddCardMutation(): string {
   return `
-    mutation addTodo($text: String!) {
-      addTodo(text: $text) {
-        todos {
+    mutation addCard($text: String!) {
+      addCard(text: $text) {
+        cards {
           id
           creatorId
           createdAt
@@ -49,7 +49,7 @@ export function createLoginMutation(): string {
           username
           token
         }
-        todos {
+        cards {
           id
           text
           createdAt
@@ -78,15 +78,15 @@ export function createLogoutMutation(email: string): string {
   `;
 }
 
-export function createEditTodoMutation(): string {
+export function createEditCardMutation(): string {
   return `
-    mutation editTodoById($id: Int!, $text: String!){
-      editTodoById(id: $id, text: $text) {
+    mutation editCardById($id: Int!, $text: String!){
+      editCardById(id: $id, text: $text) {
         errors{
           field
           message
         }
-        todos {
+        cards {
           id
           text
           updatedAt
@@ -97,10 +97,10 @@ export function createEditTodoMutation(): string {
   `;
 }
 
-export function createClearUserTodosMutation(): string {
+export function createClearUserCardsMutation(): string {
   return `
-    mutation clearUserTodos {
-      clearUserTodos {
+    mutation clearUserCards {
+      clearUserCards {
         done
         errors {
           field
@@ -111,11 +111,11 @@ export function createClearUserTodosMutation(): string {
   `;
 }
 
-export function createDeleteTodoMutation(): string {
+export function createDeleteCardMutation(): string {
   return `
-    mutation deleteTodo($id: Int!) {
-      deleteTodo(id: $id){
-        todos {
+    mutation deleteCard($id: Int!) {
+      deleteCard(id: $id){
+        cards {
           id
           text
         }
