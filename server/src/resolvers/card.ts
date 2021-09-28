@@ -10,7 +10,8 @@ import {
   Arg,
   ObjectType,
   Ctx,
-  Int
+  Int,
+  InputType
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import { ANSI_ESCAPES, MyContext } from '../types';
@@ -40,6 +41,55 @@ class ClearCardResponse {
 
   @Field(() => Boolean, { nullable: true })
   done: boolean | null;
+}
+
+@ObjectType()
+@InputType()
+class AddCardInput {
+  
+  @Field(() => String, { nullable: true })
+  frontSideText: string;
+  
+  @Field(() => String, { nullable: true })
+  frontSideLanguage: string;
+  
+  @Field(() => String, { nullable: true })
+  frontSidePicture: string;
+  
+  @Field(() => String, { nullable: true })
+  backSideText: string;
+  
+  @Field(() => String, { nullable: true })
+  backSideLanguage: string;
+
+  @Field(() => String, { nullable: true })
+  backSidePicture: string;
+
+}
+@ObjectType()
+@InputType()
+class EditCardInput {
+  
+  @Field(() => Int, { nullable: true })
+  id: string;
+  
+  @Field(() => String, { nullable: true })
+  frontSideText: string;
+  
+  @Field(() => String, { nullable: true })
+  frontSideLanguage: string;
+  
+  @Field(() => String, { nullable: true })
+  frontSidePicture: string;
+  
+  @Field(() => String, { nullable: true })
+  backSideText: string;
+  
+  @Field(() => String, { nullable: true })
+  backSideLanguage: string;
+  
+  @Field(() => String, { nullable: true })
+  backSidePicture: string;
 }
 @ObjectType()
 class AddCardResponse {
@@ -108,11 +158,10 @@ export class CardResolver {
 
   @Mutation(() => EditCardResponse)
   async editCardById(
-    @Arg("id", () => Int) id: number,
-    @Arg("text", () => String) text: string,
+    @Arg("options", () => EditCardInput) options: EditCardInput,
     @Ctx() { req }: MyContext
   ): Promise<EditCardResponse> {
-
+    const { id, frontSideText, backSidePicture, backSideLanguage, backSideText, frontSideLanguage, frontSidePicture } = options;
     if (!req.user) {
       return new ErrorResponse("unauthenticated", "401 Unauthenticated");
     }
@@ -134,9 +183,14 @@ export class CardResolver {
         .getRepository(Card)
         .createQueryBuilder("card")
         .update<Card>(Card, 
-                      { text })
+                      { frontSideText,
+                        frontSidePicture,
+                        frontSideLanguage, 
+                        backSideText,
+                        backSideLanguage, 
+                        backSidePicture })
         .where("id = :id", { id })
-        .returning(["text", "id", "creatorId", "createdAt", "updatedAt"])
+        .returning(["frontSideText", "frontSidePicture", "frontSideLanguage", "backsideText", "id", "creatorId", "createdAt", "updatedAt"])
         .updateEntity(true)
         .execute();
       if (!changedCard.raw[0]) return new ErrorResponse("card", "404 Card Not Found");
@@ -218,9 +272,10 @@ export class CardResolver {
 
   @Mutation(() => AddCardResponse)
   async addCard(
-    @Arg("text", () => String) text: string,
+    @Arg("options", () => AddCardInput) options: AddCardInput,
     @Ctx() { req }: MyContext
   ): Promise<AddCardResponse> {
+    const { backSidePicture, backSideLanguage, frontSideText, backSideText, frontSideLanguage, frontSidePicture } = options;
     // TODO abstract these checks to a middlware ... learn that first
     console.log("checking context user", req.user);
     if (!req.user) {
@@ -238,7 +293,12 @@ export class CardResolver {
       .createQueryBuilder()
       .insert()
       .into(Card)
-      .values({ text,
+      .values({ frontSideText,
+                frontSideLanguage,
+                frontSidePicture,
+                backSideText,
+                backSideLanguage,
+                backSidePicture,
                 //a creator with this id MUST exist for this query to work!!
                 creatorId: foundUserByEmail?.id })
       .returning('*')
