@@ -25,8 +25,28 @@ export class Card extends BaseEntity {
   creatorId?: number;
 
   @Field()
-  @Column()
-  text?: string;
+  @Column({ nullable: true })
+  frontSideText!: string;
+
+  @Field()
+  @Column({ nullable: true })
+  frontSideLanguage?: string;
+
+  @Field()
+  @Column({ nullable: true })
+  frontSidePicture: string; //base 64 encoded??? not sure yet
+
+  @Field()
+  @Column( { nullable: true })
+  backSideText?: string;
+  
+  @Field()
+  @Column( { nullable: true })
+  backSideLanguage?: string;
+
+  @Field()
+  @Column( { nullable: true })
+  backSidePicture?: string;
 
   //not exposing the creator here
   @ManyToOne(() => User, user => user.cards, { onDelete: "CASCADE" })

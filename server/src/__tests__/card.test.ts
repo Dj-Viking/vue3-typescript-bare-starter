@@ -8,7 +8,7 @@ import {
   UPDATED_CARD_TEXT,
   HOST,
 } from "../constants";
-import { RegisterResponse, GetUserCardsResponse, AddCardResponse, Card, ClearUserCardsResponse, EditCardByIdResponse } from "../types";
+import { RegisterResponse, GetUserCardsResponse, AddCardResponse, Card, ClearUserCardsResponse, EditCardByIdResponse, EditCardPayload, AddCardPayload } from "../types";
 import { ColorLog, logJson, createAddCardMutation, createClearUserCardsMutation, createEditCardMutation, createGetUserCardsQuery } from "./utils/helpers";
 
 const { 
@@ -20,7 +20,6 @@ const {
 const logger = ColorLog;
 let newToken: string = "";
 let creatorId: number = 0;
-let creatorEmail: string = "";
 let newCardId: number | undefined = 0;
 let newUserId: number = 0;
 
@@ -42,7 +41,6 @@ describe("Tests the user register", () => {
     newToken = res.register.token;
 
     expect(res.register.user.email).toEqual(REGISTER_EMAIL);
-    creatorEmail = res.register.user.email;
   });
 
   it("and check that the user got added to the db", async () => {
@@ -67,10 +65,20 @@ describe("Tests the card resolvers adding, reading, editing, and deleting", () =
 
   it("tries to add a card with a invalid token", async () => {
     //user not authenticated (bad token or no token)
+    const addCardPayload: AddCardPayload = {
+      options: {
+        frontSideText: "add card front side text",
+        frontSideLanguage: "add card front side language",
+        frontSidePicture: "add card front side picture",
+        backSideText: "add card backside text",
+        backSideLanguage: "add card backside language",
+        backSidePicture: "add card backside picture"
+      }
+    }
     const invalidToken: AddCardResponse = await request(
       HOST + "/graphql",
-      `${createAddCardMutation("hello from test")}`,
-      {},
+      `${createAddCardMutation()}`,
+      { options: addCardPayload.options },
       { "authorization": `Bearer adsfadfs` }
     );
     expect(invalidToken.addCard.errors).toHaveLength(1);
@@ -79,10 +87,20 @@ describe("Tests the card resolvers adding, reading, editing, and deleting", () =
 
   it("tries to add a card with an expired token", async () => {
     //user not authenticated (bad token or no token)
+    const addCardPayload: AddCardPayload = {
+      options: {
+        frontSideText: "add card front side text",
+        frontSideLanguage: "add card front side language",
+        frontSidePicture: "add card front side picture",
+        backSideText: "add card backside text",
+        backSideLanguage: "add card backside language",
+        backSidePicture: "add card backside picture"
+      }
+    }
     const invalidToken: AddCardResponse = await request(
       HOST + "/graphql",
-      `${createAddCardMutation("hello from test")}`,
-      {},
+      `${createAddCardMutation()}`,
+      { options: addCardPayload.options },
       { "authorization": `Bearer ${EXPIRED_TOKEN}` }
     );
     expect(invalidToken.addCard.errors).toHaveLength(1);
@@ -92,17 +110,30 @@ describe("Tests the card resolvers adding, reading, editing, and deleting", () =
   it("should successfully add a Card with the proper credentials", async () => {
     //this should all be good, user is authenticated and 
     // the requestor's id is the id of the original CardList creator
+    const addCardPayload: AddCardPayload = {
+      options: {
+        frontSideText: "add card front side text",
+        frontSideLanguage: "add card front side language",
+        frontSidePicture: "add card front side picture",
+        backSideText: "add card backside text",
+        backSideLanguage: "add card backside language",
+        backSidePicture: "add card backside picture"
+      }
+    }
     const res: AddCardResponse = await request(
       HOST + "/graphql", 
-      `${createAddCardMutation("hello from test")}`, 
-      {},
+      `${createAddCardMutation()}`, 
+      { options: addCardPayload.options },
       { "authorization":  `Bearer ${newToken}`}
     );
   
     expect(res.addCard.errors).toBeNull();
     logJson(res.addCard);
+    console.log("\x1b[32m", "res add card", res.addCard, "\x1b[00m");
+    console.log("\x1b[33m", "creatorId at this point", newUserId, "\x1b[00m");
     //find the Cards that have the creator's id
-    const foundCard = res.addCard.cards?.filter((card: Card) => card.creatorId === creatorId)[0];
+    const foundCard = res.addCard.cards?.filter((card: Card) => card.creatorId === newUserId)[0];
+    console.log("did i find the card i just made?", foundCard);
   
     expect(typeof foundCard?.id).toBe("number");
     expect(typeof foundCard?.creatorId).toBe("number");
@@ -177,44 +208,63 @@ describe("checks the getting cards mutation responses", () => {
 describe("checks editing a card", () => {
   describe("checks edit card access control logic", () => {
     it("tries to edit the card with an invalid token", async () => {
-      const editCardPayload = {
-        text: UPDATED_CARD_TEXT,
-        cardId: newCardId
+      const editCardPayload: EditCardPayload = {
+        options: {
+          id: newCardId,
+          frontSideText: UPDATED_CARD_TEXT,
+          frontSideLanguage: "TEST LANGUAGE",
+          frontSidePicture: "PICTURE BASE 64 CRAP",
+          backSideText: "BACKSIDE TEXT",
+          backSideLanguage: "Backside language",
+          backSidePicture: "whatever front side will be"
+        }
       }
       const invalidToken: EditCardByIdResponse = await request(
         HOST + "/graphql", 
-        `${createEditCardMutation(editCardPayload)}`,
-        {},
+        `${createEditCardMutation()}`,
+        { options: editCardPayload.options },
         { "authorization": `Bearer asdfasdfasdf`}
       );
       expect(invalidToken.editCardById.errors).toHaveLength(1);
       expect(invalidToken.editCardById.errors[0].message).toBe("401 Unauthenticated");
     });
     it("tries to edit the card with an expired token", async () => {
-      const editCardPayload = {
-        text: UPDATED_CARD_TEXT,
-        email: creatorEmail,
-        cardId: newCardId
+      const editCardPayload: EditCardPayload = {
+        options: {
+          id: newCardId,
+          frontSideText: UPDATED_CARD_TEXT,
+          frontSideLanguage: "TEST LANGUAGE",
+          frontSidePicture: "PICTURE BASE 64 CRAP",
+          backSideText: "BACKSIDE TEXT",
+          backSideLanguage: "Backside language",
+          backSidePicture: "whatever front side will be"
+        }
       }
       const expiredToken: EditCardByIdResponse = await request(
         HOST + "/graphql", 
-        `${createEditCardMutation(editCardPayload)}`,
-        {},
+        `${createEditCardMutation()}`,
+        { options: editCardPayload.options },
         { "authorization": `Bearer ${EXPIRED_TOKEN}`}
       );
       expect(expiredToken.editCardById.errors).toHaveLength(1);
       expect(expiredToken.editCardById.errors[0].message).toBe("401 Unauthenticated");
     });
     it("tries to edit the card with a not found cardId", async () => {
-      const editCardPayload = {
-        text: UPDATED_CARD_TEXT,
-        email: creatorEmail,
-        cardId: 0
+      const editCardPayload: EditCardPayload = {
+        options: {
+          id: 0, //shouldn't ever be zero unless we dropped the database and recreated it
+          frontSideText: UPDATED_CARD_TEXT,
+          frontSideLanguage: "TEST LANGUAGE",
+          frontSidePicture: "PICTURE BASE 64 CRAP",
+          backSideText: "BACKSIDE TEXT",
+          backSideLanguage: "Backside language",
+          backSidePicture: "whatever front side will be"
+        }
       }
       const notFound: EditCardByIdResponse = await request(
         HOST + "/graphql", 
-        `${createEditCardMutation(editCardPayload)}`,
-        {},
+        `${createEditCardMutation()}`,
+        { options: editCardPayload.options },
         { "authorization": `Bearer ${newToken}`}
       );
       expect(notFound.editCardById.errors).toHaveLength(1);
@@ -225,19 +275,26 @@ describe("checks editing a card", () => {
   
   it("edits the card that was just added", async () => {
     new logger("blue", "editing the card we just added").genLog();
-    const editCardPayload = {
-      text: UPDATED_CARD_TEXT,
-      cardId: newCardId
+    const editCardPayload: EditCardPayload = {
+      options: {
+        id: newCardId,
+        frontSideText: UPDATED_CARD_TEXT,
+        frontSideLanguage: "TEST LANGUAGE",
+        frontSidePicture: "PICTURE BASE 64 CRAP",
+        backSideText: "BACKSIDE TEXT",
+        backSideLanguage: "Backside language",
+        backSidePicture: "whatever front side will be"
+      }
     }
     const res: EditCardByIdResponse = await request(
       HOST + "/graphql", 
-      `${createEditCardMutation(editCardPayload)}`,
-      {},
+      `${createEditCardMutation()}`,
+      { options: editCardPayload.options },
       { "authorization": `Bearer ${newToken}`}
     );
     logJson(res.editCardById.cards);
     const foundEditedCardIndex = res.editCardById.cards?.findIndex((card: Card) => card.id === newCardId);
-    expect(res.editCardById.cards![foundEditedCardIndex as number].text).toEqual(UPDATED_CARD_TEXT);
+    expect(res.editCardById.cards![foundEditedCardIndex as number].frontSideText).toEqual(UPDATED_CARD_TEXT);
   });
 });
 

@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { Session, SessionData } from 'express-session';
 import jwt from 'jsonwebtoken';
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
@@ -10,13 +9,13 @@ import jwt from 'jsonwebtoken';
 export type MyContext = {
     req: Request & {
         user: JwtData | null;
-        session: Session & Partial<SessionData> & {
-            userId?: number;
-        } & {
-            welcomeBackMsg?: String;
-        } & {
-            username?: String;
-        }
+        // session: Session & Partial<SessionData> & {
+        //     userId?: number;
+        // } & {
+        //     welcomeBackMsg?: String;
+        // } & {
+        //     username?: String;
+        // }
     };
     res: Response;
     next: NextFunction;
@@ -95,8 +94,13 @@ export interface GetUserCardsResponse {
 }
 
 export interface Card {
-    text: string;
-    id: number;
+    id: number,
+    frontSideText: string;
+    frontSideLanguage: string;
+    frontSidePicture: string;
+    backSideText: string;
+    backSideLanguage: string;
+    backSidePicture: string;
     createdAt: string;
     updatedAt: string;
     creatorId: number;
@@ -118,8 +122,25 @@ export interface EditCardByIdResponse {
 }
 
 export interface EditCardPayload {
-    text: string | undefined;
-    cardId: number | undefined;
+    options: {
+        frontSideText: string | undefined;
+        frontSideLanguage: string | undefined;
+        frontSidePicture: string | undefined;
+        backSideText: string | undefined;
+        backSideLanguage: string | undefined;
+        backSidePicture: string | undefined;
+        id: number | undefined;
+    }
+}
+export interface AddCardPayload {
+    options: {
+        frontSideText: string | undefined;
+        frontSideLanguage: string | undefined;
+        frontSidePicture: string | undefined;
+        backSideText: string | undefined;
+        backSideLanguage: string | undefined;
+        backSidePicture: string | undefined;
+    }
 }
 
 export interface UserEntityBase {
