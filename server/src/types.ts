@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { Session, SessionData } from 'express-session';
 import jwt from 'jsonwebtoken';
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
@@ -10,13 +9,13 @@ import jwt from 'jsonwebtoken';
 export type MyContext = {
     req: Request & {
         user: JwtData | null;
-        session: Session & Partial<SessionData> & {
-            userId?: number;
-        } & {
-            welcomeBackMsg?: String;
-        } & {
-            username?: String;
-        }
+        // session: Session & Partial<SessionData> & {
+        //     userId?: number;
+        // } & {
+        //     welcomeBackMsg?: String;
+        // } & {
+        //     username?: String;
+        // }
     };
     res: Response;
     next: NextFunction;
