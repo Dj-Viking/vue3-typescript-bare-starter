@@ -107,6 +107,16 @@ export type RootDispatchType =
   | "cards/editCard"
   | "cards/addCard";
 
+export interface AddCardPayload {
+  options: {
+    frontSideText: string | undefined;
+    frontSideLanguage: string | undefined;
+    frontSidePicture: string | undefined;
+    backSideText: string | undefined;
+    backSideLanguage: string | undefined;
+    backSidePicture: string | undefined;
+  };
+}
 export interface AddCardResponse {
   addCard: {
     cards: Card[];

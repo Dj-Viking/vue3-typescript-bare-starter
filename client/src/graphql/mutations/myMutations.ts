@@ -26,8 +26,13 @@ export function createAddCardMutation(): string {
           id
           creatorId
           createdAt
-          text
           updatedAt
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
         }
         errors {
           field
@@ -51,9 +56,15 @@ export function createLoginMutation(): string {
         }
         cards {
           id
-          text
           createdAt
           updatedAt
+          creatorId
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
         }
         errors {
           field
@@ -88,9 +99,14 @@ export function createEditCardMutation(): string {
         }
         cards {
           id
-          text
           updatedAt
           createdAt
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
         }
       }
     }
@@ -117,7 +133,13 @@ export function createDeleteCardMutation(): string {
       deleteCard(id: $id){
         cards {
           id
-          text
+          creatorId
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
         }
         errors {
           field
