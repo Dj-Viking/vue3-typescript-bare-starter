@@ -17,10 +17,10 @@
     <div class="container is-widescreen" v-if="cards.length > 0">
       <h3>Your Cards</h3>
       <div class="notification is-light" v-for="(card, i) in cards" :key="i">
-        <p :style="`color: ${card.color}`">
-          {{ card.text }}
+        <div :style="`color: ${card.color}`">
+          <pre> {{ card }} </pre>
           <span style="color: blue">updated at: {{ card.updatedAt }}</span>
-        </p>
+        </div>
         <button
           class="button is-danger"
           @click.prevent="
@@ -56,45 +56,22 @@
     </div>
 
     <div style="margin-top: 100px">
-      <form
-        @submit.prevent="
-          ($event) => {
-            readInputEvent($event);
-            if (input && isLoggedIn) {
-              submitAddCard({
-                text: input,
-              });
-              input = '';
-            } else {
-              //do a local update in the non logged in state update of cards
-              addALocalCard();
-            }
-          }
-        "
-      >
-        <div class="field">
-          <div class="control">
-            <input
-              class="input"
-              style="width: 30%"
-              type="text"
-              name="textInput"
-              @input="textInput($event)"
-              v-model="input"
-            />
-          </div>
-        </div>
-        <div class="control">
-          <button class="button is-info mt-3" type="submit">Add Card</button>
-        </div>
-      </form>
+      <div class="control">
+        <button
+          @click.prevent="openAddModal($event)"
+          class="button is-info mt-3"
+          type="submit"
+        >
+          Add New Card
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import {
-  AddCardResponse,
+  // AddCardResponse,
   EditCardModalContext,
   RootCommitType,
   RootDispatchType,
@@ -106,12 +83,12 @@ import store from "../store";
 import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import {
-  createAddCardMutation,
+  // createAddCardMutation,
   createDeleteCardMutation,
   createClearUserCardsMutation,
   // createEditCardMutation,
 } from "../graphql/mutations/myMutations";
-import { FetchResult } from "@apollo/client/core";
+// import { FetchResult } from "@apollo/client/core";
 import { Card } from "../../../server/src/types";
 import { useToast } from "vue-toastification";
 // import { Store } from "vuex";
@@ -120,60 +97,12 @@ export default defineComponent({
   name: "CardList",
   setup(this: void) {
     const toast = useToast();
-    const promptText = ref("");
     const inputId = ref(0);
     const input = ref("");
     const errMsg = ref("");
     const successMsg = ref("");
     const showSuccess = ref(false);
     const showError = ref(false);
-    const {
-      mutate: submitAddCard,
-      loading: addCardIsLoading,
-      error: addCardError,
-      onDone: onAddCardDone,
-    } = useMutation(
-      gql`
-        ${createAddCardMutation()}
-      `,
-      {
-        variables: {
-          text: input.value,
-        },
-      }
-    );
-
-    onAddCardDone(
-      (
-        result: FetchResult<
-          AddCardResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      ) => {
-        if (result.data?.addCard.errors) {
-          toast.error(
-            `Error: there was an error adding a todo - ${result.data?.addCard.errors[0].message}`,
-            {
-              timeout: 3000,
-            }
-          );
-        } else {
-          toast.success("Success: added a todo to your list!", {
-            timeout: 3000,
-          });
-          // successMsg.value = "Added a TODO!!";
-          // showSuccess.value = true;
-          store.commit(
-            "cards/SET_CARDS" as RootCommitType,
-            result.data?.addCard.cards,
-            {
-              root: true,
-            }
-          );
-        }
-      }
-    );
 
     const { mutate: submitDeleteCard } = useMutation(
       gql`
@@ -194,7 +123,6 @@ export default defineComponent({
 
     return {
       input,
-      promptText,
       submitClearUserCards,
       inputId,
       submitDeleteCard,
@@ -202,9 +130,6 @@ export default defineComponent({
       showSuccess,
       errMsg,
       successMsg,
-      addCardIsLoading,
-      addCardError,
-      submitAddCard,
       toast,
     };
   },
@@ -221,17 +146,6 @@ export default defineComponent({
     activeClass: () => store.state.modal.modal.activeClass,
   },
   methods: {
-    addALocalCard(): void {
-      if (!this.input) return;
-      store.state.cards.cards.push({
-        id: Date.now(),
-        text: this.input,
-        color: "green",
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      });
-      this.input = "";
-    },
     readInputEvent(event: Event) {
       console.log("add card event", event);
     },
@@ -261,6 +175,17 @@ export default defineComponent({
       );
       this.inputText = "";
       return addResponse;
+    },
+    openAddModal(event: MouseEvent): void {
+      console.log("open add modal click event", event);
+      //set modal title
+      store.commit("modal/SET_MODAL_TITLE", "Add a new Card", {
+        root: true,
+      });
+      // open the modal
+      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+        root: true,
+      });
     },
     openEditModal(event: Event, id: Card["id"]) {
       console.log(

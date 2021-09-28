@@ -1,9 +1,15 @@
 export interface Card {
   id: number;
-  text: string;
+  creatorId: number;
+  frontSideText: string;
+  frontSideLanguage: string;
+  frontSidePicture: string;
+  backSideText: string;
+  backSideLanguage: string;
+  backSidePicture: string;
   updatedAt: number;
   createdAt: number;
-  color: string | "blue"; //TODO remove
+  color?: string | "blue"; //TODO remove
 }
 
 export interface EditCardResponse {
@@ -20,7 +26,14 @@ export interface Modal {
   title: string;
 }
 export interface EditCardCommitPayload {
-  text: string;
+  cardId: number;
+  frontSideText: string;
+  frontSideLanguage: string;
+  frontSidePicture: string;
+  backSideText: string;
+  backSideLanguage: string;
+  backSidePicture: string;
+  color?: string;
   id: number;
 }
 export interface EditCardModalContext {
