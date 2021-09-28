@@ -94,8 +94,13 @@ export interface GetUserCardsResponse {
 }
 
 export interface Card {
-    text: string;
-    id: number;
+    id: number,
+    frontSideText: string;
+    frontSideLanguage: string;
+    frontSidePicture: string;
+    backSideText: string;
+    backSideLanguage: string;
+    backSidePicture: string;
     createdAt: string;
     updatedAt: string;
     creatorId: number;
@@ -117,8 +122,25 @@ export interface EditCardByIdResponse {
 }
 
 export interface EditCardPayload {
-    text: string | undefined;
-    cardId: number | undefined;
+    options: {
+        frontSideText: string | undefined;
+        frontSideLanguage: string | undefined;
+        frontSidePicture: string | undefined;
+        backSideText: string | undefined;
+        backSideLanguage: string | undefined;
+        backSidePicture: string | undefined;
+        cardId: number | undefined;
+    }
+}
+export interface AddCardPayload {
+    options: {
+        frontSideText: string | undefined;
+        frontSideLanguage: string | undefined;
+        frontSidePicture: string | undefined;
+        backSideText: string | undefined;
+        backSideLanguage: string | undefined;
+        backSidePicture: string | undefined;
+    }
 }
 
 export interface UserEntityBase {

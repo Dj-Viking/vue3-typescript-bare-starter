@@ -26,7 +26,7 @@ export class Card extends BaseEntity {
 
   @Field()
   @Column({ nullable: true })
-  frontSideText?: string;
+  frontSideText!: string;
 
   @Field()
   @Column({ nullable: true })
@@ -43,7 +43,7 @@ export class Card extends BaseEntity {
   @Field()
   @Column( { nullable: true })
   backSideLanguage?: string;
-  
+
   @Field()
   @Column( { nullable: true })
   backSidePicture?: string;

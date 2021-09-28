@@ -156,12 +156,14 @@ export class CardResolver {
     }
   }
 
-  @Mutation(() => EditCardResponse)
+  @Mutation(() => [Card])
   async editCardById(
     @Arg("options", () => EditCardInput) options: EditCardInput,
     @Ctx() { req }: MyContext
   ): Promise<EditCardResponse> {
-    const { id, frontSideText, backSidePicture, backSideLanguage, backSideText, frontSideLanguage, frontSidePicture } = options;
+
+    const { id, frontSideText, backSideLanguage, backSideText, frontSideLanguage, frontSidePicture } = options;
+
     if (!req.user) {
       return new ErrorResponse("unauthenticated", "401 Unauthenticated");
     }
@@ -188,7 +190,7 @@ export class CardResolver {
                         frontSideLanguage, 
                         backSideText,
                         backSideLanguage, 
-                        backSidePicture })
+                        backSidePicture: frontSidePicture })
         .where("id = :id", { id })
         .returning(["frontSideText", "frontSidePicture", "frontSideLanguage", "backsideText", "id", "creatorId", "createdAt", "updatedAt"])
         .updateEntity(true)
@@ -274,8 +276,12 @@ export class CardResolver {
   async addCard(
     @Arg("options", () => AddCardInput) options: AddCardInput,
     @Ctx() { req }: MyContext
-  ): Promise<AddCardResponse> {
-    const { backSidePicture, backSideLanguage, frontSideText, backSideText, frontSideLanguage, frontSidePicture } = options;
+  ): Promise<AddCardResponse | ErrorResponse> {
+
+    const { backSideLanguage, frontSideText, backSideText, frontSideLanguage, frontSidePicture } = options;
+
+    console.log("options input on add card", options)
+
     // TODO abstract these checks to a middlware ... learn that first
     console.log("checking context user", req.user);
     if (!req.user) {
@@ -298,14 +304,15 @@ export class CardResolver {
                 frontSidePicture,
                 backSideText,
                 backSideLanguage,
-                backSidePicture,
+                backSidePicture: frontSidePicture,
                 //a creator with this id MUST exist for this query to work!!
                 creatorId: foundUserByEmail?.id })
-      .returning('*')
+      .returning(["frontSideText", "frontSidePicture", "frontSideLanguage", "backsideText", "id", "creatorId", "createdAt", "updatedAt"])
       .execute();
       //seeing all the cards that the user has
       const cards = await Card.find({ where: { creatorId: foundUserByEmail?.id } });
-      console.log(`${ANSI_ESCAPES.success}`, `Someone added a card!`, `${ANSI_ESCAPES.reset}`)
+      console.log(`${ANSI_ESCAPES.success}`, `Someone added a card!`, `${ANSI_ESCAPES.reset}`);
+      console.log("heres new set of flashcards", cards);
       return {
         cards: cards
       };

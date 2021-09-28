@@ -1,6 +1,6 @@
 
 
-import { ANSI_ESCAPES, EditCardPayload } from "../../types";
+import { ANSI_ESCAPES } from "../../types";
 
 export function logJson(input: any): void {
   return (() => console.log(`${ANSI_ESCAPES.warning}`, `${JSON.stringify(input, null, 2)}`, `${ANSI_ESCAPES.reset}`))();
@@ -59,16 +59,19 @@ export function createLogoutMutation(email: string): string {
 	`
 }
 
-export function createAddCardMutation(text: string): string {
+//same here add the variables args as an object with { options: { ...args } }
+export function createAddCardMutation(): string {
   return `
-		mutation addCard {
-			addCard(text: "${text}") {
+		mutation addCard($options: AddCardInput!) {
+			addCard(options: $options) {
 				cards {
 					id
-					text
-					createdAt
-					updatedAt
-					creatorId
+					frontSideText
+					frontSideLanguage
+					frontSidePicture 
+					backSideText
+					backSideLanguage
+					backSidePicture
 				}
 				errors {
 					field
@@ -85,10 +88,12 @@ export function createGetUserCardsQuery(): string {
 			getUserCards{
 				cards {
 					id
-					creatorId
-					text
-					createdAt
-					updatedAt
+					frontSideText
+					frontSideLanguage
+					frontSidePicture 
+					backSideText
+					backSideLanguage
+					backSidePicture
 				}
 				errors {
 					field
@@ -113,19 +118,24 @@ export function createClearUserCardsMutation(): string {
 	`
 }
 
-export function createEditCardMutation(payload: EditCardPayload): string {
-  const { text, cardId } = payload
+//no input args tot his function pass variable args withint he request() function
+// on the test
+export function createEditCardMutation(): string {
   return `
-		mutation editCardById {
-			editCardById(id: ${cardId}, text: "${text}"){
+		mutation editCardById($options: EditCardInput!) {
+			editCardById(options: $options){
 				errors {
 					field
 					message
 				}
 				cards {
-					text
-					creatorId
 					id
+					frontSideText
+					frontSideLanguage
+					frontSidePicture 
+					backSideText
+					backSideLanguage
+					backSidePicture
 				}
 			}
 		}
@@ -146,9 +156,12 @@ export function createMeQuery(): string {
 				}
 				cards {
 					id
-					text
-					updatedAt
-					createdAt
+					frontSideText
+					frontSideLanguage
+					frontSidePicture 
+					backSideText
+					backSideLanguage
+					backSidePicture
 				}
 				token
 				errors {
