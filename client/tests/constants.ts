@@ -247,3 +247,5 @@ export const lightTextNames: Array<LightTextName> = [
   "light-link-back",
   "light-primary-back",
 ];
+
+export const EDITED_CARD_FIXTURE_PATH = "editedCardInstance.json";

@@ -1,14 +1,17 @@
 export interface Card {
-  id: number;
-  creatorId: number;
+  __typename?: "Card";
+  // eslint-disable-next-line
+  id?: number | string | undefined | null | any;
+  cardId?: number;
+  creatorId?: number;
   frontSideText: string;
   frontSideLanguage: string;
   frontSidePicture: string;
   backSideText: string;
   backSideLanguage: string;
   backSidePicture: string;
-  updatedAt: number;
-  createdAt: number;
+  updatedAt?: number | string;
+  createdAt?: number | string;
   color?: string | "blue"; //TODO remove
 }
 
@@ -20,13 +23,14 @@ export interface EditCardResponse {
 }
 export interface Modal {
   context: {
-    cardId: number;
+    card?: Card | null;
   };
   activeClass: boolean;
   title: string;
 }
-export interface EditCardCommitPayload {
-  cardId: number;
+
+export interface AddCardCommitPayload {
+  cardId?: number;
   frontSideText: string;
   frontSideLanguage: string;
   frontSidePicture: string;
@@ -34,10 +38,21 @@ export interface EditCardCommitPayload {
   backSideLanguage: string;
   backSidePicture: string;
   color?: string;
-  id: number;
+  id?: number;
+}
+export interface EditCardCommitPayload {
+  id: number | string | undefined;
+  cardId?: number;
+  frontSideText: string;
+  frontSideLanguage: string;
+  frontSidePicture: string;
+  backSideText: string;
+  backSideLanguage: string;
+  backSidePicture: string;
+  color?: string;
 }
 export interface EditCardModalContext {
-  cardId: number;
+  card: Card;
 }
 export interface ModalState {
   modal: Modal;
@@ -96,10 +111,27 @@ export interface UserState {
     token?: string | null | undefined;
     cards: Card[];
     loggedIn: boolean;
+    __typename?: string;
+    id?: number;
+    createdAt?: number;
+    updatedAt?: number;
   };
 }
 
+export interface SetUserCommitPayload {
+  username: string | null;
+  email: string | null;
+  token?: string | null | undefined;
+  cards: Card[];
+  loggedIn: boolean;
+  __typename?: string;
+  id?: number;
+  createdAt?: number;
+  updatedAt?: number;
+}
+
 export interface UserEntityBase {
+  __typename?: string;
   id?: number;
   username: string;
   email: string;

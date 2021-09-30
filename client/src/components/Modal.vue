@@ -1,4 +1,5 @@
 <template>
+  <Transition name="fade" type="transition"> </Transition>
   <div :class="{ 'is-active': activeClass }" class="modal" name="modal">
     <div class="modal-background"></div>
     <div class="modal-content" style="width: 75%">
@@ -8,23 +9,34 @@
             ($event) => {
               if (isLoggedIn) {
                 //graphql mutation pass data to the modal for it to use.
-                submitEditCard({
+                const payload = {
                   options: {
-                    id: modalContext?.cardId,
-                    frontSideText: frontSideTextInput,
-                    frontSideLanguage: frontSideLanguageInput,
-                    frontSidePicture: frontSidePictureInput,
-                    backSideText: backSideTextInput,
-                    backSideLanguage: backSideLanguageInput,
-                    backSidePicture: backSidePictureInput,
+                    id: modalContext.card?.id,
+                    frontSideText:
+                      frontSideTextInput || modalContext.card?.frontSideText,
+                    frontSideLanguage:
+                      frontSideLanguageInput ||
+                      modalContext.card?.frontSideLanguage,
+                    frontSidePicture:
+                      frontSidePictureInput ||
+                      modalContext.card?.frontSidePicture,
+                    backSideText:
+                      backSideTextInput || modalContext.card?.backSideText,
+                    backSideLanguage:
+                      backSideLanguageInput ||
+                      modalContext.card?.backSideLanguage,
+                    backSidePicture:
+                      backSidePictureInput ||
+                      modalContext.card?.backSidePicture,
                   },
-                });
+                };
+                submitEditCard(payload);
+                // editLocalCard($event, payload.options);
                 clearCardInputFields();
                 closeModal();
               } else {
                 const card = {
-                  id: modalContext.cardId,
-                  cardId: Date.now(), //ids must be unique
+                  id: modalContext.card?.id,
                   frontSideText: frontSideTextInput,
                   frontSideLanguage: frontSideLanguageInput,
                   frontSidePicture: frontSidePictureInput,
@@ -145,7 +157,11 @@
           </div>
           <div class="field">
             <div class="control">
-              <button type="submit" class="button is-info">
+              <button
+                name="submitEditCard"
+                type="submit"
+                class="button is-info"
+              >
                 SUBMIT EDIT CARD
               </button>
               <span v-if="showErrMsg" class="has-text-danger"
@@ -161,16 +177,18 @@
             ($event) => {
               if (isLoggedIn) {
                 //graphql mutation pass data to the modal for it to use.
-                submitAddCard({
+                const card = {
                   options: {
-                    frontSideText: frontSideTextInput,
-                    frontSideLanguage: frontSideLanguageInput,
-                    frontSidePicture: frontSidePictureInput,
-                    backSideText: backSideTextInput,
-                    backSideLanguage: backSideLanguageInput,
-                    backSidePicture: backSidePictureInput,
+                    frontSideText: frontSideTextInput || '',
+                    frontSideLanguage: frontSideLanguageInput || '',
+                    frontSidePicture: frontSidePictureInput || '',
+                    backSideText: backSideTextInput || '',
+                    backSideLanguage: backSideLanguageInput || '',
+                    backSidePicture: backSidePictureInput || '',
                   },
-                });
+                };
+                submitAddCard(card);
+                // addLocalCard($event, card.options);
                 clearCardInputFields();
                 closeModal();
               } else {
@@ -296,7 +314,7 @@
           </div>
           <div class="field">
             <div class="control">
-              <button type="submit" class="button is-info">
+              <button name="submitAddCard" type="submit" class="button is-info">
                 SUBMIT ADD CARD
               </button>
               <span v-if="showErrMsg" class="has-text-danger"
@@ -330,8 +348,8 @@ import {
   UserState,
   EditCardResponse,
   Card,
-  EditCardCommitPayload,
   AddCardResponse,
+  EditCardCommitPayload,
 } from "@/types";
 import { FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
@@ -343,13 +361,12 @@ export default defineComponent({
   name: "Modal",
   setup() {
     const toast = useToast();
-    const frontSideTextInput = ref("");
-    const frontSideLanguageInput = ref("");
-    const frontSidePictureInput = ref("");
-    const backSideTextInput = ref("");
-    const backSideLanguageInput = ref("");
-    const backSidePictureInput = ref("");
-    const editText = ref("");
+    const frontSideTextInput = ref();
+    const frontSideLanguageInput = ref();
+    const frontSidePictureInput = ref();
+    const backSideTextInput = ref();
+    const backSideLanguageInput = ref();
+    const backSidePictureInput = ref();
     const inputId = ref(0);
     const errMsg = ref("");
     const showErrMsg = ref(false);
@@ -391,9 +408,13 @@ export default defineComponent({
           toast.success("Success: added a card to your list!", {
             timeout: 3000,
           });
-          store.commit("" as RootCommitType, result.data?.addCard.cards, {
-            root: true,
-          });
+          store.commit(
+            "cards/SET_CARDS" as RootCommitType,
+            result.data?.addCard.cards,
+            {
+              root: true,
+            }
+          );
         }
       }
     );
@@ -428,7 +449,6 @@ export default defineComponent({
         if (result.data?.editCardById.errors) {
           showErrMsg.value = true;
           errMsg.value = result.data?.editCardById.errors[0].message;
-          editText.value = "";
         } else {
           editResponse.value = result.data;
           store.commit(
@@ -447,7 +467,6 @@ export default defineComponent({
       backSideTextInput,
       backSideLanguageInput,
       backSidePictureInput,
-      editText,
       submitEditCard,
       errMsg,
       showErrMsg,
@@ -482,9 +501,9 @@ export default defineComponent({
         root: true,
       });
     },
-    editLocalCard(_event: Event, payload: EditCardCommitPayload): void {
+    editLocalCard(_event: Event, card: EditCardCommitPayload): void {
       console.log("editing a local card if not logged in", _event);
-      store.commit("cards/EDIT_CARD" as RootCommitType, payload, {
+      store.commit("cards/EDIT_CARD" as RootCommitType, card, {
         root: true,
       });
     },

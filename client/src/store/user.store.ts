@@ -5,6 +5,7 @@ import {
   Card,
   RootDispatchType,
   RootCommitType,
+  SetUserCommitPayload,
 } from "@/types";
 import { ActionContext } from "vuex";
 
@@ -18,8 +19,13 @@ const state: UserState = {
   },
 };
 const mutations = {
-  SET_USER(state: UserState, payload: UserState): void {
-    console.log("set user commit some payload", payload);
+  SET_USER(state: UserState, payload: SetUserCommitPayload): void {
+    // console.log("set user commit some payload", payload);
+    // eslint-disable-next-line
+    if (payload && payload.hasOwnProperty("token")) {
+      delete payload.__typename;
+      delete payload.token;
+    }
 
     if (typeof payload !== "object")
       return console.error("payload was was not an object!");
@@ -27,7 +33,6 @@ const mutations = {
       ...state.user,
       ...payload,
     } as UserState["user"];
-    delete state.user.token;
   },
   SET_USER_TODOS(state: UserState, payload: Card[]): void {
     console.log("setting user todos payload!!!", payload);
@@ -43,6 +48,9 @@ const mutations = {
   // eslint-disable-next-line
   CLEAR_USER(state: UserState, payload: any): void {
     state.user = payload;
+  },
+  CLEAR_USER_TOKEN(state: UserState): void {
+    state.user.token = null;
   },
 };
 const actions = {

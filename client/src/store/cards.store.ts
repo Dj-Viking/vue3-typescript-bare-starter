@@ -52,6 +52,7 @@ const mutations = {
   //only for local state
   // TODO edit a field conditionally depending on the choice of field(s) that were chose to edit
   EDIT_CARD(state: CardsState, payload: EditCardCommitPayload): void {
+    console.log("payload in edit card store", payload);
     const {
       id,
       frontSideText,

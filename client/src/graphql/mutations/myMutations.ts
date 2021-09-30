@@ -20,8 +20,8 @@ export function createRegisterMutation(): string {
 
 export function createAddCardMutation(): string {
   return `
-    mutation addCard($text: String!) {
-      addCard(text: $text) {
+    mutation addCard($options: AddCardInput!) {
+      addCard(options: $options) {
         cards {
           id
           creatorId
@@ -91,8 +91,8 @@ export function createLogoutMutation(email: string): string {
 
 export function createEditCardMutation(): string {
   return `
-    mutation editCardById($id: Int!, $text: String!){
-      editCardById(id: $id, text: $text) {
+    mutation editCardById($options: EditCardInput!){
+      editCardById(options: $options) {
         errors{
           field
           message

@@ -18,7 +18,7 @@
       <h3>Your Cards</h3>
       <div class="notification is-light" v-for="(card, i) in cards" :key="i">
         <div :style="`color: ${card.color}`">
-          <pre> {{ card }} </pre>
+          <pre name="cardInfo">{{ card }}</pre>
           <span style="color: blue">updated at: {{ card.updatedAt }}</span>
         </div>
         <button
@@ -26,7 +26,7 @@
           @click.prevent="
             ($event) => {
               //update vuex cards that are displayed
-              deleteCard($event, card.id);
+              deleteCard($event, card?.id);
               //only delete user's cards if they are logged in
               if (isLoggedIn) {
                 submitDeleteCard({
@@ -43,7 +43,7 @@
           style="color: black"
           @click.prevent="
             ($event) => {
-              openEditModal($event, card.id);
+              openEditModal($event, card);
             }
           "
         >
@@ -72,7 +72,7 @@
 <script lang="ts">
 import {
   // AddCardResponse,
-  EditCardModalContext,
+  // EditCardModalContext,
   RootCommitType,
   RootDispatchType,
   CardsState,
@@ -89,7 +89,7 @@ import {
   // createEditCardMutation,
 } from "../graphql/mutations/myMutations";
 // import { FetchResult } from "@apollo/client/core";
-import { Card } from "../../../server/src/types";
+import { Card } from "../types";
 import { useToast } from "vue-toastification";
 // import { Store } from "vuex";
 
@@ -187,20 +187,20 @@ export default defineComponent({
         root: true,
       });
     },
-    openEditModal(event: Event, id: Card["id"]) {
+    openEditModal(event: Event, card: Card) {
       console.log(
         "able to get id in this loop to also open the modal?????",
-        id
+        card
       );
       console.log("open modal from card list", event);
       //adding to element classlist under the hood
       store.commit("modal/SET_MODAL_TITLE", "Edit a card", {
         root: true,
       });
-      const payload: EditCardModalContext = {
-        cardId: id,
-      };
-      store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, payload, {
+      // const payload: EditCardModalContext = {
+      //   card,
+      // };
+      store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, card, {
         root: true,
       });
       store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {

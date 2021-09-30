@@ -190,7 +190,7 @@ export class CardResolver {
                         frontSideLanguage, 
                         backSideText,
                         backSideLanguage, 
-                        backSidePicture: frontSidePicture })
+                        backSidePicture: frontSidePicture, })
         .where("id = :id", { id })
         .returning(["frontSideText", "frontSidePicture", "frontSideLanguage", "backsideText", "id", "creatorId", "createdAt", "updatedAt"])
         .updateEntity(true)
@@ -198,6 +198,8 @@ export class CardResolver {
       if (!changedCard.raw[0]) return new ErrorResponse("card", "404 Card Not Found");
 
       const cards = await Card.find({ where: { creatorId: foundUserByEmail.id } });
+
+      console.log('cards of the person editing a card', cards);
 
       return {
         cards: cards
