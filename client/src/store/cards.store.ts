@@ -71,34 +71,22 @@ const mutations = {
       if (key !== "id" && !!payload[key]) {
         switch (key) {
           case "frontSideText":
-            {
-              state.cards[index].frontSideText = frontSideText;
-            }
+            state.cards[index].frontSideText = frontSideText;
             break;
           case "frontSideLanguage":
-            {
-              state.cards[index].frontSideLanguage = frontSideLanguage;
-            }
+            state.cards[index].frontSideLanguage = frontSideLanguage;
             break;
           case "frontSidePicture":
-            {
-              state.cards[index].frontSidePicture = frontSidePicture;
-            }
+            state.cards[index].frontSidePicture = frontSidePicture;
             break;
           case "backSideLanguage":
-            {
-              state.cards[index].backSideLanguage = backSideLanguage;
-            }
+            state.cards[index].backSideLanguage = backSideLanguage;
             break;
           case "backSideText":
-            {
-              state.cards[index].backSideText = backSideText;
-            }
+            state.cards[index].backSideText = backSideText;
             break;
           case "backSidePicture":
-            {
-              state.cards[index].backSidePicture = backSidePicture;
-            }
+            state.cards[index].backSidePicture = backSidePicture;
             break;
           default:
             return void 0;
