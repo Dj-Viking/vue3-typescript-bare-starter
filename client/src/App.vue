@@ -1,6 +1,5 @@
 <template>
   <Notification />
-
   <Transition name="fade" type="transition">
     <div v-if="activeClass">
       <div>
