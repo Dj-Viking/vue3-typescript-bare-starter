@@ -1,7 +1,15 @@
 <template>
   <Notification />
-  <Modal />
-  <router-view />
+  <Transition name="fade" type="transition">
+    <div v-if="activeClass">
+      <div>
+        <Modal />
+      </div>
+    </div>
+    <div v-else>
+      <router-view />
+    </div>
+  </Transition>
 </template>
 
 <script lang="ts">
@@ -9,13 +17,17 @@ import { defineComponent } from "vue";
 import Modal from "./components/Modal.vue";
 import Notification from "./components/Notification.vue";
 import store from "./store";
-import { OpenNotificationPayload, RootCommitType } from "./types";
+import { ModalState, OpenNotificationPayload, RootCommitType } from "./types";
 export default defineComponent({
   name: "App",
   components: {
     Modal,
     Notification,
     // Modalv2,
+  },
+  computed: {
+    activeClass: (): ModalState["modal"]["activeClass"] =>
+      store.state.modal.modal.activeClass,
   },
   methods: {
     openModal(event: Event) {
@@ -98,5 +110,14 @@ export default defineComponent({
       color: #42b983;
     }
   }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

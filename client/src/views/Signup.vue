@@ -118,20 +118,34 @@ export default defineComponent({
       ) => {
         submitted.value = true;
         if (result?.data?.register.errors) {
+          auth.clearToken();
+          store.commit("user/CLEAR_USER_TOKEN" as RootCommitType, null, {
+            root: true,
+          });
           toast.error(`Error: ${result.data.register.errors[0].message}`, {
             timeout: 3000,
           });
         } else {
           toast.success("Good luck, have fun!", { timeout: 2000 });
           isLoading.value = true;
+          console.log(
+            "what is token here on signup done",
+            result.data?.register.token
+          );
+          store.commit(
+            "user/SET_USER" as RootCommitType,
+            result.data?.register.user,
+            { root: true }
+          );
+          auth;
+          registerResponse.value = result?.data as RegisterResponse;
+          submitted.value = false;
+          auth.setToken(result?.data?.register.token as string);
+          auth.setEmail(globalEmail as string);
           setTimeout(() => {
-            isLoading.value = false;
-            registerResponse.value = result?.data as RegisterResponse;
-            submitted.value = false;
             globalEmail = result?.data?.register.user?.email;
-            auth.setToken(result?.data?.register.token as string);
-            auth.setEmail(globalEmail as string);
             router.push("/");
+            isLoading.value = false;
           }, 2000);
         }
       }
@@ -169,24 +183,6 @@ export default defineComponent({
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       // do nothing
-    },
-  },
-  watch: {
-    registerResponse: function (newValue: RegisterResponse): void {
-      if (newValue.register.errors?.length) {
-        auth.clearToken();
-        auth.setEmail("");
-        store.commit("user/CLEAR_USER_TOKEN" as RootCommitType, null, {
-          root: true,
-        });
-      } else {
-        store.commit(
-          "user/SET_USER" as RootCommitType,
-          newValue.register.user,
-          { root: true }
-        );
-        auth.setToken(newValue.register.user?.token as string);
-      }
     },
   },
 });

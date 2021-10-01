@@ -36,6 +36,7 @@ import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import { mapState } from "vuex";
 import {
+  Card,
   MeQueryResponse,
   // MyRootState,
   RootCommitType,
@@ -102,9 +103,17 @@ export default defineComponent({
           "cards/SET_CARDS" as RootCommitType,
           [
             {
-              text: "sign in to see and add your own cards!!!",
-              id: Date.now(),
-            },
+              frontSideText: "sign in to see and add your own cards!!!",
+              frontSideLanguage: "sign in to see and add your own cards!!!",
+              frontSidePicture: "sign in to see and add your own cards!!!",
+              backSideText: "sign in to see and add your own cards!!!",
+              backSideLanguage: "sign in to see and add your own cards!!!",
+              backSidePicture: "sign in to see and add your own cards!!!",
+              id: 0,
+              createdAt: "right now",
+              updatedAt: "just now",
+              creatorId: 0,
+            } as Card,
           ],
           { root: true }
         );

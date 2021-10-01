@@ -18,7 +18,7 @@
     "types": [
       "webpack-env",
       "node",
-      "cypress", "cypress-localstorage-commands"
+      "cypress",
     ],
     "paths": {
       "@/*": [

@@ -12,6 +12,8 @@ class AuthService {
   }
 
   public setToken(token: string): void {
+    console.log("what is token here", token);
+
     // Saves user token to localStorage
     let encrypted = "";
     //encrypt token before setting to storage

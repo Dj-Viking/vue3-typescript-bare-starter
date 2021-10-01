@@ -250,6 +250,8 @@ export class UserResolver {
       
 
     const cards = await Card.find({ where: { creatorId: user.id }});
+    console.log("got cards", cards);
+    
 
     return {
       token: token,

@@ -21,12 +21,12 @@ export class Card extends BaseEntity {
   id!: number;
   
   @Field()
-  @Column({nullable: true})
+  @Column({ nullable: true })
   creatorId?: number;
 
   @Field()
   @Column({ nullable: true })
-  frontSideText!: string;
+  frontSideText?: string;
 
   @Field()
   @Column({ nullable: true })
@@ -34,7 +34,7 @@ export class Card extends BaseEntity {
 
   @Field()
   @Column({ nullable: true })
-  frontSidePicture: string; //base 64 encoded??? not sure yet
+  frontSidePicture?: string; //base 64 encoded??? not sure yet
 
   @Field()
   @Column( { nullable: true })

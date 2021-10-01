@@ -27,4 +27,20 @@
 import "cypress-file-upload";
 
 import "@cypress/code-coverage/support";
-import "cypress-localstorage-commands";
+// import "cypress-localstorage-commands";
+
+let LOCAL_STORAGE_MEMORY = {};
+
+// eslint-disable-next-line
+Cypress.Commands.add("saveLocalStorage", () => {
+  Object.keys(localStorage).forEach((key) => {
+    LOCAL_STORAGE_MEMORY[key] = localStorage[key];
+  });
+});
+
+// eslint-disable-next-line
+Cypress.Commands.add("restoreLocalStorage", () => {
+  Object.keys(LOCAL_STORAGE_MEMORY).forEach((key) => {
+    localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+  });
+});

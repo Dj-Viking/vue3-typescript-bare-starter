@@ -14,10 +14,15 @@ export function createMeQuery(): string {
         }
         cards {
           id
-          text
           creatorId
           updatedAt
           createdAt
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
         }
       }
     }
@@ -29,11 +34,16 @@ export function createGetUserTodosQuery(): string {
     query getUserTodos {
       getUserTodos {
         todos {
-          text
           id
           creatorId
           createdAt
           updatedAt
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
         }
         errors{
           field

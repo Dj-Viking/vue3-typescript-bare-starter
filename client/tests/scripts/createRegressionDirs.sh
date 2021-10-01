@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# npn run regressionDirs:create <your new spec file name> 
+
 DIR=$1
 
 echo 'creating new directories for the test' $DIR

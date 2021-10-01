@@ -20,14 +20,19 @@ export function createRegisterMutation(): string {
 
 export function createAddCardMutation(): string {
   return `
-    mutation addCard($text: String!) {
-      addCard(text: $text) {
+    mutation addCard($options: AddCardInput!) {
+      addCard(options: $options) {
         cards {
           id
           creatorId
           createdAt
-          text
           updatedAt
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
         }
         errors {
           field
@@ -51,9 +56,15 @@ export function createLoginMutation(): string {
         }
         cards {
           id
-          text
           createdAt
           updatedAt
+          creatorId
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
         }
         errors {
           field
@@ -80,17 +91,23 @@ export function createLogoutMutation(email: string): string {
 
 export function createEditCardMutation(): string {
   return `
-    mutation editCardById($id: Int!, $text: String!){
-      editCardById(id: $id, text: $text) {
+    mutation editCardById($options: EditCardInput!){
+      editCardById(options: $options) {
         errors{
           field
           message
         }
         cards {
           id
-          text
+          creatorId
           updatedAt
           createdAt
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
         }
       }
     }
@@ -117,7 +134,13 @@ export function createDeleteCardMutation(): string {
       deleteCard(id: $id){
         cards {
           id
-          text
+          creatorId
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
         }
         errors {
           field

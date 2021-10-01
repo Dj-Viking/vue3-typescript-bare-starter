@@ -1,9 +1,18 @@
 export interface Card {
-  id: number;
-  text: string;
-  updatedAt: number;
-  createdAt: number;
-  color: string | "blue"; //TODO remove
+  __typename?: "Card";
+  // eslint-disable-next-line
+  id?: number | string | undefined | null | any;
+  cardId?: number | string;
+  creatorId?: number | string;
+  frontSideText: string;
+  frontSideLanguage: string;
+  frontSidePicture: string;
+  backSideText: string;
+  backSideLanguage: string;
+  backSidePicture: string;
+  updatedAt?: number | string;
+  createdAt?: number | string;
+  color?: string | "blue"; //TODO remove
 }
 
 export interface EditCardResponse {
@@ -14,17 +23,36 @@ export interface EditCardResponse {
 }
 export interface Modal {
   context: {
-    cardId: number;
+    card?: Card | null;
   };
   activeClass: boolean;
   title: string;
 }
+
+export interface AddCardCommitPayload {
+  cardId?: number;
+  frontSideText: string;
+  frontSideLanguage: string;
+  frontSidePicture: string;
+  backSideText: string;
+  backSideLanguage: string;
+  backSidePicture: string;
+  color?: string;
+  id?: number;
+}
 export interface EditCardCommitPayload {
-  text: string;
-  id: number;
+  id: number | string | undefined;
+  cardId?: number;
+  frontSideText: string;
+  frontSideLanguage: string;
+  frontSidePicture: string;
+  backSideText: string;
+  backSideLanguage: string;
+  backSidePicture: string;
+  color?: string;
 }
 export interface EditCardModalContext {
-  cardId: number;
+  card: Card;
 }
 export interface ModalState {
   modal: Modal;
@@ -83,10 +111,27 @@ export interface UserState {
     token?: string | null | undefined;
     cards: Card[];
     loggedIn: boolean;
+    __typename?: string;
+    id?: number;
+    createdAt?: number;
+    updatedAt?: number;
   };
 }
 
+export interface SetUserCommitPayload {
+  username: string | null;
+  email: string | null;
+  token?: string | null | undefined;
+  cards: Card[];
+  loggedIn: boolean;
+  __typename?: string;
+  id?: number;
+  createdAt?: number;
+  updatedAt?: number;
+}
+
 export interface UserEntityBase {
+  __typename?: string;
   id?: number;
   username: string;
   email: string;
@@ -107,6 +152,16 @@ export type RootDispatchType =
   | "cards/editCard"
   | "cards/addCard";
 
+export interface AddCardPayload {
+  options: {
+    frontSideText: string | undefined;
+    frontSideLanguage: string | undefined;
+    frontSidePicture: string | undefined;
+    backSideText: string | undefined;
+    backSideLanguage: string | undefined;
+    backSidePicture: string | undefined;
+  };
+}
 export interface AddCardResponse {
   addCard: {
     cards: Card[];

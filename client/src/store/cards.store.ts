@@ -4,19 +4,26 @@ import {
   UserState,
   Card,
   RootCommitType,
+  EditCardCommitPayload,
 } from "@/types";
 import { ActionContext } from "vuex";
 
 const state: CardsState = {
-  cards: new Array(2).fill(undefined).map((_, index: number) => {
+  cards: [] /*new Array(2).fill(undefined).map((_, index: number) => {
     return {
       id: Date.now() + index, //ids must be unique
-      text: "something is here " + index,
+      frontSideText: "heres some front side text",
+      frontSideLanguage: "heres the front side language",
+      frontSidePicture: "gonna be a picture eventually",
+      backSideText: "backside text",
+      backSideLanguage: "backside Language",
+      backSidePicture: "backsidePicture",
       color: "blue",
+      creatorId: 69420,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
-  }),
+  }),*/,
 };
 const mutations = {
   SET_CARDS(state: CardsState, payload: Card[]): void {
@@ -43,15 +50,52 @@ const mutations = {
     state.cards = state.cards.filter((todo) => todo.id !== id);
   },
   //only for local state
-  EDIT_CARD(state: CardsState, payload: { id: number; text: string }): void {
-    const { id, text } = payload;
-    if (!id || !text)
-      return console.error(
-        "error in edit card commit payload types are incorrect"
-      );
-    //this only works for local state not during a graphql mutation i think
+  // TODO edit a field conditionally depending on the choice of field(s) that were chose to edit
+  EDIT_CARD(state: CardsState, payload: EditCardCommitPayload): void {
+    console.log("payload in edit card store", payload);
+    const {
+      id,
+      frontSideText,
+      frontSideLanguage,
+      frontSidePicture,
+      backSideLanguage,
+      backSideText,
+      backSidePicture,
+    } = payload;
+    //find the index of the card we want to edit
     const index = state.cards.findIndex((card) => card.id === id);
-    state.cards[index].text = text;
+    //if there are values for each key in the payload then edit those properties on the
+    // card we found by the ID passed in from the modal context
+    // if the keys dont have values then we wont edit that field on the
+    Object.keys(payload).forEach((key): void => {
+      if (key !== "id" && !!payload[key]) {
+        switch (key) {
+          case "frontSideText":
+            state.cards[index].frontSideText = frontSideText;
+            break;
+          case "frontSideLanguage":
+            state.cards[index].frontSideLanguage = frontSideLanguage;
+            break;
+          case "frontSidePicture":
+            state.cards[index].frontSidePicture = frontSidePicture;
+            break;
+          case "backSideLanguage":
+            state.cards[index].backSideLanguage = backSideLanguage;
+            break;
+          case "backSideText":
+            state.cards[index].backSideText = backSideText;
+            break;
+          case "backSidePicture":
+            state.cards[index].backSidePicture = backSidePicture;
+            break;
+          default:
+            return void 0;
+        }
+      }
+      return void 0;
+    });
+
+    // state.cards[index].text = text;
     state.cards[index].updatedAt = Date.now();
   },
 };

@@ -38,9 +38,9 @@ describe("logs in to check if the logout link appears when logged in then logs o
     cy.wait(1000);
     cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
-  it("waits a bit and checks we are back at the home page, i.e. checking if the add todo button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
+  it("waits a bit and checks we are back at the home page, i.e. checking if the add new card button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
     cy.wait(2000);
-    cy.get("button").contains("Add Card");
+    cy.get("button").contains("Add New Card");
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that
     cy.window().then((window: Cypress.AUTWindow) => {
