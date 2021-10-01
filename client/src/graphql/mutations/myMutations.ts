@@ -99,6 +99,7 @@ export function createEditCardMutation(): string {
         }
         cards {
           id
+          creatorId
           updatedAt
           createdAt
           frontSideText

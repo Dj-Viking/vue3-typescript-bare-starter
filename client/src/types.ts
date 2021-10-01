@@ -2,8 +2,8 @@ export interface Card {
   __typename?: "Card";
   // eslint-disable-next-line
   id?: number | string | undefined | null | any;
-  cardId?: number;
-  creatorId?: number;
+  cardId?: number | string;
+  creatorId?: number | string;
   frontSideText: string;
   frontSideLanguage: string;
   frontSidePicture: string;

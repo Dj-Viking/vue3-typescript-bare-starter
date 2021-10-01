@@ -1,5 +1,4 @@
 <template>
-  <Transition name="fade" type="transition"> </Transition>
   <div :class="{ 'is-active': activeClass }" class="modal" name="modal">
     <div class="modal-background"></div>
     <div class="modal-content" style="width: 75%">
@@ -44,7 +43,7 @@
                   backSideLanguage: backSideLanguageInput,
                   backSidePicture: backSidePictureInput,
                   color: 'blue',
-                  creatorId: 69420,
+                  creatorId: 0,
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
                 };
@@ -61,13 +60,13 @@
             </label>
           </div>
           <div class="field">
-            <label style="color: white" class="label" for="modalAddFsText"
+            <label style="color: white" class="label" for="modalEditFsText"
               >Front Side Text
             </label>
             <div class="control">
               <input
                 autocomplete="off"
-                name="modalAddFsText"
+                name="modalEditFsText"
                 type="text"
                 class="input"
                 v-model="frontSideTextInput"
@@ -78,14 +77,14 @@
             <label
               class="label"
               style="color: white"
-              for="modalAddFsTextLanguage"
+              for="modalEditFsTextLanguage"
             >
               Front Side Text Language
             </label>
             <div class="control">
               <input
                 autocomplete="off"
-                name="modalAddFsTextLanguage"
+                name="modalEditFsTextLanguage"
                 type="text"
                 class="input"
                 v-model="frontSideLanguageInput"
@@ -95,7 +94,7 @@
           <div class="field">
             <label
               style="color: white"
-              for="modalAddFsTextPicture"
+              for="modalEditFsTextPicture"
               class="label"
             >
               Front Side Picture</label
@@ -103,7 +102,7 @@
             <div class="control">
               <input
                 autocomplete="off"
-                name="modalAddFsTextPicture"
+                name="modalEditFsTextPicture"
                 type="text"
                 class="input"
                 v-model="frontSidePictureInput"
@@ -111,13 +110,13 @@
             </div>
           </div>
           <div class="field">
-            <label style="color: white" for="modalAddBsText" class="label">
+            <label style="color: white" for="modalEditBsText" class="label">
               Back Side Text
             </label>
             <div class="control">
               <input
                 autocomplete="off"
-                name="modalAddBsText"
+                name="modalEditBsText"
                 type="text"
                 class="input"
                 v-model="backSideTextInput"
@@ -127,14 +126,14 @@
           <div class="field">
             <label
               style="color: white"
-              for="modalAddBsTextLanguage"
+              for="modalEditBsTextLanguage"
               class="label"
               >Back Side Text Language</label
             >
             <div class="control">
               <input
                 autocomplete="off"
-                name="modalAddBsTextLanguage"
+                name="modalEditBsTextLanguage"
                 type="text"
                 class="input"
                 v-model="backSideLanguageInput"
@@ -142,13 +141,16 @@
             </div>
           </div>
           <div class="field">
-            <label style="color: white" for="modalAddBsPicture" class="label"
+            <label
+              style="color: white"
+              for="modalEditBsTextPicture"
+              class="label"
               >Back Side Picture</label
             >
             <div class="control">
               <input
                 autocomplete="off"
-                name="modalAddBsPicture"
+                name="modalEditBsTextPicture"
                 type="text"
                 class="input"
                 v-model="backSidePictureInput"
@@ -193,7 +195,7 @@
                 closeModal();
               } else {
                 const card = {
-                  id: Date.now(), //ids must be unique
+                  id: 0, //ids must be unique
                   frontSideText: frontSideTextInput,
                   frontSideLanguage: frontSideLanguageInput,
                   frontSidePicture: frontSidePictureInput,
@@ -201,7 +203,7 @@
                   backSideLanguage: backSideLanguageInput,
                   backSidePicture: backSidePictureInput,
                   color: 'blue',
-                  creatorId: 69420,
+                  creatorId: 0,
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
                 };
@@ -299,13 +301,16 @@
             </div>
           </div>
           <div class="field">
-            <label style="color: white" for="modalAddBsPicture" class="label"
+            <label
+              style="color: white"
+              for="modalAddBsTextPicture"
+              class="label"
               >Back Side Picture</label
             >
             <div class="control">
               <input
                 autocomplete="off"
-                name="modalAddBsPicture"
+                name="modalAddBsTextPicture"
                 type="text"
                 class="input"
                 v-model="backSidePictureInput"

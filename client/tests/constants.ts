@@ -1,3 +1,4 @@
+import { Card } from "@/types";
 import {
   TextColor,
   BackgroundColor,
@@ -248,4 +249,33 @@ export const lightTextNames: Array<LightTextName> = [
   "light-primary-back",
 ];
 
-export const EDITED_CARD_FIXTURE_PATH = "editedCardInstance.json";
+// export const EDITED_CARD_FIXTURE_PATH = "editedCardInstance.json";
+
+export const EXPECTED_ADD_LOCAL_CARD_OBJECT: Card = {
+  id: 0,
+  creatorId: 0,
+  frontSideText: "front side text",
+  frontSideLanguage: "front side text language",
+  frontSidePicture: "front side picture",
+  backSideText: "back side text",
+  backSideLanguage: "back side text language",
+  backSidePicture: "",
+  color: "blue",
+};
+EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture =
+  EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture;
+
+export const EXPECTED_EDIT_LOCAL_CARD_OBJECT: Card = {
+  frontSideText: "some text we expect to be here",
+  frontSideLanguage: "RU",
+  frontSidePicture: "dkfdkjf",
+  backSideText: "backside text",
+  backSideLanguage: "backside language",
+  backSidePicture: "",
+  createdAt: "right now",
+  updatedAt: "right now",
+  creatorId: 0,
+  __typename: "Card",
+};
+EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture =
+  EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture;
