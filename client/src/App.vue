@@ -7,8 +7,10 @@
         <Modal />
       </div>
     </div>
+    <div v-else>
+      <router-view />
+    </div>
   </Transition>
-  <router-view />
 </template>
 
 <script lang="ts">

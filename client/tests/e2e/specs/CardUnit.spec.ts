@@ -199,9 +199,6 @@ describe("registers a new user that will crud the cards", () => {
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that
     cy.window().then((window: Cypress.AUTWindow) => {
-      // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
-      cy.saveLocalStorage();
       console.log("what is the token here", token);
       token = window.localStorage.getItem("id_token");
       console.log("what is the token here", token);
