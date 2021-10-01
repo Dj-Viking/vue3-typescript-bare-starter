@@ -22,7 +22,7 @@
           <span style="color: blue">updated at: {{ card.updatedAt }}</span>
         </div>
         <button
-          class="button is-danger"
+          class="button is-danger mx-2"
           @click.prevent="
             ($event) => {
               //update vuex cards that are displayed
@@ -39,7 +39,7 @@
           delete card
         </button>
         <button
-          class="button is-primary"
+          class="button is-primary mx-2"
           style="color: black"
           @click.prevent="
             ($event) => {

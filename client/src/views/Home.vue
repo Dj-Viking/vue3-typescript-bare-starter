@@ -1,12 +1,5 @@
 <template>
   <BaseLayout :isHome="true">
-    <button
-      class="button is-primary"
-      style="color: black"
-      @click.prevent="openModal($event)"
-    >
-      open modal
-    </button>
     <div>
       <CardList />
     </div>
