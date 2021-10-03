@@ -138,7 +138,7 @@ export class UserResolver {
       .updateEntity(true)
       .execute();
 
-      console.log("updated user's info adding in todos", changedUser);
+      // console.log("updated user's info adding in todos", changedUser);
       
 
       return {
@@ -256,7 +256,7 @@ export class UserResolver {
     .updateEntity(true)
     .execute();
 
-    console.log("updated user's token after logging in ", changedUser.raw[0]);
+    // console.log("updated user's token after logging in ", changedUser.raw[0]);
       
 
     const cards = await Card.find({ where: { creatorId: user.id }});
@@ -291,7 +291,7 @@ export class UserResolver {
       .execute();
       if (!changedUser) return new ErrorResponse("user", "user not found");
 
-      console.log('changed user', changedUser.raw[0]);
+      // console.log('changed user', changedUser.raw[0]);
 
       context.req.user = null;
       
