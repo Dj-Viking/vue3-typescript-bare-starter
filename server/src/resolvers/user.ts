@@ -82,6 +82,8 @@ class LoginInput {
   @Field()
   email: string;
   @Field()
+  username: string;
+  @Field()
   password: string;
 }
 
@@ -210,8 +212,16 @@ export class UserResolver {
   async login(
     @Arg('options', () => LoginInput) options: LoginInput,
     @Ctx() _context: MyContext
-  ): Promise<UserResponse>{
-    const user = await User.findOne({ where: { email: options.email } });
+  ): Promise<UserResponse>{ 
+    console.log("args sent from client", options);
+    
+    let user;
+    user = await User.findOne({ where: { email: options.email } });
+    console.log("found user by email?", user);
+    if (!user) {
+      user = await User.findOne({ where: { username: options.username } });
+      console.log("found user by username", user);
+    }
     if (!user) 
     {
       return new ErrorResponse(
@@ -241,12 +251,12 @@ export class UserResolver {
     .createQueryBuilder("user")
     .update<User>(User, 
                   { token })
-    .where("email = :email", { email: options.email })
+    .where("email = :email", { email: user.email })
     .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
     .updateEntity(true)
     .execute();
 
-    console.log("updated user's token after logging in ", changedUser);
+    console.log("updated user's token after logging in ", changedUser.raw[0]);
       
 
     const cards = await Card.find({ where: { creatorId: user.id }});

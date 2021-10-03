@@ -1,16 +1,16 @@
 import { request } from "graphql-request";
 import { User } from "../entities/User";
 import { 
-  HOST, 
-  LOGIN_MUTATION,  
-  // ME_QUERY,  
+  HOST,  
   REGISTER_EMAIL, 
   REGISTER_MUTATION, 
+  REGISTER_PASSWORD, 
   REGISTER_USERNAME
 } from "../constants";
 import { connectDb } from "./utils/connectDb";
-import { LoginResponse, RegisterResponse } from "../types";
+import { LoginInput, LoginResponse, RegisterResponse } from "../types";
 import { logJson, ColorLog } from "./utils/helpers";
+import { createLoginMutation } from "./graphql/myMutations";
 // import { connectDb } from "./utils/connectDb";
 
 const logger = ColorLog;
@@ -54,13 +54,42 @@ describe("Tests the user register", () => {
 
 // launch login mutation
 describe("do the login mutation", () => {
-  it("login mutation", async () => {
+  it("login the login mutation with email only", async () => {
     new logger("blue", "check the login mutation").genLog();
-    const res: LoginResponse = await request(HOST + "/graphql", LOGIN_MUTATION);
+    const payload: LoginInput = {
+      options: {
+        username: "",
+        email: REGISTER_EMAIL as string,
+        password: REGISTER_PASSWORD as string
+      }
+    }
+
+    const res: LoginResponse = await request(HOST + "/graphql", createLoginMutation(), payload);
     // check the response
-    logJson(res);
+    // logJson(res);
+    console.log("user response in login", res);
     expect(res.login.errors).toBeNull();
     expect(res.login.user?.token).toBeTruthy();
+    expect(res.login.user?.email).toEqual(REGISTER_EMAIL);
+    expect(res.login.user?.username).toEqual(REGISTER_USERNAME);
+  }); 
+  it("login the login mutation with username only", async () => {
+    new logger("blue", "check the login mutation").genLog();
+
+    const payload: LoginInput = {
+      options: {
+        username: REGISTER_USERNAME as string,
+        email: "",
+        password: REGISTER_PASSWORD as string
+      }
+    }
+
+    const res: LoginResponse = await request(HOST + "/graphql", createLoginMutation(), payload);
+    // check the response
+    // logJson("user response in login", res);
+    console.log("user response in login", res);
+    expect(res.login.errors).toBeNull();
+    expect(res.login.token).toBeTruthy();
     expect(res.login.user?.email).toEqual(REGISTER_EMAIL);
     expect(res.login.user?.username).toEqual(REGISTER_USERNAME);
   }); 
