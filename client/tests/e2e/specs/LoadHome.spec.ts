@@ -1,4 +1,27 @@
-import { LOCALHOST_URL, EMAIL, PASSWORD } from "../../constants";
+import {
+  LOCALHOST_URL,
+  EMAIL,
+  PASSWORD,
+  ACTUALS_LOADHOMESPEC_PATH_HEADLESS,
+  ACTUALS_LOADHOMESPEC_PATH,
+} from "../../constants";
+describe("deletes-screenshots", () => {
+  it("deletes any actuals for this test before we enter the page", () => {
+    console.log("checking cypress browser running", Cypress.browser);
+    if (Cypress.browser.isHeadless) {
+      cy.task("deleteActuals", ACTUALS_LOADHOMESPEC_PATH_HEADLESS).then(
+        (dirOrNull) => {
+          console.log("delete actuals response dir or null", dirOrNull);
+        }
+      );
+    }
+    if (Cypress.browser.isHeaded) {
+      cy.task("deleteActuals", ACTUALS_LOADHOMESPEC_PATH).then((dirOrNull) => {
+        console.log("delete actuals response dir or null", dirOrNull);
+      });
+    }
+  });
+});
 
 describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
   it("visit's home page", () => {
@@ -26,7 +49,9 @@ describe("logs in to check if the logout link appears when logged in then logs o
     cy.get("a.link").contains("Login").click();
   });
   it("types in email", () => {
-    cy.get("input[name=email]").should("have.length", 1).type(EMAIL);
+    cy.get("input[name=email-or-username]")
+      .should("have.length", 1)
+      .type(EMAIL);
   });
   it("types in password", () => {
     cy.get("input[name=password]").should("have.length", 1).type(PASSWORD);
