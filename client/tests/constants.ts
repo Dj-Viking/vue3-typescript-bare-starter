@@ -118,6 +118,28 @@ export const ACTUALS_SIGNUPREGRESSIONSPEC_PATH_HEADLESS =
  * path to the actuals screenshots folder
  * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
  */
+export const ACTUALS_SIGNUPUNITSPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/SignupUnit.spec.ts";
+/**
+ * path to actuals when running headless electron cypress
+ */
+export const ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/SignupUnit.spec.ts";
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
+export const ACTUALS_CARDUNITSPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/CardUnit.spec.ts";
+/**
+ * path to actuals when running headless electron cypress
+ */
+export const ACTUALS_CARDUNITSPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/CardUnit.spec.ts";
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
 export const ACTUALS_SIGNUPREGRESSIONSPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/SignupRegression.spec.ts";
 /**

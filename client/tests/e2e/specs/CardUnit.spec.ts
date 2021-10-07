@@ -1,3 +1,4 @@
+import { Card } from "@/types";
 import {
   LOCALHOST_URL,
   REGISTER_USERNAME,
@@ -5,6 +6,8 @@ import {
   REGISTER_PASSWORD,
   EXPECTED_ADD_LOCAL_CARD_OBJECT,
   EXPECTED_EDIT_LOCAL_CARD_OBJECT,
+  ACTUALS_CARDUNITSPEC_PATH_HEADLESS,
+  ACTUALS_CARDUNITSPEC_PATH,
 } from "../../constants";
 
 let unique_username = "";
@@ -21,6 +24,23 @@ afterEach(() => {
   // eslint-disable-next-line
   // @ts-ignore //this is ignored because I didn't make the type yet
   cy.saveLocalStorage();
+});
+describe("deletes-screenshots", () => {
+  it("deletes any actuals for this test before we enter the page", () => {
+    console.log("checking cypress browser running", Cypress.browser);
+    if (Cypress.browser.isHeadless) {
+      cy.task("deleteActuals", ACTUALS_CARDUNITSPEC_PATH_HEADLESS).then(
+        (dirOrNull) => {
+          console.log("delete actuals response dir or null", dirOrNull);
+        }
+      );
+    }
+    if (Cypress.browser.isHeaded) {
+      cy.task("deleteActuals", ACTUALS_CARDUNITSPEC_PATH).then((dirOrNull) => {
+        console.log("delete actuals response dir or null", dirOrNull);
+      });
+    }
+  });
 });
 
 describe("visits home page", () => {
@@ -150,6 +170,7 @@ describe("checks all CRUD operations of interactions with cards as not logged in
     cy.get("input[name=modalAddBsTextPicture]").type("back side picture");
     //get the submit add button
     cy.get("button[name=submitAddCard]").click();
+    cy.wait(400);
     // //add a card finish
   });
   it("checks that the cards are gone after clear button click", () => {
@@ -309,34 +330,20 @@ describe("registers a new user that will crud the cards", () => {
       );
     });
     cy.get("pre[name=cardInfo]").then((element) => {
-      console.log("heres the element we got", element);
-      const textItems = element.text().split(",");
-      console.log("text items split on comma character", textItems);
-      //get the number that is a part of the string and
-      // cast it to a number
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.updatedAt = textItems
-        //get the text item that matches with the updatedAt prop
-        .filter((item) => /updatedAt/g.test(item))[0]
-        // only get the number after splitting on the space
-        .split(" ")[3]
-        .split('"')[1];
+      console.log(
+        "heres the element we got lets parse it for deep equal comparison later",
+        element
+      );
+      const tmpParsed: Card = JSON.parse(element.text());
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.updatedAt = tmpParsed.updatedAt;
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.createdAt = tmpParsed.createdAt;
+      console.log("parsed json text element", JSON.parse(element.text()));
     });
     cy.get("pre[name=cardInfo]").then((element) => {
       console.log("heres the element we got", element);
-      const textItems = element.text().split(",");
-      console.log("text items split on comma character", textItems);
-      //get the number that is a part of the string and
-      // cast it to a number
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.createdAt = textItems
-        //get the text item that matches with the createdAt prop
-        .filter((item) => /createdAt/g.test(item))[0]
-        // only get the number after splitting on the space
-        .split(" ")[3]
-        .split('"')[1];
+      console.log("element text we got from the pre tag", element.text());
       console.log("expected card object now", EXPECTED_EDIT_LOCAL_CARD_OBJECT);
     });
-
-    //edit the card here compared to the previous values
 
     ///JSON parse the pre
     cy.get("pre[name=cardInfo]").then((element) => {
@@ -392,6 +399,7 @@ describe("registers a new user that will crud the cards", () => {
 
     //check that the card can be deleted
     //   //delete button click
+    cy.wait(500);
     cy.get("div.some-unique-class")
       .children()
       .eq(1)
@@ -435,6 +443,7 @@ describe("registers a new user that will crud the cards", () => {
 
     //clear cards as logged in user
     cy.get("button.is-info").contains("clear cards").click();
+    cy.wait(500);
     cy.get("div.some-unique-class")
       .children()
       .eq(1)

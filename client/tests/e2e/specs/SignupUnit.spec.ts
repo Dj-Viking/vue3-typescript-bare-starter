@@ -5,17 +5,44 @@ import {
   REGISTER_PASSWORD,
   REGISTER_EMAIL,
   REGISTER_USERNAME,
+  ACTUALS_SIGNUPUNITSPEC_PATH,
+  ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS,
 } from "tests/constants";
 
 let unique_username = "";
 let unique_email = "";
+
 // const token = "";
 beforeEach(() => {
+  // eslint-disable-next-line
+  //@ts-ignore
   cy.restoreLocalStorage();
 });
 
 afterEach(() => {
+  // eslint-disable-next-line
+  //@ts-ignore
   cy.saveLocalStorage();
+});
+
+describe("deletes-screenshots", () => {
+  it("deletes any actuals for this test before we enter the page", () => {
+    console.log("checking cypress browser running", Cypress.browser);
+    if (Cypress.browser.isHeadless) {
+      cy.task("deleteActuals", ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS).then(
+        (dirOrNull) => {
+          console.log("delete actuals response dir or null", dirOrNull);
+        }
+      );
+    }
+    if (Cypress.browser.isHeaded) {
+      cy.task("deleteActuals", ACTUALS_SIGNUPUNITSPEC_PATH).then(
+        (dirOrNull) => {
+          console.log("delete actuals response dir or null", dirOrNull);
+        }
+      );
+    }
+  });
 });
 
 describe("signup-unit-test, tests signup functionality", () => {
@@ -56,9 +83,6 @@ describe("tries to make account with too short password", () => {
   it("types in some username", () => {
     cy.get("input[name=username]").should("have.length", 1).type("sldkjfkdjfd");
   });
-  it("types in incorrect email", () => {
-    cy.get("input[name=email]").should("have.length", 1).type("asdf@asdf.com");
-  });
   it("types password that is too short", () => {
     cy.get("input[name=password]").should("have.length", 1).type("sdf");
   });
@@ -93,8 +117,27 @@ describe("checks the user or email error appears", () => {
     cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
   it("clears the inputs", () => {
-    cy.get("input[name=username]").clear();
     cy.get("input[name=email]").clear();
+    cy.get("input[name=username]").clear();
+    cy.get("input[name=password]").clear();
+    cy.wait(1000);
+  });
+  it("types in an already used email", () => {
+    cy.get("input[name=email]").type(EMAIL);
+    cy.get("input[name=username]").type(";adlksjfl;skdjf;");
+  });
+  it("types in some password", () => {
+    cy.get("input[name=password]").type(Date.now().toString());
+  });
+  it("clicks sign up button", () => {
+    cy.get("button").contains("Sign Up!").click();
+  });
+  it("checks that error message appears", () => {
+    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+  });
+  it("clears the inputs", () => {
+    cy.get("input[name=email]").clear();
+    cy.get("input[name=username]").clear();
     cy.get("input[name=password]").clear();
     cy.wait(1000);
   });
@@ -118,8 +161,12 @@ describe("tests the register with valid inputs works, has success message, and n
   });
   it("clicks the submit button", () => {
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
+    // eslint-disable-next-line
+//@ts-ignore
     cy.saveLocalStorage();
     cy.wait(2000);
+    // eslint-disable-next-line
+//@ts-ignore
     cy.saveLocalStorage();
 
     // cy.window().then((window) => {
@@ -133,6 +180,8 @@ describe("tests the register with valid inputs works, has success message, and n
     // cy.saveLocalStorage();
   });
   it("checks that success message appears ", () => {
+    // eslint-disable-next-line
+//@ts-ignore
     cy.restoreLocalStorage();
     cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
@@ -157,7 +206,9 @@ describe("should be able to login with those credentials that we just registered
     cy.visit(LOCALHOST_URL + "login");
   });
   it("types in email", () => {
-    cy.get("input[name=email]").should("have.length", 1).type(unique_email);
+    cy.get("input[name=email-or-username]")
+      .should("have.length", 1)
+      .type(unique_email);
   });
   it("types in password", () => {
     cy.get("input[name=password]")
@@ -167,6 +218,8 @@ describe("should be able to login with those credentials that we just registered
   it("clicks the submit button", () => {
     cy.get("button").contains("Login").should("have.length", 1).click();
     cy.wait(2000);
+    // eslint-disable-next-line
+//@ts-ignore
     cy.saveLocalStorage();
   });
   it("checks that success message appears ", () => {
@@ -180,8 +233,6 @@ describe("should be able to login with those credentials that we just registered
     // cypress trashes local storage during the test to prevent buildup of state or something like that
     cy.window().then((window: Cypress.AUTWindow) => {
       const token = window.localStorage.getItem("id_token");
-      const email = window.localStorage.getItem("global_email");
-      expect(email).to.equal(unique_email);
       expect(token).to.not.be.null;
     });
   });

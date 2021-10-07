@@ -51,10 +51,20 @@ export interface RegisterErrorResponse {
         user: null;
     }
 }
+
+export interface LoginInput {
+    options: {
+        username: string | "";
+        email: string | "";
+        password: string;
+
+    }
+}
 export interface LoginResponse {
     login: {
         errors: MyErrorResponse
         user: UserEntityBase
+        token: string;
     }
 }
 export interface LogoutResponse {

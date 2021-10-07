@@ -9,21 +9,22 @@
           readEvent(event);
           submitLogin({
             options: {
-              email,
+              email: /@/g.test(loginInput) ? loginInput : '',
+              username: /@/g.test(loginInput) ? '' : loginInput,
               password,
             },
           });
         }
       "
     >
-      <label class="label mt-0">Email</label>
+      <label class="label mt-0">Email or Username</label>
       <input
         class="input mt-4"
         type="text"
-        name="email"
+        name="email-or-username"
         autocomplete="off"
-        v-model="email"
-        placeholder="example@mail.com"
+        v-model="loginInput"
+        placeholder="example@mail.com | my_username"
         required
       />
       <label class="label mt-4">Password</label>
@@ -68,7 +69,7 @@ export default defineComponent({
   setup(this: void) {
     let globalEmail = inject("$email");
     const toast = useToast();
-    const email = ref("");
+    const loginInput = ref("");
     const password = ref("");
     const successMsg = ref("");
     const showSuccess = ref(false);
@@ -85,7 +86,8 @@ export default defineComponent({
       {
         variables: {
           options: {
-            email: email.value,
+            email: loginInput.value,
+            username: loginInput.value,
             password: password.value,
           },
         },
@@ -135,7 +137,7 @@ export default defineComponent({
     });
 
     return {
-      email,
+      loginInput,
       password,
       submitLogin,
       loginIsLoading,

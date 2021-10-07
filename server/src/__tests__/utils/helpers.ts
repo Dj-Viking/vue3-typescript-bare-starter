@@ -138,11 +138,16 @@ export function createEditCardMutation(): string {
 					backSideText
 					backSideLanguage
 					backSidePicture
+					createdAt
+					updatedAt
+					creatorId
 				}
 			}
 		}
 	`;
 }
+
+
 
 export function createMeQuery(): string {
 	return `
