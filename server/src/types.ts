@@ -174,3 +174,30 @@ export interface MeQueryResponse {
         errors: MyErrorResponse;
       };
 }
+ 
+/**
+ *  @example
+ * const testEmailArgs: MySendEmailOptions = {
+     fromHeader: "Server Start Test",
+     subject: "this is a test", 
+     mailTo: NODEMAILER_EMAIL_TO as string,
+     mailHtml: "<h1>heres a test</h1>"
+   }
+ */
+export interface MySendEmailOptions {
+    mailTo: string;
+    mailHtml: string;
+    fromHeader?: string;
+    subject?: string;
+}
+
+export interface SignResetPasswordTokenArgs {
+    uuid: string;
+    exp: string;
+}   
+
+export interface SignLoginRegisterMeTokenArgs {
+    username: string;
+    email: string;
+    password: string;
+}

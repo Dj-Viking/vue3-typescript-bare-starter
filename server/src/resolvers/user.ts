@@ -12,13 +12,15 @@ import {
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import argon2 from 'argon2';
-import { MyContext } from '../types';
+import { MyContext, MySendEmailOptions } from '../types';
 
 import { User } from '../entities/User';
 import { Card } from '../entities/Card';
 import { verifyRegisterArgs } from '../utils/verifyRegisterArgs';
-import { decodeToken } from '../utils/decodeToken';
-
+// import { decodeToken } from '../utils/decodeToken';
+import { sendEmail } from '../utils/sendEmail';
+import { APP_DOMAIN_PREFIX } from '../constants';
+const uuid = require("uuid");
 @InputType()
 class RegisterInput {
   @Field()
@@ -87,6 +89,15 @@ class LoginInput {
   password: string;
 }
 
+@ObjectType()
+class ForgotPassResponse {
+  @Field(() => Boolean, { nullable: true })
+  done: boolean | null;
+
+  @Field(() => [UserFieldError], { nullable: true })
+  errors?: UserFieldError[] | null;
+}
+
 @Resolver()
 export class UserResolver {
 
@@ -112,7 +123,7 @@ export class UserResolver {
 
       const user = await User.findOne({ where:{ email: req.user.email }});
       
-      console.log("user found", user);
+      // console.log("user found", user);
 
       const cards = await Card.find({ where: { creatorId: user?.id as number }});
       console.log("checking cards given the creatorId", cards);
@@ -125,8 +136,8 @@ export class UserResolver {
       });
 
       //debug
-      const profile = decodeToken(newToken);
-      console.log("heres the profile of the person doing me query", profile);
+      // const profile = decodeToken(newToken);
+      // console.log("heres the profile of the person doing me query", profile);
       
       const changedUser = await getConnection()
       .getRepository(User)
@@ -269,6 +280,51 @@ export class UserResolver {
       cards: cards
     };
   }
+
+  // TODO: add change password mutation here that somehow verifies 
+  // the temporary token that is available for a short time
+  // to allow the user to actually reset the password
+
+  @Mutation(() => ForgotPassResponse)
+  async forgotPassword(
+    @Arg('email') email: string,
+    @Ctx() _context: MyContext
+  ): Promise<ForgotPassResponse | ErrorResponse> {
+    try {
+      // TODO: once deployed apply the production domain URL 
+      // to supply a link to the page where the user will change
+      // their password (execute change password mutation)
+      // 
+      //create token to send and verify
+      const resetToken = uuid.v4();
+
+      const token = signToken({
+        uuid: resetToken,
+        exp: "15m"
+      });
+
+      const forgotPasswordEmailOptions: MySendEmailOptions = {
+        fromHeader: "Password Reset",
+        subject: "Password Reset Request",
+        mailTo: email,
+        mailHtml:  `
+          <span>We were made aware that you request your password to be reset</span>
+          <p>If this wasn't you. Then please disregard this email. Thank you!</p>
+          <a href="${APP_DOMAIN_PREFIX}/change-password/${token}">Reset your password</a>   
+        `
+      }
+      //send email logic
+      await sendEmail(forgotPasswordEmailOptions);
+
+      return {
+        done: true
+      }
+    } catch (error) {
+      const err = error as Error;
+      return new ErrorResponse("reset", err.message);
+    }
+  }
+
   @Mutation(() => LogoutResponse)
   async logout(
     @Arg("email", () => String) email: string,
