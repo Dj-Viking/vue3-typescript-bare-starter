@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 // new values on the req.session object
 export type MyContext = {
     req: Request & {
-        user: JwtData | null;
+        user: MyJwtData | null;
         // session: Session & Partial<SessionData> & {
         //     userId?: number;
         // } & {
@@ -74,11 +74,13 @@ export interface LogoutResponse {
     };
 }
 
-export type JwtData = IJwtData;
+export type MyJwtData = IJwtData;
 
 export interface IJwtData extends jwt.JwtPayload {
     username: string;
     email: string;
+    uuid?: string;
+    resetEmail?: string;
     iat?: number;
     exp?: number;
 }
@@ -192,6 +194,7 @@ export interface MySendEmailOptions {
 }
 
 export interface SignResetPasswordTokenArgs {
+    resetEmail: string;
     uuid: string;
     exp: string;
 }   

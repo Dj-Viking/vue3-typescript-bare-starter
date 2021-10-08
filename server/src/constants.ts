@@ -11,7 +11,7 @@ export const COOKIE_NAME: string = "sid";
 export const IS_PROD: boolean | undefined = process.env.NODE_ENV === "production";
 
 export const APP_DOMAIN_PREFIX: string | undefined = IS_PROD
-? "NOT FOUND"
+? "https://not_made_yet"
 : "http://localhost:8080";
 export const FORGET_PASS_PREFIX: string = "forget-password:";
 export const HOST: string | undefined = TEST_HOST;

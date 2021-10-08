@@ -17,7 +17,8 @@ export function signToken(args: SignLoginRegisterMeTokenArgs | SignResetPassword
 
 
   const {
-    uuid,
+    resetEmail
+,   uuid,
     exp
   } = args as SignResetPasswordTokenArgs;
   
@@ -31,8 +32,9 @@ export function signToken(args: SignLoginRegisterMeTokenArgs | SignResetPassword
       SECRET as string,
       { expiresIn: EXPIRATION as string });
     }
-    case Boolean(uuid && exp): {
+    case Boolean(uuid && exp && resetEmail): {
       return jwt.sign({
+        resetEmail,
         uuid
       },
       SECRET as string,

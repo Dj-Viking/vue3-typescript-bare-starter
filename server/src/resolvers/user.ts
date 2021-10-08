@@ -20,6 +20,7 @@ import { verifyRegisterArgs } from '../utils/verifyRegisterArgs';
 // import { decodeToken } from '../utils/decodeToken';
 import { sendEmail } from '../utils/sendEmail';
 import { APP_DOMAIN_PREFIX } from '../constants';
+import { decodeToken } from '../utils/decodeToken';
 const uuid = require("uuid");
 @InputType()
 class RegisterInput {
@@ -91,11 +92,25 @@ class LoginInput {
 
 @ObjectType()
 class ForgotPassResponse {
+
+  //remove after testing
+  @Field(() => String, { nullable: true })
+  token: string | null;  
+
   @Field(() => Boolean, { nullable: true })
   done: boolean | null;
 
   @Field(() => [UserFieldError], { nullable: true })
   errors?: UserFieldError[] | null;
+}
+
+@ObjectType()
+class ChangePasswordResponse {
+  @Field(() => Boolean, { nullable: true })
+  done: boolean | null;
+  
+  @Field(() => [UserFieldError], { nullable: true })
+  errors?: UserFieldError[] | null
 }
 
 @Resolver()
@@ -285,6 +300,50 @@ export class UserResolver {
   // the temporary token that is available for a short time
   // to allow the user to actually reset the password
 
+  @Mutation(() => ChangePasswordResponse)
+  async changePassword(
+    @Arg("password") password: string,
+    //remove after testing
+    @Arg("token") token: string,
+    @Ctx() _context: MyContext
+  ): Promise<ChangePasswordResponse | ErrorResponse> {
+    try {
+
+      console.log("args passed in", token, password);
+      
+
+      const decodedToken = decodeToken(token);
+      console.log("decoded token", decodedToken);
+      
+
+      //create a new password to update the user table with
+      const hashedPassword = await argon2.hash(password);
+
+      //update the user's password in their db table
+
+      const changedUser = await getConnection()
+      .getRepository(User)
+      .createQueryBuilder("user")
+      .update<User>(User, 
+                    { password: hashedPassword })
+      .where("email = :email", { email: decodedToken?.resetEmail })
+      .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
+      .updateEntity(true)
+      .execute();
+
+      console.log("changed user password", changedUser.raw[0])
+
+      //decode the token to have the email of the person who isn't logged in 
+      // and needs their password reset
+
+      return {
+        done: true
+      }
+    } catch (error) {
+      return new ErrorResponse("change pass", error.message);
+    }
+  }
+
   @Mutation(() => ForgotPassResponse)
   async forgotPassword(
     @Arg('email') email: string,
@@ -300,6 +359,7 @@ export class UserResolver {
 
       const token = signToken({
         uuid: resetToken,
+        resetEmail: email,
         exp: "15m"
       });
 
@@ -317,6 +377,8 @@ export class UserResolver {
       await sendEmail(forgotPasswordEmailOptions);
 
       return {
+        //for testing send the token for use in the change password mutation
+        token,
         done: true
       }
     } catch (error) {

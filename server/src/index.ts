@@ -39,7 +39,7 @@ const {
   //connect to db
   await createConnection({
     type: "postgres",
-    url: undefined,
+    url: IS_PROD ? "some given URL I dont have it yet" : undefined,
     database: !IS_PROD ? DB_NAME : undefined,
     password: !IS_PROD ? DB_PASSWORD : undefined,
     username: !IS_PROD ? DB_USER : undefined,
