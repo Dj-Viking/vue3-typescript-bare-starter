@@ -19,6 +19,7 @@ export async function verifyAsync(token: string): Promise<MyJwtData | null | Err
         console.log("is there a decoded token in verify async", decoded);
         if (error?.message.includes("malformed")) returnMe = error;
         if (error?.message.includes("expired")) returnMe = error;
+        if (error?.message.includes("invalid")) returnMe = error;
         if (decoded) returnMe = decoded;
       } 
     );

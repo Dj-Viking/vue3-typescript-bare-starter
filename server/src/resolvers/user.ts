@@ -315,7 +315,16 @@ export class UserResolver {
       verified = await verifyAsync(token);
       console.log("what is the response of verify async here as an awaited function", verified);
       console.log("verified is an instance of Error??", verified instanceof Error);
-      if (verified instanceof Error && verified.message.includes("expired")) return new ErrorResponse("invalid", "reset token expired");
+      
+      //create the error response if verifying the token creates an error
+      if (verified instanceof Error && verified.message.includes("expired")) 
+        return new ErrorResponse("invalid", "reset token expired");
+      else if (
+        verified instanceof Error && (
+          verified.message.includes("malformed") ||
+          verified.message.includes("invalid")
+        )
+      ) return new ErrorResponse("invalid", "invalid token");
       
       const decodedToken = decodeToken(token);
       console.log("decoded token", decodedToken);

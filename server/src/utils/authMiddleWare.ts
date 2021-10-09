@@ -20,7 +20,8 @@ export function authMiddleware(
       { maxAge: EXPIRATION }, //maxage deprecated but still accepted...
       (error, decoded) => {
         if (error?.message.includes("malformed")) throw new Error(error.message);
-        if (error?.message.includes("expired")) throw new Error(error.message)
+        if (error?.message.includes("expired")) throw new Error(error.message);
+        if (error?.message.includes("invalid")) throw new Error(error.message);
         if (decoded) {
           context.req.user = decoded as MyJwtData;
           // const oldDecoded = decodeToken(token);
