@@ -47,7 +47,6 @@ import gql from "graphql-tag";
 import { ChangePasswordResponse } from "@/types";
 import { FetchResult } from "@apollo/client/core";
 import { useToast } from "vue-toastification";
-import router from "../router";
 export default defineComponent({
   name: "ChangePass",
   setup(this: void) {
@@ -87,11 +86,14 @@ export default defineComponent({
         } else {
           setTimeout(() => {
             isLoading.value = false;
+            //to remove the password page from recent browser history of the current tab
+          }, 2000);
+          setTimeout(() => {
+            window.location.replace("/login");
           }, 1000);
           toast.success("Changed Password!", {
-            timeout: 3000,
+            timeout: 2000,
           });
-          router.push("/");
         }
       }
     );
