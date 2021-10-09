@@ -45,7 +45,13 @@
         placeholder="***************"
         required
       />
-      <button v-if="!isLoading" class="button is-success mt-5">Sign Up!</button>
+      <button
+        :disabled="!username || !email || !password"
+        v-if="!isLoading"
+        class="button is-success mt-5"
+      >
+        Sign Up!
+      </button>
       <button
         v-if="isLoading"
         is-loading

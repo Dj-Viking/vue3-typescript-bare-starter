@@ -48,7 +48,13 @@
       <div style="display: flex; justify-content: flex-end">
         <router-link :to="'/forgot'" class="link">Forgot Password?</router-link>
       </div>
-      <button v-if="!isLoading" class="button is-success mt-5">Login</button>
+      <button
+        :disabled="!loginInput || !password"
+        v-if="!isLoading"
+        class="button is-success mt-5"
+      >
+        Login
+      </button>
       <button
         v-if="isLoading"
         is-loading

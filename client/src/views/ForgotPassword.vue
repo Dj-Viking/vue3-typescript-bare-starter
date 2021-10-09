@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from "@vue/runtime-core";
+import { ref, defineComponent, onMounted } from "@vue/runtime-core";
 import { FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
@@ -65,6 +65,10 @@ export default defineComponent({
         },
       }
     );
+
+    onMounted(() => {
+      document.title = "Forgot Password";
+    });
 
     onDone(
       (

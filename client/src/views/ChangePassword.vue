@@ -6,10 +6,18 @@
       ($event) => {
         readEvent($event);
         isLoading = true;
-        submitChangePassword({
-          password: passwordInput,
-          token: route.params.token || '',
-        });
+        const matched = verifyMatch(passwordInput, confirmInput);
+        if (matched) {
+          submitChangePassword({
+            password: passwordInput,
+            token: route.params.token || '',
+          });
+        } else {
+          isLoading = false;
+          toast.error('Entered password and confirmed password do not match.', {
+            timeout: 3000,
+          });
+        }
       }
     "
   >
@@ -27,13 +35,33 @@
         />
       </div>
     </div>
-    <button v-if="!isLoading" class="button is-success mt-5">Submit</button>
+    <div class="field">
+      <label for="confirmInput" class="label">Confirm New Password</label>
+      <div class="control">
+        <input
+          class="input"
+          type="password"
+          autocomplete="off"
+          placeholder="***************"
+          name="confirmInput"
+          v-model="confirmInput"
+          required
+        />
+      </div>
+    </div>
+    <button
+      :disabled="!passwordInput || !confirmInput"
+      v-if="!isLoading"
+      class="button is-success mt-5"
+    >
+      Submit
+    </button>
     <button
       v-if="isLoading"
       is-loading
       class="button is-loading is-success mt-5"
     >
-      Login
+      Submit
     </button>
   </form>
 </template>
@@ -54,6 +82,7 @@ export default defineComponent({
     const isLoading = ref(false);
     const route = useRoute();
     const passwordInput = ref("");
+    const confirmInput = ref("");
     const { mutate: submitChangePassword, onDone } = useMutation(
       gql`
         ${createChangePasswordMutation()}
@@ -65,6 +94,11 @@ export default defineComponent({
         },
       }
     );
+
+    const verifyMatch = (pass: string, confirm: string): boolean => {
+      if (pass === confirm) return true;
+      else return false;
+    };
 
     onDone(
       (
@@ -103,6 +137,9 @@ export default defineComponent({
     });
 
     return {
+      toast,
+      verifyMatch,
+      confirmInput,
       passwordInput,
       isLoading,
       route,
