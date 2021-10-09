@@ -12,7 +12,7 @@ import {
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import argon2 from 'argon2';
-import { MyContext, MySendEmailOptions } from '../types';
+import { MyContext, MyJwtData, MySendEmailOptions } from '../types';
 
 import { User } from '../entities/User';
 import { Card } from '../entities/Card';
@@ -21,6 +21,7 @@ import { verifyRegisterArgs } from '../utils/verifyRegisterArgs';
 import { sendEmail } from '../utils/sendEmail';
 import { APP_DOMAIN_PREFIX } from '../constants';
 import { decodeToken } from '../utils/decodeToken';
+import { verifyAsync } from '../utils/verifyAsync';
 const uuid = require("uuid");
 @InputType()
 class RegisterInput {
@@ -94,8 +95,8 @@ class LoginInput {
 class ForgotPassResponse {
 
   //remove after testing
-  @Field(() => String, { nullable: true })
-  token: string | null;  
+  // @Field(() => String, { nullable: true })
+  // token: string | null;  
 
   @Field(() => Boolean, { nullable: true })
   done: boolean | null;
@@ -308,14 +309,17 @@ export class UserResolver {
     @Ctx() _context: MyContext
   ): Promise<ChangePasswordResponse | ErrorResponse> {
     try {
-
-      console.log("args passed in", token, password);
       
-
+      //check if token is expired if so return an error response
+      let verified: MyJwtData | null | any = "something";
+      verified = await verifyAsync(token);
+      console.log("what is the response of verify async here as an awaited function", verified);
+      console.log("verified is an instance of Error??", verified instanceof Error);
+      if (verified instanceof Error && verified.message.includes("expired")) return new ErrorResponse("invalid", "reset token expired");
+      
       const decodedToken = decodeToken(token);
       console.log("decoded token", decodedToken);
       
-
       //create a new password to update the user table with
       const hashedPassword = await argon2.hash(password);
 
@@ -360,7 +364,7 @@ export class UserResolver {
       const token = signToken({
         uuid: resetToken,
         resetEmail: email,
-        exp: "15m"
+        exp: "5m"
       });
 
       const forgotPasswordEmailOptions: MySendEmailOptions = {
@@ -370,7 +374,8 @@ export class UserResolver {
         mailHtml:  `
           <span>We were made aware that you request your password to be reset</span>
           <p>If this wasn't you. Then please disregard this email. Thank you!</p>
-          <a href="${APP_DOMAIN_PREFIX}/change-password/${token}">Reset your password</a>   
+          <h2>This Request will expire after 5 minutes.</h2>
+          <a href="${APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>   
         `
       }
       //send email logic
@@ -378,7 +383,7 @@ export class UserResolver {
 
       return {
         //for testing send the token for use in the change password mutation
-        token,
+        // token,
         done: true
       }
     } catch (error) {
