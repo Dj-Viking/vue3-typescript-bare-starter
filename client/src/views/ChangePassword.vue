@@ -1,69 +1,74 @@
 <template>
-  <form
-    class="field box"
-    style="margin: 0 20%; margin-top: 2em"
-    @submit.prevent="
-      ($event) => {
-        readEvent($event);
-        isLoading = true;
-        const matched = verifyMatch(passwordInput, confirmInput);
-        if (matched) {
-          submitChangePassword({
-            password: passwordInput,
-            token: route.params.token || '',
-          });
-        } else {
-          isLoading = false;
-          toast.error('Entered password and confirmed password do not match.', {
-            timeout: 3000,
-          });
+  <BaseLayout :isHome="false">
+    <form
+      class="field box"
+      style="margin: 0 20%; margin-top: 2em"
+      @submit.prevent="
+        ($event) => {
+          readEvent($event);
+          isLoading = true;
+          const matched = verifyMatch(passwordInput, confirmInput);
+          if (matched) {
+            submitChangePassword({
+              password: passwordInput,
+              token: route.params.token || '',
+            });
+          } else {
+            isLoading = false;
+            toast.error(
+              'Entered password and confirmed password do not match.',
+              {
+                timeout: 3000,
+              }
+            );
+          }
         }
-      }
-    "
-  >
-    <div class="field">
-      <label for="passwordInput" class="label">New Password</label>
-      <div class="control">
-        <input
-          class="input"
-          type="password"
-          autocomplete="off"
-          placeholder="***************"
-          name="passwordInput"
-          v-model="passwordInput"
-          required
-        />
-      </div>
-    </div>
-    <div class="field">
-      <label for="confirmInput" class="label">Confirm New Password</label>
-      <div class="control">
-        <input
-          class="input"
-          type="password"
-          autocomplete="off"
-          placeholder="***************"
-          name="confirmInput"
-          v-model="confirmInput"
-          required
-        />
-      </div>
-    </div>
-    <button
-      :disabled="!passwordInput || !confirmInput"
-      v-if="!isLoading"
-      class="button is-success mt-5"
+      "
     >
-      Submit
-    </button>
-    <button
-      v-if="isLoading"
-      is-loading
-      class="button is-loading is-success mt-5"
-    >
-      Submit
-    </button>
-  </form>
+      <div class="field">
+        <label for="passwordInput" class="label">New Password</label>
+        <div class="control">
+          <input
+            class="input"
+            type="password"
+            autocomplete="off"
+            placeholder="***************"
+            name="passwordInput"
+            v-model="passwordInput"
+            required
+          />
+        </div>
+      </div>
+      <div class="field">
+        <label for="confirmInput" class="label">Confirm New Password</label>
+        <div class="control">
+          <input
+            class="input"
+            type="password"
+            autocomplete="off"
+            placeholder="***************"
+            name="confirmInput"
+            v-model="confirmInput"
+            required
+          />
+        </div>
+      </div>
+      <button
+        :disabled="!passwordInput || !confirmInput"
+        v-if="!isLoading"
+        class="button is-success mt-5"
+      >
+        Submit
+      </button>
+      <button
+        v-if="isLoading"
+        is-loading
+        class="button is-loading is-success mt-5"
+      >
+        Submit
+      </button>
+    </form>
+  </BaseLayout>
 </template>
 
 <script lang="ts">
@@ -72,11 +77,17 @@ import { useRoute } from "vue-router";
 import { useMutation } from "@vue/apollo-composable";
 import { createChangePasswordMutation } from "../graphql/mutations/myMutations";
 import gql from "graphql-tag";
-import { ChangePasswordResponse } from "@/types";
+import { ChangePasswordResponse, RootCommitType } from "@/types";
 import { FetchResult } from "@apollo/client/core";
 import { useToast } from "vue-toastification";
+import auth from "../utils/AuthService";
+import store from "../store";
+import BaseLayout from "@/components/BaseLayout.vue";
 export default defineComponent({
   name: "ChangePass",
+  components: {
+    BaseLayout,
+  },
   setup(this: void) {
     const toast = useToast();
     const isLoading = ref(false);
@@ -118,13 +129,24 @@ export default defineComponent({
             timeout: 3000,
           });
         } else {
+          // set logged in state and set the auth token
+          auth.setToken(result.data?.changePassword?.token as string);
+          store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+            root: true,
+          });
+          // set cards
+          store.commit(
+            "cards/SET_CARDS" as RootCommitType,
+            result.data?.changePassword.cards,
+            { root: true }
+          );
           setTimeout(() => {
             isLoading.value = false;
             //to remove the password page from recent browser history of the current tab
           }, 2000);
-          setTimeout(() => {
-            window.location.replace("/login");
-          }, 1000);
+          // setTimeout(() => {
+          //   window.location.replace("/");
+          // }, 1000);
           toast.success("Changed Password!", {
             timeout: 2000,
           });

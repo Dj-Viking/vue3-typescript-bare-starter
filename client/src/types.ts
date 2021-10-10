@@ -232,6 +232,8 @@ export interface ForgotPassResponse {
 export interface ChangePasswordResponse {
   changePassword: {
     done: boolean | null;
+    token: string | null;
+    cards: Card[];
     errors?: MyErrorResponse | null;
   };
 }

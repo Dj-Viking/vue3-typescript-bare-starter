@@ -17,6 +17,19 @@ export function createChangePasswordMutation(): string {
     mutation changePassword($token: String!, $password: String!){
       changePassword(token: $token, password: $password){
         done
+        cards {
+          id
+          creatorId
+          createdAt
+          updatedAt
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
+        }
+        token
         errors {
           field
           message

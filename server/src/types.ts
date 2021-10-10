@@ -202,5 +202,5 @@ export interface SignResetPasswordTokenArgs {
 export interface SignLoginRegisterMeTokenArgs {
     username: string;
     email: string;
-    password: string;
+    uuid?: string;
 }

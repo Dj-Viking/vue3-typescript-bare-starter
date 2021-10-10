@@ -8,10 +8,11 @@ const {
 } = process.env;
 
 export function signToken(args: SignLoginRegisterMeTokenArgs | SignResetPasswordTokenArgs): string {
+  console.log("what are args here to sign a token", args);
   
   const {
     username, 
-    password,
+    uuid: someUuid, //i think im aliasing here
     email
   } = args as SignLoginRegisterMeTokenArgs;
 
@@ -23,10 +24,10 @@ export function signToken(args: SignLoginRegisterMeTokenArgs | SignResetPassword
   } = args as SignResetPasswordTokenArgs;
   
   switch (true) {
-    case Boolean(username && password && email): {
+    case Boolean(username && someUuid && email): {
       return jwt.sign({
         username,
-        password,
+        uuid,
         email
       },
       SECRET as string,

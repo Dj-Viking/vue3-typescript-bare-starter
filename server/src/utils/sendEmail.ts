@@ -2,7 +2,6 @@ require('dotenv').config();
 import nodemailer from "nodemailer";
 import { MySendEmailOptions } from "src/types";
 
-// async..await is not allowed in global scope, must use a wrapper
 export async function sendEmail(args: MySendEmailOptions): Promise<void> {
   const { mailTo, mailHtml, fromHeader, subject } = args;
   // Generate test SMTP service account from ethereal.email

@@ -83,6 +83,9 @@ describe("tries to make account with too short password", () => {
   it("types in some username", () => {
     cy.get("input[name=username]").should("have.length", 1).type("sldkjfkdjfd");
   });
+  it("types in some email", () => {
+    cy.get("input[name=email]").should("have.length", 1).type("alskdjfsadk");
+  });
   it("types password that is too short", () => {
     cy.get("input[name=password]").should("have.length", 1).type("sdf");
   });
