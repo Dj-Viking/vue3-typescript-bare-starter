@@ -93,19 +93,19 @@ export type MyErrorResponse = CustomError[];
 
 export interface AddCardResponse {
     addCard: {
-        cards: null | Card[]
+        cards: null | ICard[]
         errors: MyErrorResponse
     }
 }
 
 export interface GetUserCardsResponse {
     getUserCards: {
-        cards?: Card[];
+        cards?: ICard[];
         errors: MyErrorResponse
     }
 }
 
-export interface Card {
+export interface ICard {
     id: number,
     frontSideText: string;
     frontSideLanguage: string;
@@ -129,7 +129,7 @@ export interface ClearUserCardsResponse {
 export interface EditCardByIdResponse {
     editCardById: {
         errors: MyErrorResponse
-        cards?: null | Card[]
+        cards?: null | ICard[]
     }
 }
 
@@ -172,7 +172,7 @@ export interface MeQueryResponse {
             email: string;
         };
         token: string;
-        cards: Array<Card>;
+        cards: Array<ICard>;
         errors: MyErrorResponse;
     };
 }

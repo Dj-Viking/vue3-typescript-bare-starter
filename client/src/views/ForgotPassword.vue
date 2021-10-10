@@ -1,5 +1,5 @@
 <template>
-  <BaseLayout :isHome="false">
+  <base-layout :isHome="false">
     <form
       class="field box"
       style="margin: 0 20%; margin-top: 2em"
@@ -29,7 +29,13 @@
           />
         </div>
       </div>
-      <button v-if="!isLoading" class="button is-success mt-5">Submit</button>
+      <button
+        :disabled="!emailInput"
+        v-if="!isLoading"
+        class="button is-success mt-5"
+      >
+        Send Reset Link
+      </button>
       <button
         v-if="isLoading"
         is-loading
@@ -38,7 +44,7 @@
         Login
       </button>
     </form>
-  </BaseLayout>
+  </base-layout>
 </template>
 
 <script lang="ts">
@@ -50,12 +56,8 @@ import router from "../router";
 import { createForgotPasswordMutation } from "@/graphql/mutations/myMutations";
 import { ForgotPassResponse } from "@/types";
 import { useToast } from "vue-toastification";
-import BaseLayout from "@/components/BaseLayout.vue";
 export default defineComponent({
   name: "Forgot",
-  components: {
-    BaseLayout,
-  },
   setup(this: void) {
     const isLoading = ref(false);
     const toast = useToast();

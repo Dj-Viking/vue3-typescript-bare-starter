@@ -1,5 +1,4 @@
 <template>
-  <Skeleton :half="true" />
   <Notification />
   <Transition name="fade" type="transition">
     <div v-if="activeClass">
@@ -17,15 +16,15 @@
 import { defineComponent } from "vue";
 import Modal from "./components/Modal.vue";
 import Notification from "./components/Notification.vue";
-import Skeleton from "./components/Skeleton.vue";
 import store from "./store";
 import { ModalState, OpenNotificationPayload, RootCommitType } from "./types";
+// import Spinner from "./components/Spinner.vue";
 export default defineComponent({
   name: "App",
   components: {
     Modal,
     Notification,
-    Skeleton,
+    // Spinner,
     // Modalv2,
   },
   computed: {

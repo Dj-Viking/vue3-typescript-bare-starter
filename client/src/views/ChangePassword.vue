@@ -1,5 +1,5 @@
 <template>
-  <BaseLayout :isHome="false">
+  <base-layout :isHome="false">
     <form
       class="field box"
       style="margin: 0 20%; margin-top: 2em"
@@ -68,7 +68,7 @@
         Submit
       </button>
     </form>
-  </BaseLayout>
+  </base-layout>
 </template>
 
 <script lang="ts">
@@ -82,12 +82,8 @@ import { FetchResult } from "@apollo/client/core";
 import { useToast } from "vue-toastification";
 import auth from "../utils/AuthService";
 import store from "../store";
-import BaseLayout from "@/components/BaseLayout.vue";
 export default defineComponent({
   name: "ChangePass",
-  components: {
-    BaseLayout,
-  },
   setup(this: void) {
     const toast = useToast();
     const isLoading = ref(false);
