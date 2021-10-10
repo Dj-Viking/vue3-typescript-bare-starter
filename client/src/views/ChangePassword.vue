@@ -144,9 +144,9 @@ export default defineComponent({
             isLoading.value = false;
             //to remove the password page from recent browser history of the current tab
           }, 2000);
-          // setTimeout(() => {
-          //   window.location.replace("/");
-          // }, 1000);
+          setTimeout(() => {
+            window.location.replace("/");
+          }, 1000);
           toast.success("Changed Password!", {
             timeout: 2000,
           });

@@ -1,42 +1,44 @@
 <template>
-  <form
-    class="field box"
-    style="margin: 0 20%; margin-top: 2em"
-    @submit.prevent="
-      ($event) => {
-        readEvent($event);
-        isLoading = true;
-        submitForgotPassword({
-          email: emailInput,
-        });
-      }
-    "
-  >
-    <div class="field">
-      <label for="emailInput" class="label"
-        >Enter an email to send the reset link to</label
-      >
-      <div class="control">
-        <input
-          class="input"
-          type="text"
-          autocomplete="off"
-          required
-          placeholder="your@email.com"
-          name="emailInput"
-          v-model="emailInput"
-        />
-      </div>
-    </div>
-    <button v-if="!isLoading" class="button is-success mt-5">Submit</button>
-    <button
-      v-if="isLoading"
-      is-loading
-      class="button is-loading is-success mt-5"
+  <BaseLayout :isHome="false">
+    <form
+      class="field box"
+      style="margin: 0 20%; margin-top: 2em"
+      @submit.prevent="
+        ($event) => {
+          readEvent($event);
+          isLoading = true;
+          submitForgotPassword({
+            email: emailInput,
+          });
+        }
+      "
     >
-      Login
-    </button>
-  </form>
+      <div class="field">
+        <label for="emailInput" class="label"
+          >Enter an email to send the reset link to</label
+        >
+        <div class="control">
+          <input
+            class="input"
+            type="text"
+            autocomplete="off"
+            required
+            placeholder="your@email.com"
+            name="emailInput"
+            v-model="emailInput"
+          />
+        </div>
+      </div>
+      <button v-if="!isLoading" class="button is-success mt-5">Submit</button>
+      <button
+        v-if="isLoading"
+        is-loading
+        class="button is-loading is-success mt-5"
+      >
+        Login
+      </button>
+    </form>
+  </BaseLayout>
 </template>
 
 <script lang="ts">
@@ -48,8 +50,12 @@ import router from "../router";
 import { createForgotPasswordMutation } from "@/graphql/mutations/myMutations";
 import { ForgotPassResponse } from "@/types";
 import { useToast } from "vue-toastification";
+import BaseLayout from "@/components/BaseLayout.vue";
 export default defineComponent({
   name: "Forgot",
+  components: {
+    BaseLayout,
+  },
   setup(this: void) {
     const isLoading = ref(false);
     const toast = useToast();
