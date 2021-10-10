@@ -25,7 +25,7 @@ export type MyContext = {
  * @example
  * console.log(`${red || "\x1b[31m"}`, "red text in the log", `${reset || "\x1b[00m"}`)
  */
- export enum ANSI_ESCAPES {
+export enum ANSI_ESCAPES {
     danger = "\x1b[31m",
     success = "\x1b[32m",
     info = "\x1b[36m",
@@ -37,7 +37,7 @@ export type MyContext = {
     info_back = "\x1b[44m",
     link_back = "\x1b[45m",
     reset = "\x1b[00m",
-  }
+}
 export interface RegisterResponse {
     register: {
         errors: MyErrorResponse
@@ -167,16 +167,16 @@ export interface UserEntityBase {
 export interface MeQueryResponse {
     me: {
         user: {
-          token: string;
-          username: string;
-          email: string;
+            token: string;
+            username: string;
+            email: string;
         };
         token: string;
         cards: Array<Card>;
         errors: MyErrorResponse;
-      };
+    };
 }
- 
+
 /**
  *  @example
  * const testEmailArgs: MySendEmailOptions = {
@@ -197,7 +197,7 @@ export interface SignResetPasswordTokenArgs {
     resetEmail: string;
     uuid: string;
     exp: string;
-}   
+}
 
 export interface SignLoginRegisterMeTokenArgs {
     username: string;
