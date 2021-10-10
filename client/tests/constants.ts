@@ -253,22 +253,22 @@ export const backgroundColors: Array<BackgroundColor> = [
 ];
 
 export const lightBackgroundNames: Array<LightBackGroundName> = [
-  "light-danger-text",
-  "light-success-text",
-  "light-warning-text",
-  "light-info-text",
-  "light-link-text",
-  "light-primary-text",
-  "white-text",
-];
-
-export const lightTextNames: Array<LightTextName> = [
   "light-danger-back",
   "light-success-back",
   "light-warning-back",
   "light-info-back",
   "light-link-back",
   "light-primary-back",
+  "light-white-back",
+];
+
+export const lightTextNames: Array<LightTextName> = [
+  "light-danger",
+  "light-success",
+  "light-warning",
+  "light-info",
+  "light-link",
+  "light-primary",
 ];
 
 // export const EDITED_CARD_FIXTURE_PATH = "editedCardInstance.json";
