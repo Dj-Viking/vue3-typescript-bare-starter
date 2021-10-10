@@ -1,6 +1,6 @@
 {
-  "name": "vue3-typescript",
-  "version": "0.1.0",
+  "name": "app-lang",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "tscheck": "vue-ts-checker",

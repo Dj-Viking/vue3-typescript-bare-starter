@@ -221,3 +221,19 @@ export interface OpenNotificationPayload {
     toastUp: false;
   };
 }
+
+export interface ForgotPassResponse {
+  forgotPassword: {
+    done: boolean | null;
+    errors?: MyErrorResponse | null;
+  };
+}
+
+export interface ChangePasswordResponse {
+  changePassword: {
+    done: boolean | null;
+    token: string | null;
+    cards: Card[];
+    errors?: MyErrorResponse | null;
+  };
+}

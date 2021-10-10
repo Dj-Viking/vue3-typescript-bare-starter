@@ -17,27 +17,44 @@
         }
       "
     >
-      <label class="label mt-0">Email or Username</label>
-      <input
-        class="input mt-4"
-        type="text"
-        name="email-or-username"
-        autocomplete="off"
-        v-model="loginInput"
-        placeholder="example@mail.com | my_username"
-        required
-      />
-      <label class="label mt-4">Password</label>
-      <input
-        class="input mt-4"
-        type="password"
-        autocomplete="off"
-        name="password"
-        v-model="password"
-        placeholder="*****************"
-        required
-      />
-      <button v-if="!isLoading" class="button is-success mt-5">Login</button>
+      <div class="field">
+        <label class="label mt-0">Email or Username</label>
+        <div class="control">
+          <input
+            class="input mt-4"
+            type="text"
+            name="email-or-username"
+            autocomplete="off"
+            v-model="loginInput"
+            placeholder="example@mail.com | my_username"
+            required
+          />
+        </div>
+      </div>
+      <div class="field">
+        <label class="label mt-4">Password</label>
+        <div class="control">
+          <input
+            class="input mt-4"
+            type="password"
+            autocomplete="off"
+            name="password"
+            v-model="password"
+            placeholder="*****************"
+            required
+          />
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end">
+        <router-link :to="'/forgot'" class="link">Forgot Password?</router-link>
+      </div>
+      <button
+        :disabled="!loginInput || !password"
+        v-if="!isLoading"
+        class="button is-success mt-5"
+      >
+        Login
+      </button>
       <button
         v-if="isLoading"
         is-loading
