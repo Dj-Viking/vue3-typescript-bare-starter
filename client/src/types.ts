@@ -23,7 +23,7 @@ export interface EditCardResponse {
 }
 export interface Modal {
   context: {
-    card: ICard;
+    card: ICard | Record<string, never>;
   };
   activeClass: boolean;
   title: string;
