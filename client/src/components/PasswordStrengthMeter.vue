@@ -34,7 +34,7 @@ import { defineComponent, ref } from "@vue/runtime-core";
 
 export default defineComponent({
   name: "PasswordStrengthMeter",
-  props: ["input"],
+  props: { input: String },
   setup() {
     const length = ref(0);
     const assessText = ref<{
@@ -62,9 +62,7 @@ export default defineComponent({
             };
           }
           break;
-        case Boolean(
-          (value.length > 5 && value.length <= 8) || value.length <= 5
-        ):
+        case (value.length > 5 && value.length <= 8) || value.length <= 5:
           {
             this.assessText = {
               text: "Weak",
@@ -72,7 +70,7 @@ export default defineComponent({
             };
           }
           break;
-        case Boolean(value.length >= 8 && value.length < 16):
+        case value.length >= 8 && value.length < 16:
           {
             this.assessText = {
               text: "Moderate",
