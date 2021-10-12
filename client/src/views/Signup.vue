@@ -87,15 +87,6 @@ export default defineComponent({
     const email = ref("");
     const username = ref("");
     const password = ref("");
-    const length = ref(0);
-    const assessText = ref<{
-      text: string;
-      color: "" | "red" | "orange" | "green";
-    }>({
-      text: "",
-      color: "",
-    });
-
     const registerResponse = ref();
     const submitted = ref(false);
     const isLoading = ref(false);
@@ -171,11 +162,9 @@ export default defineComponent({
     return {
       submitRegister,
       email,
-      assessText,
       username,
       password,
       isLoading,
-      length,
     };
   },
   methods: {
