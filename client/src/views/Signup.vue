@@ -1,5 +1,5 @@
 <template>
-  <BaseLayout :isHome="false">
+  <base-layout :isHome="false">
     <form
       class="field box"
       style="margin: 0 20%"
@@ -60,11 +60,10 @@
         Login
       </button>
     </form>
-  </BaseLayout>
+  </base-layout>
 </template>
 <script lang="ts">
 import { defineComponent, inject, onMounted, ref } from "vue";
-import BaseLayout from "../components/BaseLayout.vue";
 import { useMutation } from "@vue/apollo-composable";
 import { gql } from "graphql-tag";
 import { createRegisterMutation } from "../graphql/mutations/myMutations";
@@ -77,9 +76,6 @@ import { useToast } from "vue-toastification";
 
 export default defineComponent({
   name: "Signup",
-  components: {
-    BaseLayout,
-  },
   setup(this: void) {
     let globalEmail = inject("$email");
     const toast = useToast();
