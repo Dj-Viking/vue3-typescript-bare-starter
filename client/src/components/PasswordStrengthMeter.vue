@@ -80,7 +80,7 @@ export default defineComponent({
             };
           }
           break;
-        case value.length >= 16 && /.{16,100}|\w{16,1000}/.test(value):
+        case value.length >= 16 && /.{16,100}|\w{16,100}/.test(value):
           {
             this.assessText = {
               text: "Strong",
