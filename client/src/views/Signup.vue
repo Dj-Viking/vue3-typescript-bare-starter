@@ -45,6 +45,7 @@
         placeholder="***************"
         required
       />
+      <PasswordStrengthMeter :input="password" />
       <button
         :disabled="!username || !email || !password"
         v-if="!isLoading"
@@ -64,6 +65,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, inject, onMounted, ref } from "vue";
+import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
 import { useMutation } from "@vue/apollo-composable";
 import { gql } from "graphql-tag";
 import { createRegisterMutation } from "../graphql/mutations/myMutations";
@@ -73,29 +75,32 @@ import router from "../router";
 import { FetchResult } from "@apollo/client/core";
 import store from "../store";
 import { useToast } from "vue-toastification";
-
+// for some reason the value property is not on the default Event type
 export default defineComponent({
   name: "Signup",
+  components: {
+    PasswordStrengthMeter,
+  },
   setup(this: void) {
     let globalEmail = inject("$email");
     const toast = useToast();
     const email = ref("");
     const username = ref("");
     const password = ref("");
+    const length = ref(0);
+    const assessText = ref<{
+      text: string;
+      color: "" | "red" | "orange" | "green";
+    }>({
+      text: "",
+      color: "",
+    });
+
     const registerResponse = ref();
     const submitted = ref(false);
-    const errMsg = ref("");
-    const showError = ref(false);
-    const successMsg = ref("");
-    const showSuccess = ref(false);
     const isLoading = ref(false);
 
-    const {
-      mutate: submitRegister,
-      loading: registerIsLoading,
-      error: registerError,
-      onDone: onRegisterDone,
-    } = useMutation(
+    const { mutate: submitRegister, onDone: onRegisterDone } = useMutation(
       gql`
         ${createRegisterMutation()}
       `,
@@ -114,8 +119,8 @@ export default defineComponent({
       (
         result: FetchResult<
           RegisterResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
+          Record<string, unknown>, //extensions
+          Record<string, unknown> //context ..not sure what these are for yet
         >
       ) => {
         submitted.value = true;
@@ -166,18 +171,11 @@ export default defineComponent({
     return {
       submitRegister,
       email,
-      showError,
-      showSuccess,
-      errMsg,
-      successMsg,
+      assessText,
       username,
       password,
       isLoading,
-      registerIsLoading,
-      globalEmail,
-      registerError,
-      registerResponse,
-      submitted,
+      length,
     };
   },
   methods: {
@@ -186,6 +184,8 @@ export default defineComponent({
     readEvent(_event: Event): void {
       // do nothing
     },
+    // eslint-disable-next-line
+    // 
   },
 });
 </script>

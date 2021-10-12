@@ -53,6 +53,7 @@
           />
         </div>
       </div>
+      <PasswordStrengthMeter :input="passwordInput" />
       <button
         :disabled="!passwordInput || !confirmInput"
         v-if="!isLoading"
@@ -72,6 +73,7 @@
 </template>
 
 <script lang="ts">
+import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
 import { defineComponent, ref, onMounted } from "@vue/runtime-core";
 import { useRoute } from "vue-router";
 import { useMutation } from "@vue/apollo-composable";
@@ -84,6 +86,9 @@ import auth from "../utils/AuthService";
 import store from "../store";
 export default defineComponent({
   name: "ChangePass",
+  components: {
+    PasswordStrengthMeter,
+  },
   setup(this: void) {
     const toast = useToast();
     const isLoading = ref(false);
